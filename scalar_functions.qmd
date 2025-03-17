@@ -1,0 +1,44 @@
+---
+title: "Scalar Functions"
+---
+
+The Airport Extension enables the Arrow Flight Server to provide scalar functions callable within SQL queries.
+
+A scalar function returns a single result (of any [DuckDB data type](https://duckdb.org/docs/stable/sql/data_types/overview.html), including nested types) when given a set of parameters. For example:
+
+```sql
+SELECT geocode_address('1024 Lenox Ave, Miami Beach, Florida 33139')
+```
+
+When invoked, the parameters to the function are serialized and sent to the Arrow Flight server, with the results returned to the DuckDB client.
+
+Scalar functions are registered in a DuckDB catalog and schema when an Airport-provided database is [attached](server_catalog_integration.qmd). They can be explicitly called by referencing the database and schema names:
+
+```sql
+SELECT geocoder.usa.geocode_address('1024 Lenox Ave, Miami Beach, Florida 33139')
+```
+In this example `geocoder` is the attached database name, and `usa` is the name of the schema.
+
+## Efficiency / Parallelism
+
+Airport scalar functions operate efficiently by processing entire [DuckDB vectors](https://duckdb.org/docs/stable/internals/vector.html) at once. As of DuckDB version 1.2, the standard vector size is 2048 tuples. DuckDB can also invoke scalar functions from multiple threads, so the Arrow Flight server should handle parallel requests.
+
+## Catalog Integration
+
+An Arrow Flight server can implement a scalar function by embedding metadata in the `app_metadata` field of the `FlightInfo` structure returned from `list_schemas`. The format is as follows:
+
+```json
+{
+  "type": "scalar_function",
+  "catalog": "CATALOG_NAME",
+  "schema": "SCHEMA_NAME",
+  "name": "FUNCTION_NAME",
+  "comment": "COMMENT",
+  "action_name": "FLIGHT_ACTION_NAME",
+  "input_schema": "INPUT_SCHEMA"
+}
+```
+
+The `input_schema` field contains a serialized Arrow Schema describing the function's input. The Arrow Flight schema serves as the output schema, which must contain exactly one element.
+
+When the scalar function is invoked, a [DoExchange](https://arrow.apache.org/docs/format/Flight.html#exchanging-data) Arrow Flight RPC operation is performed. Batches of rows are sent to the server, and results are returned for each batch.

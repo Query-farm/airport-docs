@@ -1,0 +1,100 @@
+---
+title: "Column Statistics"
+---
+
+DuckDB's tables can supply optional statistics that assist efficient query execution. What these statistics consist of vary based on the data type of the column.  These statistics are optional.  Tables provided via the Airport extension can provide these statistics if they choose to.
+
+For an Airport based table to provide statitics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.  If the table has opted-in to providing statistics an Arrow Flight `DoAction` RPC call with be made to the server with an action name of `get_flight_column_statistics`.
+
+The action will be provided a parameter with this `msgpack` encoded message.
+
+```c++
+struct GetFlightColumnStatistics
+{
+  std::string flight_descriptor;
+  std::string column_name;
+  std::string type;
+
+  MSGPACK_DEFINE_MAP(flight_descriptor, column_name, type)
+};
+```
+
+The `flight_descriptor` field is the Arrow Flight serialized FlightDescriptor structure.  The `type` field is the DuckDB data type name, i.e. `VARCHAR`, `TIMESTAMP WITH TIME ZONE`.
+
+The response to the the `DoAction` call is the `GetFlightColumnStatisticsResult` structure.
+
+```c++
+struct GetFlightColumnStatisticsResult
+{
+  //! Whether or not the segment can contain NULL values
+  bool has_null;
+  //! Whether or not the segment can contain values that are not null
+  bool has_no_null;
+  // estimate that one may have even if distinct_stats==nullptr
+  idx_t distinct_count;
+
+  //! Numeric and String stats
+  GetFlightColumnStatisticsNumericStatsData numeric_stats;
+  GetFlightColumnStatisticsStringData string_stats;
+
+  MSGPACK_DEFINE_MAP(has_null, has_no_null, distinct_count, numeric_stats, string_stats)
+};
+```
+This in turn references a few additional structures.  The first is for strings.
+
+```c++
+  struct GetFlightColumnStatisticsStringData
+  {
+    std::string min;
+    std::string max;
+    MSGPACK_DEFINE_MAP(min, max)
+  };
+```
+
+Returning statistics for numeric types is a bit more complicated since there are different levels of precision and `msgpack` doesn't support 128-bit integers.  So they've been split into a high and low 64-bit integer.
+
+```c++
+struct GetFlightColumnStatisticsNumericStatsData
+{
+  //! Whether or not the value has a max value
+  bool has_min;
+  //! Whether or not the segment has a min value
+  bool has_max;
+  //! The minimum value of the segment
+  GetFlightColumnStatisticsNumericValue min;
+  //! The maximum value of the segment
+  GetFlightColumnStatisticsNumericValue max;
+
+  MSGPACK_DEFINE_MAP(has_min, has_max, min, max)
+};
+
+struct GetFlightColumnStatisticsNumericValue
+{
+  bool boolean;
+  int8_t tinyint;
+  int16_t smallint;
+  int32_t integer;
+  int64_t bigint;
+  uint8_t utinyint;
+  uint16_t usmallint;
+  uint32_t uinteger;
+  uint64_t ubigint;
+
+  uint64_t hugeint_high;
+  uint64_t hugeint_low;
+
+  float float_;
+  double double_;
+
+  MSGPACK_DEFINE_MAP(
+    boolean, tinyint,
+    smallint, integer,
+    bigint, utinyint,
+    usmallint, uinteger,
+    ubigint,
+    hugeint_high, hugeint_low,
+    float_, double_)
+};
+```
+
+By providing column level statistics DuckDB can do a better job with planning and query optimization.

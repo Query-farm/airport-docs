@@ -1,0 +1,36 @@
+---
+title: "Create"
+---
+
+The Airport extension supports the creation of tables. The Arrow Flight server can decide if the table should actually be created.
+
+## Example Usage
+
+For a DuckDB session to create a table, a standard SQL `CREATE TABLE` statement is executed in a schema that is managed by the Airport extension.
+
+```sql
+-- Attach an Airport database
+ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
+
+-- assume that there is a `main` schema
+-- already in the `example` database
+CREATE TABLE example.main.employees (
+  name varchar,
+  id integer
+);
+```
+
+## Server Side Implementation
+
+The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `create_table`.
+
+The single parameter provided to the `create_table` action will be a serialized Apache Arrow schema which is the schema of the table to be created. This schema will be augmented with these additional metadata fields that describe to the Arrow Flight server where the table is requested to be created.
+
+| Metadata Field Name | Description |
+|-----------------|-------------------------------|
+| `table_name` | The name of the table to create |
+| `schema_name` | The name of the schema where the table should be created |
+| `catalog_name` | The name of the database/catalog where the table should be created |
+
+The `create_table` action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) result that represents an Apache Flight that can be utilized to obtain the contents of the table.
+

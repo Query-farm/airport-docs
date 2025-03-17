@@ -1,0 +1,34 @@
+---
+title: "Delete"
+---
+
+The Airport extension allows tables that it manages to have rows deleted.  The Arrow Flight server is responsible for performing the deletes to the data if it chooses.
+
+```sql
+-- Attach an Airport database
+ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
+
+-- Assume that there is a `main` schema
+-- already in the `example` database
+CREATE TABLE example.main.employees (
+  name varchar,
+  id integer
+);
+
+-- Delete a single row
+DELETE FROM example.main.employees where id = 5;
+```
+
+::: {.callout-caution}
+For an Airport managed table to perform a `DELETE` operation it must have a [`rowid` pseudocolumn](table_row_ids.qmd).
+:::
+
+::: {.callout-tip}
+Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `INSERT` statement, all rows are sent to the Arrow Flight server where they are presumed to be immediately commited to storage. This differs from a standard SQL transation that doesn't commit data until `COMMIT` or `ROLLBACK` is issued.
+
+The current philosophy of the Airport extension is to send the rows to the server. If the server fails to commit the rows during the RPC request, it will raise an Arrow Flight exception, causing the DuckDB transaction to abort.
+
+This may change in the future.
+:::
+
+## Server Side Implementation Details

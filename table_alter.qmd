@@ -1,0 +1,5 @@
+---
+title: "Alter"
+---
+
+The Airport extension doesn't currently support altering tables once they are created.  If possible the extension may be extended to support this in the future.  If you're interested in this function please contact the author.

@@ -1,0 +1,25 @@
+---
+title: "Version Support"
+---
+
+The Airport extension for DuckDB supports multiple DuckDB versions and leverages different software dependencies.
+
+## Supported DuckDB Versions
+
+- **DuckDB 1.2 or later**: Supported via the [`v1.2`](https://github.com/Query-farm/duckdb-airport-extension/tree/v1.2) branch.
+- **DuckDB main development branch**: Tracked in the [`main`](https://github.com/Query-farm/duckdb-airport-extension/tree/main) branch.
+
+## Dependencies
+
+The Airport extension relies on the following [`vcpkg`](https://vcpkg.io/en/) packages:
+
+- [`msgpack`](https://vcpkg.io/en/package/msgpack.html)
+- [`arrow`](https://vcpkg.io/en/package/arrow.html)
+- [`curl`](https://vcpkg.io/en/package/curl.html)
+
+## Dependency Versions
+
+The specific versions of these dependencies are determined by the active commit of `vcpkg` used in the DuckDB extension build. The commit identifier is specified in the [`extension-ci-tools`](https://github.com/duckdb/extension-ci-tools) repository.
+
+For the `v1.2` branch, Apache Arrow 18.0.0 is used.
+

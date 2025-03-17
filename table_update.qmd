@@ -1,0 +1,40 @@
+---
+title: "Update Table"
+---
+
+The Airport extension allows tables that is manages to be updated.  The Arrow Flight server is responsible for storing and persisting the updated data if it chooses to do so.
+
+
+## Example Usage
+
+A standard SQL `UPDATE` statement is used:
+
+```sql
+-- Attach an Airport database
+ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
+
+-- Assume that there is a `main` schema
+-- already in the `example` database
+CREATE TABLE example.main.employees (
+  name varchar,
+  id integer
+);
+
+-- Update a single row
+UPDATE example.main.employees set id = 5 where id = 1;
+```
+
+::: {.callout-caution}
+For an Airport managed table to perform an `UPDATE` operation it must have a [`rowid` pseudocolumn](table_row_ids.qmd).
+:::
+
+::: {.callout-tip}
+Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `INSERT` statement, all rows are sent to the Arrow Flight server where they are presumed to be immediately commited to storage. This differs from a standard SQL transation that doesn't commit data until `COMMIT` or `ROLLBACK` is issued.
+
+The current philosophy of the Airport extension is to send the rows to the server. If the server fails to commit the rows during the RPC request, it will raise an Arrow Flight exception, causing the DuckDB transaction to abort.
+
+This may change in the future.
+:::
+
+
+## Server Side Implementation Details

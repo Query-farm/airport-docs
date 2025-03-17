@@ -1,0 +1,40 @@
+---
+title: "Create"
+---
+
+The Airport extension supports the creation of schemas in the database it manages. DuckDB schemas can contain tables, functions, macros and other objects. The Arrow Flight server can decide if the schema should actually be created.
+
+## Example Usage
+
+For a DuckDB session to create a schema, a standard SQL [`CREATE SCHEMA`](https://duckdb.org/docs/stable/sql/statements/create_schema.html) statement while referencing a database/catalog that is managed by the Airport extension.
+
+```sql
+-- Attach an Airport database
+ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
+
+-- Create a new schema called main in the
+-- example catalog
+CREATE SCHEMA example.main;
+```
+
+## Server Side Implementation
+
+The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `create_schema`.
+
+The single parameter provided to the `create_schema` action will be a `msgpack` encoded representation of this structure:
+
+```c++
+struct AirportCreateSchemaParameters
+{
+  string catalog_name;
+  string schema;
+
+  std::optional<string> comment;
+  unordered_map<string, string> tags;
+
+  MSGPACK_DEFINE_MAP(catalog_name, schema, comment, tags)
+};
+```
+
+The return value from `create_schema` action discarded. If an error occurrs it is expected that a Arrow Flight exception will be raised.
+

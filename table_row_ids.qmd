@@ -1,0 +1,30 @@
+---
+title: "Table Row Id Pseudocolumn"
+---
+
+In DuckDB, the [`rowid` pseudocolumn](https://duckdb.org/docs/stable/sql/statements/select.html#row-ids) serves as a unique row identifier that is derived from the physical storage of the row. For native DuckDB tables, this identifier is typically represented as a unique `BIGINT` value.
+
+### `rowid` in Airport Managed Tables
+
+Airport managed tables can either include or exclude a `rowid` pseudocolumn. To enable a table to have a `rowid` column, the Arrow schema should return a field with metadata that includes a key named `is_rowid` with a non-empty string value.
+
+### Key Constraints and Data Types
+
+- Each table can have at most one `rowid` column.
+- The `rowid` column does not have to be of type `BIGINT`; it can be of any Arrow data type.
+
+### Responsibilities of the Arrow Flight Server
+
+The Arrow Flight server is responsible for:
+
+1. Ensuring that the values in the `rowid` column are unique.
+2. Properly handling filtering operations based on the `rowid` column.
+
+### Implications of tables without `rowid` columns.
+
+1. DuckDB is not able to perform row-wise UPDATE or DELETE operations on tables that don't provide `rowid` columns.
+
+2. The DuckDB UI does not work well with tables that don't have a `rowid` column as its hard to scroll through result sets.
+
+
+

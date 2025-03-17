@@ -1,0 +1,10 @@
+---
+title: "About"
+---
+
+This is the documentation for the Airport extension for DuckDB.
+
+The Airport extention integrates Apache Arrow Flight with DuckDB.  The extension is available via [DuckDB's community extensions](https://duckdb.org/community_extensions/).
+
+To learn more about the extension start with reading the [motivation that explains why the extension was created](motivation.qmd).
+

@@ -1,0 +1,60 @@
+---
+title: "Motivation for the Airport Extension"
+author: "Rusty Conover"
+---
+
+# The Dream of Universal Data Access via SQL
+
+The Airport extension for DuckDB strives to enable access to __"any data, anywhere, on all systems, all via SQL."__
+
+An imagined testimonial:
+
+> When I begin my work, I simply launch DuckDB. It provides all the data and functionality I need from my organization. I don’t have to worry about connecting to other systems manually. I have access to current sales data, historical production data, and live operational metrics. Even the data we buy from vendors is available. All this data updates in real-time, and I can time travel through SQL to view past data. Additionally, machine learning models and time series forecasts are accessible. Building new models is easy and automated using some SQL functions, and extracting data for other systems is as simple as a COPY TO SQL statement.
+
+While DuckDB excels at single-node query execution, Airport extends this power to access data from distributed systems and remote nodes. With Airport, users can interact with remote data as if it were native SQL data.
+
+## How to make this dream a reality
+
+SQLite and DuckDB have revolutionized SQL querying by removing the complexity of managing a database server. However, they fall short in handling data access beyond the HTTP protocol and somewhat nascent Lakehouse formats like Delta Lake and Apache Iceberg.
+
+The Airport extension bridges this gap by enabling developers to build services that both provide and consume data within DuckDB. Using Arrow Flight, these services appear similar to native tables and functions in DuckDB, allowing users to query, insert, and delete data as if interacting with local tables — all without realizing they're accessing remote services.
+
+It is my intention that Airport could extend DuckDB’s reach to unconventional data sources, including NoSQL databases, IMAP, Spark, DataBricks, Snowflake, Prometheus, REST APIs, SNMP, and legacy systems.
+
+By leveraging Arrow Flight, Airport eliminates the need for intermediate data extraction and transformation before the data can be used in a query system. Similar to how REST handles data retrieval and updates via HTTP requests, Arrow Flight provides a streamlined interface for requesting and publishing data. Through configuration, Airport exposes this data as tables, functions, and schemas directly within DuckDB.
+
+
+
+
+
+## The ingredients of the dream.
+
+#### DuckDB
+
+DuckDB supports a wide range of data formats, including CSV, Excel, Parquet, Delta Lake, Apache Iceberg, PostgreSQL, and MySQL. However, transforming data from the source into a compatible format can be complex and introduce latency and freshness concerns.
+
+Given the diversity of data formats and storage systems, expecting DuckDB to handle all past and future formats and data sources in C++ is unrealistic. Airport provides a way to connect to data sources without requiring a new extension for each one.  These connections can evolve as needed at their own pace.
+
+#### Apache Arrow
+
+Apache Arrow plays a crucial role in this architecture. DuckDB provides an efficient, streaming, multithreaded query engine, while Apache Arrow and Arrow Flight offer standardized connectivity to data sources.
+
+The Arrow IPC format allows efficient data exchange between processes in different programming languages, with support for streaming data, extensible data types, and compression. Arrow Flight defines an RPC interface (built on gRPC) for sharing data using the Arrow IPC format.
+
+DuckDB's integration with Apache Arrow allows Airport to read Arrow data via the C Data Interface. To DuckDB, data from Arrow Flight is just like any other Arrow data.
+
+Apache Arrow has implementations in all of a major langauges including C++, Python, Go, Rust, Java and others. This means that servers that want to offer data to the Airport extension can be written in any of those languages, reducing the friction of implementation.
+
+
+## Mixing the Ingredients
+
+1. The challenges is that some systems aren't really relational at their core.
+2. How to efficiently perform filtering.
+3. Authentication and authorization.
+4. Failover and scale.
+5. Beyond data, exposing functions.
+6. Complexity of exposiing a service
+7. Data as a Service, in addition to Software as a Service
+8. Who says there needs be on only one service.
+9. Cost for data transfer and impact of queries.
+10. Transactional guarantees.

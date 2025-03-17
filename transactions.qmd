@@ -1,0 +1,20 @@
+---
+title: "Transactions and Consistency"
+---
+
+The Airport extension for DuckDB primarily interacts with external systems, so the same transactional guarantees may not always be available or even possible.
+
+### Consistency of Reads
+
+In database systems, data consistency refers to ensuring that data remains accurate and reliable across transactions. This typically means that when a transaction reads data, it sees a stable and correct view of the data, even if other transactions are modifying it concurrently.
+
+To achieve consistency within the Airport extension for DuckDB, a `DoAction` Arrow Flight RPC call is made at the start of a transaction. The action name is `get_transaction_identifier`. This call returns an optional unique identifier, which is included in subsequent RPC calls via the `airport-transaction-id` header. If servers respect this identifier that they issue, the extension can ensure that data requested within the same transaction remains consistent.
+
+From the perspective of the Airport extension, data requested with the same transaction identifier should be consistent (even across tables). It is the server's responsibility to reject transaction identifiers that can no longer guarantee consistency and raise an appropriate Arrow Flight exception. This mechanism allows clients to rely on consistent data views while interacting with external systems.
+
+### Commit and Rollback
+
+Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `INSERT`, `DELETE` or `UPDATE` statements, all rows are sent to the Arrow Flight server where they are presumed to be immediately commited to storage. This differs from a standard SQL transation that doesn’t commit data until `COMMIT` or `ROLLBACK` is issued.
+
+The current philosophy of the Airport extension is to send the rows to the server. If the server fails to commit the rows during the RPC request, it will raise an Arrow Flight exception, causing the DuckDB transaction to abort.
+

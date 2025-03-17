@@ -1,0 +1,210 @@
+---
+title: "Server Side DuckDB Catalog Integration"
+---
+
+During the early development of the Airport DuckDB extension, Apache Arrow Flight servers did not integrate with the DuckDB catalog. Flights provided by the server could only be listed and accessed using the `airport_list_flights` and `airport_take_flight` table-returning functions.
+
+The Airport DuckDB extension aims to provide a seamless experience, making Airport-provided data behave like any other DuckDB data source. To achieve this, the extension integrates with the DuckDB catalog, allowing Arrow Flights to appear as tables and functions, similar to native database objects.
+
+## Catalog Integration
+
+To integrate the Airport extension with the DuckDB catalog, a DuckDB session [attaches](catalog_integration.qmd) an Airport-provided database[^database]. When any object from the attached database is referenced, its contents are retrieved from the Arrow Flight server.
+
+### Arrow Flight and Catalog Integration
+
+The Arrow Flight RPC interface includes a `ListFlights` method for listing the available flights from a server. It seemed logical to use this method to integrate those flights with the DuckDB catalog. However, several limitations make `ListFlights` unsuitable for this purpose:
+
+1. __Performance Overhead:__ An Arrow Flight server can provide thousands of flights. Serializing all flights in response to a `ListFlights` RPC call can be CPU-intensive. Since serialization occurs at the gRPC level, the current implementation of Arrow does not support response caching when flights remain unchanged.
+
+2. __Large Schema Sizes:__ Apache Arrow schemas can be large, especially when dealing with hundreds of tables. Compressing responses could help but would add additional CPU overhead to the Flight server.
+
+::: {.callout-note collapse="true"}
+### Size of Serialized Apache Arrow Schemas
+
+The serialized size of an Apache Arrow schema can be quite large, especially when dealing with hundreds of schemas. The table below illustrates the size of an Apache Arrow schema as the number of `int64` fields increases.
+
+```{python}
+# | echo: false
+# | output: asis
+import zstandard
+import tabulate
+import pyarrow as pa
+from tabulate import tabulate
+
+results = []
+for i in range(11):
+    compressor = zstandard.ZstdCompressor(level=20)
+    schema = pa.schema([pa.field("", pa.int64()) for j in range(i)])
+    raw_size = schema.serialize().size
+    compressed = len(compressor.compress(schema.serialize()))
+    row = [i, raw_size, compressed]
+
+    results.append(row)
+
+table = tabulate(
+    results,
+    headers=[
+        "Number of Int64 Fields",
+        "Serialized Size of Arrow Schema (bytes)",
+        "Serialized Size of Arrow Schema with ZStandard Compression level=20 (bytes)",
+    ],
+    tablefmt="pipe",
+)
+print(table)
+```
+
+:::
+
+
+3. __Lack of Caching and CDN Support:__ If a portion of a Arrow server’s flight list rarely changes, there is no built-in way to leverage an external service (e.g., a CDN) to cache and distribute this data nor indicate that a client can cache the data. Using a CDN could offload bandwidth and CPU usage from the Flight server.
+
+::: {.callout-note collapse="true"}
+### Most Schemas Rarely Change
+
+Databases often contain hundreds or even thousands of tables, each with its own schema. An Arrow Flight server may spend significant time serializing these schemas for every client request, even though they change infrequently.
+
+To optimize performance, a server can serialize and compress schema descriptions once and provide clients with a reference to the stored representation via a URL (e.g., accessible with curl). This URL could be hosted on a CDN to further improve efficiency.
+
+If an Airport-provided `list_schemas` schema or database includes a SHA256 checksum and its contents are not provided inline with the response, it is assumed that the content can be be cacheable indefinitely. Instead of repeatedly downloading the schema information, DuckDB caches it in the `.duckdb` home directory under the  `airport_cache` direction, using the SHA256 checksum as the cache key. Before attempting to retrieve the schema from a URL, DuckDB first checks this cache. If the schema exists on disk and its hash matches, the cached version is used.
+
+:::
+
+4. __Missing Hierarchical Structure:__ DuckDB organizes objects within databases, schemas, and then tables/functions. `ListFlights` returns a flat list of flights, making it difficult to represent this hierarchy.
+
+### Alternative Approach: `list_schemas`
+
+Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the Airport extension introduces a separate RPC call, `list_schemas`, invoked via `DoAction`. The key benefits of `list_schemas` include:
+
+1. __Flexible Response Delivery:__ Responses can be provided inline or via an external URL, validated and cached based off of a SHA256 checksum. This enables CDN support and client-side caching.
+
+2. __Comprehensive Database Representation:__ `list_schemas` returns either the entire database's structure.  Each schema contained in the database can either be returned inline or via an external URL. This allows schemas that are immutable to be efficiently cached, and fixed schemas the be served effectively.
+
+4. __Efficient Handling of Dynamic Schemas:__ For schemas that change frequently, SHA256 checksums are optional.  Without a SHA256 checksum the schema information will not be cached by DuckDB.
+
+### Retrieving Catalog and Schema Information
+
+Database schema information is retrieved using an Arrow Flight RPC action called via `DoAction`[^1] with the name `list_schemas` and a `msgpack` encoded argument. `msgpack` is an alternative to JSON[^msgpack] that is both fast and capable of handling embedded data. The `list_schemas` request is a `msgpack` map structured as follows:
+
+```json
+{
+  "catalog_name": "example_catalog_name"
+}
+```
+
+This is the C++ structure definition for the request.
+
+```c++
+struct AirportSerializedCatalogSchemaRequest
+{
+  std::string catalog_name;
+
+  MSGPACK_DEFINE_MAP(catalog_name)
+};
+```
+
+The Arrow Flight server responds with a single `msgpack`-serialized message containing a `SerializedCompressedContent` structure:
+
+```c++
+struct AirportSerializedCompressedContent
+{
+  // The uncompressed length of the data.
+  uint32_t length;
+  // The compressed data using ZStandard.
+  std::string data;
+
+  MSGPACK_DEFINE(length, data)
+};
+```
+
+After decompression, the data is deserialized into a `AirportSerializedCatalogRoot` structure:
+
+```c++
+struct AirportSerializedCatalogRoot
+{
+  // The contents of the catalog itself, this is optional, if its
+  // more efficient to provide the entire catalog at once rather than
+  // having each schema listed individually.
+  AirportSerializedContentsWithSHA256Hash contents;
+  // A list of schemas.
+  std::vector<AirportSerializedSchema> schemas;
+
+  MSGPACK_DEFINE_MAP(contents, schemas)
+};
+```
+
+Each schema is represented as a `AirportSerializedSchema` structure:
+
+```c++
+struct AirportSerializedSchema
+{
+  // The name of the schema
+  std::string schema;
+  // The description of the schema
+  std::string description;
+  // Any tags to apply to the schema.
+  std::unordered_map<std::string, std::string> tags;
+  // The contents of the schema itself, which can be external
+  // or provided inline.
+  AirportSerializedContentsWithSHA256Hash contents;
+
+  MSGPACK_DEFINE_MAP(schema, description, tags, contents)
+};
+```
+
+To help with efficiency, the entire contents of a catalog can be provided via a single URL or inline.  Or each individual schema can provide its own URL or inline serialization.  This is accomplished by having a `AirportSerializedContentsWithSHA256Hash` at catalog level `AirportSerializedCatalogRoot` as well as in each `AirportSerializedSchema` structure.
+
+#### Schema Serialization Methods
+
+The `AirportSerializedContentsWithSHA256Hash` structure provides schema or catalog content, either inline or via an external URL with SHA256 validation.  If an external URL is provided, the contents is assumed to the same as the inline serialization with the SHA256 value of the contents being verified.
+
+```c++
+// This is a generic type that applies a SHA256
+// checksum to the data it contains.
+//
+// The data can either be provied inline by
+// inside of the serialized field, or it can
+// be retrieved from the specified URL.
+//
+// URLs are considered to be immutable, and
+// their contents may be cached on disk.
+struct AirportSerializedContentsWithSHA256Hash
+{
+  // The SHA256 of the serialized contents.
+  // or the external url.
+  std::string sha256;
+
+  // The external URL where the contents should be obtained.
+  std::optional<std::string> url;
+
+  // The inline serialized contents.
+  std::optional<std::string> serialized;
+
+  MSGPACK_DEFINE_MAP(sha256, url, serialized)
+};
+```
+The type and format of the inline serialized data varies depends on if the content is describing an entire catalog or a specific schema.
+
+#### Catalog Inline Serialization
+
+If the `AirportSerializedContentsWithSHA256Hash` is describing an entire catalog the serialized data consists of a vector of pairs of strings.  The pairs of strings are:
+
+1. The SHA256 value of the following data.
+2. A ZStandard compressed `msgpack` array of serialized Apache Arrow `FlightInfo` structures.
+
+The SHA256 value is required since, it is referenced in the `schemas` field of the `AirportSerializedCatalogRoot`.  Since each schema has the SHA256 provided the schemas will be cached by DuckDB on disk.  If a schema can change, it should not be provided inline at the catalog level, instead it should be provided inline at the `schema` field of the `AirportSerializedCatalogRoot`.
+
+#### Schema Inline Serialization
+
+If the `AirportSerializedContentsWithSHA256Hash` is describing a single schema the serialized data consists of a ZStandard compressed `msgpack` array of serialized Apache Arrow `FlightInfo` structures.
+
+[^1]:
+    From the Arrow Flight documentation:
+
+    > Flight services can support an arbitrary number of simple actions in addition to the possible ListFlights, GetFlightInfo, DoGet, DoPut operations that are potentially available. DoAction allows a flight client to do a specific action against a flight service. An action includes opaque request and response objects that are specific to the type action being undertaken.
+
+[^msgpack]:
+    From [msgpack.org](https://msgpack.org/index.html):
+
+    > MessagePack is an efficient binary serialization format. It lets you exchange data among multiple languages like JSON. But it's faster and smaller. Small integers are encoded into a single byte, and typical short strings require only one extra byte in addition to the strings themselves.
+
+[^database]: In this sense its not a database file, its a database name that is provied by the Arrow Flight server.

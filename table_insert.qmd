@@ -1,0 +1,68 @@
+---
+title: "Insert"
+---
+
+The Airport extension allows data to be inserted into tables it manages. The Arrow Flight server is responsible for storing and persisting the data if it chooses to do so.
+
+### Support for `RETURNING`
+
+The Airport extension supports the `RETURNING` clause in `INSERT` statements. This feature allows the `INSERT` statement to return the rows that were inserted, after being processed by the server.
+
+## Example Usage
+
+A standard SQL `INSERT` statement is used:
+
+```sql
+-- Attach an Airport database
+ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
+
+-- Assume that there is a `main` schema
+-- already in the `example` database
+CREATE TABLE example.main.employees (
+  name varchar,
+  id integer
+);
+
+-- Insert a single row.
+INSERT INTO example.main.employees values ('Rusty', 1);
+```
+
+::: {.callout-tip}
+Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `INSERT` statement, all rows are sent to the Arrow Flight server where they are presumed to be immediately commited to storage. This differs from a standard SQL transation that doesn't commit data until `COMMIT` or `ROLLBACK` is issued.
+
+The current philosophy of the Airport extension is to send the rows to the server. If the server fails to commit the rows during the RPC request, it will raise an Arrow Flight exception, causing the DuckDB transaction to abort.
+
+This may change in the future.
+:::
+
+
+## Server Side Implementation Details
+
+A `DoExchange` Arrow Flight RPC call is made to insert rows. This allows the server to return rows, which may differ from the original input.
+
+### Supplied gRPC Headers for `DoExchange` request.
+
+| Header Name        | Description                              |
+|-----------------|--------------------------------------------------|
+| `airport-operation` | Set to `insert` to indicate the operation being performed |
+| `return-chunks`   | Set to `1` if a `RETURNING` clause is present; otherwise, `0` |
+
+### Schema Handling
+
+- The schema sent by the client must match the schema of the table.
+- The schema returned by the server should also match the table's schema.
+
+### Final Metadata Message
+
+When the DuckDB client finishes writing to the `DoExchange` write stream, the server is expected to return a single metadata message that is serialized using msgpack with this structure.
+
+```c++
+struct AirportInsertFinalMetadata
+{
+  uint64_t total_inserted;
+  MSGPACK_DEFINE_MAP(total_inserted)
+};
+```
+
+This message informs the client of the total number of rows successfully inserted.
+

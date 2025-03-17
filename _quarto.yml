@@ -1,0 +1,79 @@
+project:
+  type: website
+
+website:
+  title: "Airport for DuckDB"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+  sidebar:
+      style: "docked"
+      search: true
+      contents:
+        - text: "Motivation"
+          href: motivation.qmd
+        - text: "SQL Functions"
+          href: duckdb_functions.qmd
+        - text: "Catalog Integration"
+          href: catalog_integration.qmd
+          contents:
+            - section: "Schemas"
+              contents:
+                - text: "Create"
+                  href: schema_create.qmd
+                - text: "Drop"
+                  href: schema_drop.qmd
+
+            - section: "Tables"
+              href: tables.qmd
+              contents:
+                - text: "Predicate Pushdown"
+                  href: table_predicate_pushdown.qmd
+                - text: "RowId Pseudocolumn"
+                  href: table_row_ids.qmd
+                - text: "Insert Into"
+                  href: table_insert.qmd
+                - text: "Update"
+                  href: table_update.qmd
+                - text: "Delete From"
+                  href: table_delete.qmd
+                - text: "Create"
+                  href: table_create.qmd
+                - text: "Drop"
+                  href: table_drop.qmd
+                - text: "Alter"
+                  href: table_alter.qmd
+                - text: "Column Statistics"
+                  href: table_column_statistics.qmd
+                - text: "Constraints, Checks, Default Values"
+                  href: table_constraints.qmd
+                - text: "Transactions"
+                  href: transactions.qmd
+            - scalar_functions.qmd
+            - table_returning_functions.qmd
+            - catalog_current_version.qmd
+        - text: "Authentication"
+          href: request_authentication.qmd
+        - text: "Standard Request Headers"
+          href: standard_headers.qmd
+        - text: "Version Support"
+          href: version_support.qmd
+        - text: "FAQ"
+          href: faq.qmd
+        - section: "Flight Server Implementation"
+          contents:
+              - text: "Basics"
+                href: server_basics.qmd
+
+format:
+  html:
+    theme:
+      light: dark
+
+    css: styles.css
+    toc: true
+
+
+

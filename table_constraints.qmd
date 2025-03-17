@@ -1,0 +1,30 @@
+---
+title: "Constraints, Checks and Default Values"
+---
+
+The Airport extention for DuckDB supports tables that have constraints and checks.  The Arrow Flight server must declare these constraints and checks in the Apache Arrow schema of the table.
+
+### Not Null Constraints
+
+If the Apache Arrow specifies that a field is not nullable, that is interpreted as a "not null" constraint being applied to the table.  This constraint will be validated when the table is used in an `INSERT` or `UPDATE` statement.
+
+### Checks
+
+Apache Arrow does not actually have a formalized method to serialize checks that may exist on a table, as such the checks will be serialized using `msgpack` on the Apache arrow schema.
+
+Checks are specified a set of string based expressions.  An example check expression could be `"color in ('blue', 'green')"`, that would restrict the value of the color field to be either "blue" or "green".  These checks are serialized using this `msgpack` structure, then stored in a metadata key called `check_constraints`:
+
+```c++
+struct AirportTableCheckConstraints {
+  std::vector<std::string> constraints;
+
+  MSGPACK_DEFINE_MAP(constraints)
+};
+```
+
+### Default Values
+
+In an Arrow Flight table there is the ability for a default value to be specified for the column when rows are inserted.  Apache Arrow doesn't have a way to specify this, so a metadata field is used on the field in the Arrow schema.
+
+If there is a metadata field named `default` specified on a field, its string value is parsed as a SQL expression that will be used to produce the default value for that field.  If the expression is not able to be parsed the table will not be created.
+

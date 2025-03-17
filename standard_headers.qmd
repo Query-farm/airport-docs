@@ -1,0 +1,12 @@
+---
+title: "Standard gRPC Headers"
+---
+
+The Airport extension sends a standard set of [gRPC headers](https://grpc.io/docs/guides/metadata/) for each request it makes to the Arrow Flight server.  These headers are:
+
+| Header Name | Example value | Description |
+|-------------|---------------|-------------|
+| `airport-user-agent` | `airport/20240820-02` | A user agent identifier that includes some verison information.  The format of this user agent string is free form |
+| `authority` | `grpc+tls://airport.example.com` | The server location that is requested, this is useful for load balancers and service meshes. |
+| `airport-client-session-id` | `658A6D08-D1DF-43D7-AC71-9CD15738963F` | An example UUID that changes for each DuckDB session |
+

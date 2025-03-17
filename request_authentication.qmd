@@ -1,0 +1,24 @@
+---
+title: "Request Authentication"
+---
+
+The Airport extension for DuckDB provides support for sending requests that can optionally include an authentication header.
+
+Currently the only supported authentication mechanism is a bearer token passed via the `Authorization` gRPC header.  Additional mechanisms may be added in the future to include mutual TLS and OAuth2, this will rely on underlying support from Apache Arrow.
+
+The Airport extention integrates with the DuckDB secrets manager.  It does this by creating a new type of secret called `airport`.
+
+An example of creating an `airport` secret is:
+
+```sql
+CREATE PERSISTENT SECRET airport_autogluon (
+  type airport,
+  auth_token 'example_token',
+  scope 'grpc://localhost:50312/'
+);
+```
+
+The `airport` secret type has these properties:
+
+- `auth_token` - The bearer token value to use requests to the Arrow Flight server.
+- `scope` - A string prefix that is matched against the destination location of the Arrow Flight server to determine which secret will be used.  This is useful to use a possibly use a single secret for an entire host or domain name.
