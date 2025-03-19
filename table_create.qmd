@@ -24,13 +24,33 @@ CREATE TABLE example.main.employees (
 
 The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `create_table`.
 
-The single parameter provided to the `create_table` action will be a serialized Apache Arrow schema which is the schema of the table to be created. This schema will be augmented with these additional metadata fields that describe to the Arrow Flight server where the table is requested to be created.
+The single parameter provided to the `create_table` action will be a `msgpack` serialized structure.
 
-| Metadata Field Name | Description |
-|-----------------|-------------------------------|
-| `table_name` | The name of the table to create |
-| `schema_name` | The name of the schema where the table should be created |
-| `catalog_name` | The name of the database/catalog where the table should be created |
+```c++
+struct AirportCreateTableParameters
+{
+  string catalog_name;
+  string schema_name;
+  string table_name;
+
+  // The serialized Arrow schema for the table.
+  string arrow_schema;
+
+  // This will be "error", "ignore", or "replace"
+  string on_conflict;
+
+  // The list of constraint expressions.
+  vector<uint64_t> not_null_constraints;
+  vector<uint64_t> unique_constraints;
+  vector<string> check_constraints;
+
+  MSGPACK_DEFINE_MAP(
+    catalog_name, schema_name,
+    table_name, arrow_schema,
+    on_conflict, not_null_constraints,
+    unique_constraints, check_constraints)
+};
+```
 
 The `create_table` action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) result that represents an Apache Flight that can be utilized to obtain the contents of the table.
 
