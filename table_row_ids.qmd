@@ -24,7 +24,7 @@ The Arrow Flight server is responsible for:
 
 1. DuckDB is not able to perform row-wise UPDATE or DELETE operations on tables that don't provide `rowid` columns.
 
-2. The DuckDB UI does not work well with tables that don't have a `rowid` column as its hard to scroll through result sets.
+2. The DuckDB UI does not work well with tables that don't have a `rowid` column as it is hard to scroll through result sets.
 
 
 
