@@ -9,9 +9,21 @@ The Airport extension for DuckDB strives to enable access to __"any data, anywhe
 
 An imagined testimonial:
 
-> When I begin my work, I simply launch DuckDB. It provides all the data and functionality I need from my organization. I don’t have to worry about connecting to other systems manually. I have access to current sales data, historical production data, and live operational metrics. Even the data we buy from vendors is available. All this data updates in real-time, and I can time travel through SQL to view past data. Additionally, machine learning models and time series forecasts are accessible. Building new models is easy and automated using some SQL functions, and extracting data for other systems is as simple as a COPY TO SQL statement.
+> When I begin my work, I simply launch DuckDB. It provides all the data and functionality I need from my organization. I don’t have to worry about connecting to other systems myself.  I do a lot of reporting for ecommerce, so I need to access sales data from the websites, inventory and supplier orders, and performance metrics from the servers. Even the data we buy from vendors is available in DuckDB. All this data updates without me having to do anything, and I can time travel using SQL to view how the data looked in the past. Additionally, machine learning models and time series forecasts are easy to build. Create new models is fast and automated using SQL functions, and extracting data for other systems is as simple as a COPY TO SQL statement.
 
-While DuckDB excels at single-node query execution, Airport extends this power to access data from distributed systems and remote nodes. With Airport, users can interact with remote data as if it were native SQL data.
+
+## FIXME: Explain more of the story of how rather than going into the technical details of how.
+
+::: {.callout-tip}
+## FIXME: add examples of work with multiple attach statements.
+:::
+
+
+
+DuckDB excels at single-node query execution, Airport extends DuckDB to access data from data from distributed systems and services. With Airport, users can interact with this data as if it was any other data in the database.
+
+
+
 
 ## How to make this dream a reality
 

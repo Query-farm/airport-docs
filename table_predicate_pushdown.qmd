@@ -1,0 +1,366 @@
+---
+title: "Airport Table Predicate Pushdown"
+---
+
+When DuckDB runs a SQL query that filters data from a table provided by the Airport extension, it can push those filter expressions down to the Arrow Flight server. This process, known as *predicate pushdown*, moves filtering closer to the data source, aiming to reduce the amount of data transferred back to the client.
+
+For example, consider a query that only needs data from one month out of a full year. Without predicate pushdown, a basic Arrow Flight server might return the entire year's data. With pushdown, the server can apply the filter and return only the relevant month’s data.
+
+There’s currently no industry-wide standard for serializing filter predicates across different query engines[^substrait]. The Airport extension utilizes the very useful ability of DuckDB to serialize expressions.
+
+Since support for predicate pushdown is optional in Arrow Flight servers, the Airport extension still applies a final round of filtering on the client side. A future optimization may allow servers to signal when filtering has already been applied, making the final step redundant and potentially improving query performance.
+
+Assume a DuckDB client is running a query where predicate pushdown is applicable. When the Airport extension requests Arrow Flight endpoints, it includes predicate information in the `get_flight_endpoints` `DoAction` RPC call.
+
+The Arrow Flight server responds with a set of endpoints, each optionally containing an opaque `ticket` field. The `ticket` field may embed any details needed for filtering. It's common for the servers to replicate the predicate information across all endpoints.
+
+If the endpoints reference Parquet or other static files, the Airport extension handles predicate pushdown itself, taking advantage of DuckDB’s standard file-level optimizations.
+
+## Predicate Serialization
+
+When the Airport Extension needs to serialize a set of expression filters it creates a JSON document with this format:
+
+```json
+{
+  "filters": [...],
+  "column_binding_names_by_index": [COLUMN_NAME, ...]
+}
+```
+
+::: {.callout-warning}
+DuckDB reserves the right to change the JSON serialization for each expression as new versions of DuckDB are released.
+:::
+
+## Examples
+
+For a database table with this schema.
+
+| Column Name |       Column Type        | Null | Key  | Default | Extra |
+|-------------|--------------------------|------|------|---------|-------|
+| title       | VARCHAR                  | YES  | NULL | NULL    | NULL  |
+| post_time   | TIMESTAMP WITH TIME ZONE | YES  | NULL | NULL    | NULL  |
+| score       | FLOAT                    | YES  | NULL | NULL    | NULL  |
+
+
+### Example 1 (String Comparison)
+
+```sql
+SELECT * FROM example_table WHERE title = 'Y Combinator';
+```
+Produces:
+
+```json
+{
+  "filters": [
+    {
+      "expression_class": "BOUND_COMPARISON",
+      "type": "COMPARE_EQUAL",
+      "alias": "",
+      "query_location": 18446744073709552000,
+      "left": {
+        "expression_class": "BOUND_COLUMN_REF",
+        "type": "BOUND_COLUMN_REF",
+        "alias": "title",
+        "query_location": 18446744073709552000,
+        "return_type": {
+          "id": "VARCHAR",
+          "type_info": null
+        },
+        "binding": {
+          "table_index": 0,
+          "column_index": 0
+        },
+        "depth": 0
+      },
+      "right": {
+        "expression_class": "BOUND_CONSTANT",
+        "type": "VALUE_CONSTANT",
+        "alias": "",
+        "query_location": 18446744073709552000,
+        "value": {
+          "type": {
+            "id": "VARCHAR",
+            "type_info": null
+          },
+          "is_null": false,
+          "value": "Y Combinator"
+        }
+      }
+    }
+  ],
+  "column_binding_names_by_index": [
+    "title",
+    "post_time",
+    "score"
+  ]
+}
+```
+### Example 2 (Two predicates conjoined with an "or")
+
+```sql
+SELECT * FROM example_table WHERE title in ('a', 'b', 'c') OR score > 500.0;
+```
+
+Produces:
+
+```json
+{
+  "filters": [
+    {
+      "expression_class": "BOUND_CONJUNCTION",
+      "type": "CONJUNCTION_OR",
+      "alias": "",
+      "query_location": 74,
+      "children": [
+        {
+          "expression_class": "BOUND_OPERATOR",
+          "type": "COMPARE_IN",
+          "alias": "",
+          "query_location": 55,
+          "return_type": {
+            "id": "BOOLEAN",
+            "type_info": null
+          },
+          "children": [
+            {
+              "expression_class": "BOUND_COLUMN_REF",
+              "type": "BOUND_COLUMN_REF",
+              "alias": "title",
+              "query_location": 49,
+              "return_type": {
+                "id": "VARCHAR",
+                "type_info": null
+              },
+              "binding": {
+                "table_index": 0,
+                "column_index": 0
+              },
+              "depth": 0
+            },
+            {
+              "expression_class": "BOUND_CONSTANT",
+              "type": "VALUE_CONSTANT",
+              "alias": "",
+              "query_location": 18446744073709552000,
+              "value": {
+                "type": {
+                  "id": "VARCHAR",
+                  "type_info": null
+                },
+                "is_null": false,
+                "value": "a"
+              }
+            },
+            {
+              "expression_class": "BOUND_CONSTANT",
+              "type": "VALUE_CONSTANT",
+              "alias": "",
+              "query_location": 18446744073709552000,
+              "value": {
+                "type": {
+                  "id": "VARCHAR",
+                  "type_info": null
+                },
+                "is_null": false,
+                "value": "b"
+              }
+            },
+            {
+              "expression_class": "BOUND_CONSTANT",
+              "type": "VALUE_CONSTANT",
+              "alias": "",
+              "query_location": 18446744073709552000,
+              "value": {
+                "type": {
+                  "id": "VARCHAR",
+                  "type_info": null
+                },
+                "is_null": false,
+                "value": "c"
+              }
+            }
+          ]
+        },
+        {
+          "expression_class": "BOUND_COMPARISON",
+          "type": "COMPARE_GREATERTHAN",
+          "alias": "",
+          "query_location": 83,
+          "left": {
+            "expression_class": "BOUND_COLUMN_REF",
+            "type": "BOUND_COLUMN_REF",
+            "alias": "score",
+            "query_location": 77,
+            "return_type": {
+              "id": "FLOAT",
+              "type_info": null
+            },
+            "binding": {
+              "table_index": 0,
+              "column_index": 1
+            },
+            "depth": 0
+          },
+          "right": {
+            "expression_class": "BOUND_CONSTANT",
+            "type": "VALUE_CONSTANT",
+            "alias": "",
+            "query_location": 18446744073709552000,
+            "value": {
+              "type": {
+                "id": "FLOAT",
+                "type_info": null
+              },
+              "is_null": false,
+              "value": 500
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "column_binding_names_by_index": [
+    "title",
+    "score",
+    "post_time"
+  ]
+}
+```
+### Example 3 (Two predicates conjoined with an "and" and use of functions)
+
+```sql
+SELECT * FROM example_table WHERE title like 'R%' AND length(title) > 10;
+```
+Produces:
+
+```json
+{
+  "filters": [
+    {
+      "expression_class": "BOUND_FUNCTION",
+      "type": "BOUND_FUNCTION",
+      "alias": "",
+      "query_location": 18446744073709552000,
+      "return_type": {
+        "id": "BOOLEAN",
+        "type_info": null
+      },
+      "children": [
+        {
+          "expression_class": "BOUND_COLUMN_REF",
+          "type": "BOUND_COLUMN_REF",
+          "alias": "title",
+          "query_location": 49,
+          "return_type": {
+            "id": "VARCHAR",
+            "type_info": null
+          },
+          "binding": {
+            "table_index": 0,
+            "column_index": 0
+          },
+          "depth": 0
+        },
+        {
+          "expression_class": "BOUND_CONSTANT",
+          "type": "VALUE_CONSTANT",
+          "alias": "",
+          "query_location": 18446744073709552000,
+          "value": {
+            "type": {
+              "id": "VARCHAR",
+              "type_info": null
+            },
+            "is_null": false,
+            "value": "R"
+          }
+        }
+      ],
+      "name": "prefix",
+      "arguments": [
+        {
+          "id": "VARCHAR",
+          "type_info": null
+        },
+        {
+          "id": "VARCHAR",
+          "type_info": null
+        }
+      ],
+      "original_arguments": [],
+      "has_serialize": false,
+      "is_operator": false
+    },
+    {
+      "expression_class": "BOUND_COMPARISON",
+      "type": "COMPARE_GREATERTHAN",
+      "alias": "",
+      "query_location": 18446744073709552000,
+      "left": {
+        "expression_class": "BOUND_FUNCTION",
+        "type": "BOUND_FUNCTION",
+        "alias": "",
+        "query_location": 69,
+        "return_type": {
+          "id": "BIGINT",
+          "type_info": null
+        },
+        "children": [
+          {
+            "expression_class": "BOUND_COLUMN_REF",
+            "type": "BOUND_COLUMN_REF",
+            "alias": "title",
+            "query_location": 18446744073709552000,
+            "return_type": {
+              "id": "VARCHAR",
+              "type_info": null
+            },
+            "binding": {
+              "table_index": 0,
+              "column_index": 0
+            },
+            "depth": 0
+          }
+        ],
+        "name": "length",
+        "arguments": [
+          {
+            "id": "VARCHAR",
+            "type_info": null
+          }
+        ],
+        "original_arguments": [],
+        "has_serialize": false,
+        "is_operator": false
+      },
+      "right": {
+        "expression_class": "BOUND_CONSTANT",
+        "type": "VALUE_CONSTANT",
+        "alias": "",
+        "query_location": 18446744073709552000,
+        "value": {
+          "type": {
+            "id": "BIGINT",
+            "type_info": null
+          },
+          "is_null": false,
+          "value": 10
+        }
+      }
+    }
+  ],
+  "column_binding_names_by_index": [
+    "title",
+    "post_time",
+    "score"
+  ]
+}
+```
+
+
+[^substrait]: [Apache Substrait](https://substrait.io) exists but doesn't yet have the full functionality needed.  If it matures and it becomes possible to transform DuckDB expressions into Apache Substrait expressions the Airport extension will look into supporting it.
+
+
+
+
+

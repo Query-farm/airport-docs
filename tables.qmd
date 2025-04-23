@@ -6,11 +6,10 @@ Tables are fundamental to database systems, representing collections of data org
 
 Apache Arrow Flight, however, does not natively support the concept of tables. Instead, it handles collections of flights. A flight from an Arrow Flight server can represent a table because it has a schema and can return its contents as a series of record batches.
 
-In traditional databases, tables support both reading and modification. Reading typically involves `SELECT` statements, while modifications occur through `UPDATE`, `DELETE`, or `INSERT` operations. While Arrow Flight servers are not required to support all these operations, the Airport extension facilitates them.
+In traditional databases, tables support both reading and modification. Reading typically involves `SELECT` statements, while modifications occur through `UPDATE`, `DELETE`, or `INSERT` operations. While Arrow Flight servers are not required to support all these operations, the Airport extension facilitates all of them.
 
 
 ### Server Side Integration
-
 
 The Airport extension allows a flight to represent a table by embedding additional metadata in the `FlightInfo` structure’s `app_metadata` field. This metadata is encoded using `msgpack` with the following structure:
 
@@ -55,7 +54,9 @@ The type field is set to "table". The schema for the table matches the schema of
 
 #### Select
 
-To retrieve data from a flight, the Airport extension performs a DoGet Flight RPC operation. It passes the flight descriptor to the server and requests data from each endpoint, streaming the data into the DuckDB execution engine. The extension also passes ticket information and custom headers in the DoGet request.
+**FIXME: this needs to explain the call to get_flight_endpoints along with the evaluation of multiple endpoints.**
+
+To retrieve data from a flight, the Airport extension performs a `DoGet` Flight RPC operation. It passes the flight descriptor to the server and requests data from each endpoint, streaming the data into the DuckDB execution engine. The extension also passes ticket information and custom headers in the `DoGet` request.
 
 #### Insert
 

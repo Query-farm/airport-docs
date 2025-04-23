@@ -2,9 +2,41 @@
 title: "Airport Extension for DuckDB"
 ---
 
-Airport enables the use of [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) with [DuckDB](https://duckdb.org).
+The **Airport** extension brings [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) support to [DuckDB](https://duckdb.org), enabling DuckDB to query, modify, and store data via Arrow Flight servers.
 
-![Ducks waiting to take a flight at the airport](https://github.com/user-attachments/assets/03b9fea6-171d-4b39-a2de-842860fef69b)
+To understand the rationale behind its development, check out the [motivation for creating the extension](motivation.qmd).
+
+## What is a DuckDB Extension?
+
+A DuckDB extension is a plugin that expands DuckDB's core functionality by adding new capabilities.
+
+## Getting started
+
+The Airport extension is a [DuckDB community extension](https://duckdb.org/community_extensions/).
+To install it, run the following SQL inside DuckDB:
+
+```sql
+INSTALL airport FROM community;
+```
+
+To load the extension you can then execute:
+
+```sql
+LOAD airport;
+```
+
+If you wish to build the extension from source see these [instructions](build_instructions.qmd).
+
+## What can I do with the Airport extension that I can't do with DuckDB now?
+
+With Airport, you can:
+
+* Provide a [Data-as-a-Service](data_as_a_service.qmd) infrastructure.
+* Query data that DuckDB can't normally access—either because it’s non-tabular or in an unsupported format.
+* Add custom SQL functions not available in DuckDB.
+* Serve data with fine-grained access control, filtering both rows and columns based on user permissions.
+* Easily work with data formats that DuckDB doesn’t natively support.
+* Query data from APIs and return the results as tables.
 
 ## What is Arrow Flight?
 
@@ -12,17 +44,19 @@ Airport enables the use of [Arrow Flight](https://arrow.apache.org/docs/format/F
 
 From the Apache Arrow Documentation:
 
-> [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) is an RPC framework for high-performance data services based on [Apache Arrow](https://arrow.apache.org/docs/index.html) and is built on top of [gRPC](https://grpc.io) and the [Arrow IPC format](https://arrow.apache.org/docs/format/IPC.html).
+> [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) is an RPC framework for high-performance data services based on [Apache Arrow](https://arrow.apache.org/docs/index.html) and is built on top of [gRPC](https://grpc.io) and the [Arrow IPC format](https://arrow.apache.org/docs/format/Columnar.html#format-ipc).
 >
-> Flight is organized around streams of Arrow record batches, being either downloaded from or uploaded to another service. A set of metadata methods offers discovery and introspection of streams, as well as the ability to implement application-specific methods.
+> Flight is organized around streams of Arrow record batches[^recordbatches], being either downloaded from or uploaded to another service. A set of metadata methods offers discovery and introspection of streams, as well as the ability to implement application-specific methods.
 >
 > Methods and message wire formats are defined by [Protobuf](https://protobuf.dev), enabling interoperability with clients that may support gRPC and Arrow separately, but not Flight. However, Flight implementations include further optimizations to avoid overhead in usage of Protobuf (mostly around avoiding excessive memory copies).
 
+[^recordbatches]: A record batch is a collection of equal-length arrays that all match a schema.
+
 ## What is an Apache Arrow "Flight"?
 
-An Apache Arrow Flight (hereafter referred to simply as a "flight") is a source or destination for data that is accessible via the Apache Arrow Flight RPC framework.  Each flight has a schema and one or more endpoints.
+An Apache Arrow flight (hereafter referred to simply as a "flight") is a source or destination for data that is accessible via the Apache Arrow Flight RPC framework.  Each flight has a schema and one or more endpoints, that may offer one or more locations.
 
-You can think of flights much like files or remote database tables.  Servers can provide multiple flights or none at all.
+You can think of flights to be simliar to be a collection of files that share the same schema or even more apt a database table that is stored on a remote server.  Apache Arrow Flight servers often provide many different flights.
 
 ## How does Airport work with DuckDB?
 
@@ -31,7 +65,7 @@ Airport is an extension written in C++ for DuckDB version 1.2.0 or later. Airpor
 1. The ability to list flights provided by a server.
 2. The ability to consume data from flights via `SELECT`.
 3. Integration with the DuckDB catalog so that flights can optionally be registered as tables.  This allows `INSERT`, `UPDATE` or `DELETE` operations for flights.
-4. Adds the ability for Arrow Flight servers to provide both scalar and table functions.
+4. Adds the ability for Arrow Flight servers to provide both scalar and table returning functions.
 
 ## Conference Presentations
 
@@ -39,21 +73,3 @@ Rusty Conover presented the Airport extension in a presentation titled *"Airport
 
 {{< video https://www.youtube.com/watch?v=-AfgEiE2kaI>}}
 
-## Getting Started
-
-The Airport extension is distributed as DuckDB community extension you can install it using this code:
-
-```sql
-INSTALL airport FROM community;
-LOAD airport;
-```
-
-If you wish to build the extension from source you can follow the instructions provided by the [source repository](https://github.com/Query-farm/duckdb-airport-extension).
-
-## Examples
-
-There are a number of examples available of using Airport.
-
-
-1. Simple Hello World.
-2. Basic Server.

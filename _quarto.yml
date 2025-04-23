@@ -7,13 +7,14 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
   sidebar:
       style: "docked"
       search: true
       contents:
         - text: "Motivation"
           href: motivation.qmd
+        - text: "Data-as-a-Service"
+          href: data_as_a_service.qmd
         - text: "SQL Functions"
           href: duckdb_functions.qmd
         - text: "Catalog Integration"

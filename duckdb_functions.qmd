@@ -2,15 +2,15 @@
 title: "Functions"
 ---
 
-The Airport Extension supplies a number of functions to DuckDB.
+When the Airport extension is loaded into a DuckDB session it supplies a number of functions that can be called.
 
-These functions are added to the main schema.
+These functions are added to the main schema:
 
 * [`airport_list_flights`](#airport_list_flights)
 * [`airport_take_flight`](#airport_take_flight)
 
 ::: {.callout-tip}
-Calling these functions are considered a lower level interface to Airport.  Airport also [integrates with the DuckDB catalog](catalog_integration.qmd) the allows Arrow Flights to operate much like DuckDB Tables.
+Calling these functions are considered a lower level interface.  Airport also [integrates with the DuckDB catalog](catalog_integration.qmd) the allows Arrow Flights to operate much like DuckDB Tables.
 :::
 
 ## Function Descriptions
@@ -45,10 +45,10 @@ All arguments passed by name are optional.
 
 | Argument | Type | Description |
 |--------|---|-------------------------------|
-| location | VARCHAR | This is the location of the Flight server. Typically this will be of the form `grpc://$HOST:PORT` or `grpc+tls://$HOST:$PORT` |
-| criteria | VARCHAR | This is free-form criteria to pass to the Flight server that may be used to filter the list of returned. |
-| auth_token | VARCHAR | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
-| secret | VARCHAR | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the auth_token. |
+| location | `VARCHAR` | This is the location of the Flight server. Typically this will be of the form `grpc://$HOST:PORT` or `grpc+tls://$HOST:$PORT` |
+| criteria | `VARCHAR` | This is free-form criteria to pass to the Flight server that may be used to filter the list of returned. |
+| auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
+| secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the auth_token. |
 
 
 ---
@@ -83,26 +83,20 @@ All arguments passed by name are optional.
 
 :::
 
-
 | Argument | Type | Description |
 |--------|---|-------------------------------|
-| location | VARCHAR | This is the location of the Flight server |
-| descriptor | ANY | This is the descriptor of the flight.  If it is a `VARCHAR` or `BLOB` it is interpreted as a CMD flight descriptor, if it is an `ARRAY` or `VARCHAR[]` it is considered a path-based descriptor.  Any other type results in an error being raised.  |
-| auth_token | VARCHAR | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
-| secret | VARCHAR | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
-| ticket | BLOB | This is the ticket (an opaque binary token) supplied to the Flight server it overrides any ticket supplied from the server by a call to `GetFlightInfo` from DuckDB. |
-| headers | MAP(VARCHAR, VARCHAR) | A map of extra GRPC headers to send with requests to the Flight server. |
+| location | `VARCHAR` | This is the location of the Flight server |
+| descriptor | `ANY` | This is the descriptor of the flight.  If it is a `VARCHAR` or `BLOB` it is interpreted as a CMD flight descriptor, if it is an `ARRAY` or `VARCHAR[]` it is considered a path-based descriptor.  Any other type results in an error being raised.  |
+| auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
+| secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
+| ticket | `BLOB` | This is the ticket (an opaque binary token) supplied to the Flight server it overrides any ticket supplied from the server by a call to `GetFlightInfo` from DuckDB. |
+| headers | `MAP(VARCHAR, VARCHAR)` | A map of extra gRPC headers to send with requests to the Flight server. |
 
-
-
-
-
-
-In addition to the `criteria` parameter, the Airport extension will pass additional GRPC headers.
+In addition to the `criteria` parameter, the Airport extension will pass additional gRPC headers.
 
 #### Serializing Filters
 
-The `airport-duckdb-json-filters` header is sent on the GRPC requests.  The header contains a JSON serialized representation of all of the conditional filters that are going applied to the results.
+The `airport-duckdb-json-filters` header is sent with the gRPC requests.  The header contains a JSON serialized representation of all of the conditional filters that are going applied to the results.
 
 To illustrate this through an example:
 
@@ -110,7 +104,7 @@ To illustrate this through an example:
 select * from airport_list_flights('grpc://localhost:8815/', null) where total_bytes = 5;
 ```
 
-The GRPC header `airport-duckdb-json-filters` will be set to
+The gRPC header `airport-duckdb-json-filters` will be set to
 
 ```json
 {
@@ -149,9 +143,5 @@ It is up to the implementer of the server to use this header to apply optimizati
 #### Projection Optimization
 
 The header `airport-duckdb-column-ids` will contain a comma-separated list of column indexes that are used in the query.  The Arrow Flight server can return nulls for columns that are not requested.  This can be used to reduce the amount of data that is transmitted in the response.
-
-
-
-
 
 [^1]: Table returning functions like their name suggest return "tables" (with rows and columns), this is contrased by scalar functions that return a single scalar value.  Common examples in DuckDB of table returning functions are [`read_csv()`](https://duckdb.org/docs/data/csv/overview.html) or [`read_parquet()`](https://duckdb.org/docs/data/parquet/overview.html).

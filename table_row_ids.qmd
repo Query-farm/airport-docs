@@ -1,30 +1,29 @@
 ---
-title: "Table Row Id Pseudocolumn"
+title: "Airport Tables with `RowId` Pseudocolumns"
 ---
 
-In DuckDB, the [`rowid` pseudocolumn](https://duckdb.org/docs/stable/sql/statements/select.html#row-ids) serves as a unique row identifier that is derived from the physical storage of the row. For native DuckDB tables, this identifier is typically represented as a unique `BIGINT` value.
+In DuckDB, the [`rowid` pseudocolumn](https://duckdb.org/docs/stable/sql/statements/select.html#row-ids) serves as a unique row identifier that is derived from the physical storage of the row.
 
-### `rowid` in Airport Managed Tables
+For native DuckDB tables, this identifier is typically represented as a unique `BIGINT` value.
 
-Airport managed tables can either include or exclude a `rowid` pseudocolumn. To enable a table to have a `rowid` column, the Arrow schema should return a field with metadata that includes a key named `is_rowid` with a non-empty string value.
+Tables that are supplied via the Airport extension can optionally include a `rowid` pseudocolumn.
 
-### Key Constraints and Data Types
+To enable an Airport table to have a `rowid` column, the Arrow schema that defines the table must include a single field where the field's metadata includes a key named `is_rowid` with a non-empty string value.
+
+## Key Constraints and Data Types
 
 - Each table can have at most one `rowid` column.
 - The `rowid` column does not have to be of type `BIGINT`; it can be of any Arrow data type.
 
-### Responsibilities of the Arrow Flight Server
+## Responsibilities of the Arrow Flight Server
 
 The Arrow Flight server is responsible for:
 
-1. Ensuring that the values in the `rowid` column are unique.
+1. Ensuring that the values in the `rowid` column are unique across all endpoints,
 2. Properly handling filtering operations based on the `rowid` column.
 
-### Implications of tables without `rowid` columns.
+## Implications of tables without `rowid` columns.
 
-1. DuckDB is not able to perform row-wise UPDATE or DELETE operations on tables that don't provide `rowid` columns.
+1. DuckDB is not able to perform row-wise `UPDATE` or `DELETE` operations on tables that do not have a `rowid` pseudocolumn.
 
 2. The DuckDB UI does not work well with tables that don't have a `rowid` column as it is hard to scroll through result sets.
-
-
-

@@ -1,0 +1,99 @@
+---
+title: "Airport Extension for Data-as-a-Service"
+filters:
+  - d2
+d2:
+  layout: elk
+  theme: "GrapeSoda"
+---
+
+
+The **Airport extension** for DuckDB enables a powerful *Data-as-a-Service* (DaaS) model.
+
+## What is Data-as-a-Service?
+
+Data-as-a-Service delivers clean, structured, and queryable data over the Internet, on demand—similar to SaaS (Software-as-a-Service), but for data instead of software. Consumers don’t need to manage infrastructure, storage, or ETL pipelines—they just connect and start querying.
+
+Leveraging [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html), Airport can stream datasets or provide data locations with minimal client-side effort.
+
+### Key Benefits
+
+1. **Zero Infrastructure Burden**
+    - Clients only need DuckDB. No custom SDKs or platform dependencies.
+
+2. **Scalable & Real-Time**
+    - Data delivery is efficient and often near real-time.
+
+3. **Easy Integration**
+    - Seamlessly plugs into apps, dashboards, or analytics platforms.
+
+4. **Flexible Delivery**
+    - Clients can run queries but they can also download the data just as easily.  They can just use a [`COPY TO` SQL statement](https://duckdb.org/docs/stable/sql/statements/copy.html#copy--to).
+
+5. **Cost Efficiency**
+    - Data can be stored in the cloud or on-premises in a data center, clients can be pointed to the most efficient location.  Data can be served from CDNs or streamed directly from the Arrow Flight server as necessary.
+
+## Architecture
+
+A typical DaaS deployment using Airport looks like this:
+
+```{.d2 width="80%" echo=false}
+direction: right
+
+Clients: {
+  shape: person
+}
+
+DuckDB: {
+  shape: image
+  label: ""
+  icon: https://duckdb.org/images/logo-dl/DuckDB_Logo-stacked.png
+}
+
+Clients -> DuckDB : SQL
+
+LoadBalancer: {
+  label: "Load Balancer"
+}
+
+DuckDB -> LoadBalancer : "API Calls via\ngRPC using HTTP/2"
+
+LoadBalancer -> ArrowFlightServer
+
+ArrowFlightServer: {
+  label: "Arrow Flight Server"
+}
+
+DataStore: {
+  label: "Data"
+  shape: cylinder
+}
+
+ArrowFlightServer -> DataStore
+```
+
+### Component Overview
+
+1. **DuckDB as the Client**
+    - Requires version 1.2.0 or newer. It can run standalone or be embedded.
+2. **Load Balancer**
+    - Distributes requests across multiple Arrow Flight server instances. Must support HTTP/2.
+3. **Arrow Flight Server**
+    - Built using any Arrow-compatible language (Python, Java, Rust, C++, Go). Handles query requests.
+4. **Data Store**
+    - The source of the data. Arrow Flight can:
+      1. Stream data directly via Arrow IPC.
+      2. Return a reference (e.g., URL to Parquet or CSV on a CDN).
+
+
+### Additional Elements
+
+These components enhance security, observability, and monetization:
+
+1. **Authentication & Authorization**
+    - Validate requests and enforce access rules. Optional row-level filtering is possible.
+2. **Observability & Logging**
+    - Log all requests for auditing, debugging, and performance insights.
+3. **Subscription Management**
+    - Enable paid access models by integrating billing with authorization logic.
+
