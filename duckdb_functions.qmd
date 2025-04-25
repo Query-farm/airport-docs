@@ -1,10 +1,10 @@
 ---
-title: "Functions"
+title: "Airport Extension Functions"
 ---
 
 When the Airport extension is loaded into a DuckDB session it supplies a number of functions that can be called.
 
-These functions are added to the main schema:
+These functions are added to the `main` schema:
 
 * [`airport_list_flights`](#airport_list_flights)
 * [`airport_take_flight`](#airport_take_flight)

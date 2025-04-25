@@ -4,6 +4,8 @@ title: "Delete"
 
 The Airport extension allows tables that it manages to have rows deleted.  The Arrow Flight server is responsible for performing the deletes to the data if it chooses.
 
+## Example
+
 ```sql
 -- Attach an Airport database
 ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
@@ -31,4 +33,4 @@ The current philosophy of the Airport extension is to send the rows to the serve
 This may change in the future.
 :::
 
-## Server Side Implementation Details
+## Arrow Flight Server Implementation Notes

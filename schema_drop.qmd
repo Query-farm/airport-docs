@@ -4,7 +4,7 @@ title: "Drop"
 
 The Airport extension support dropping schemas. The Arrow Flight server can decide if the schema should actually be dropped.
 
-### Example Usage
+## Example
 
 For a DuckDB session to drop a schema, a standard SQL [`DROP SCHEMA`](https://duckdb.org/docs/stable/sql/statements/drop.html) statement is executed in a schema that is managed by the Airport extension.
 
@@ -15,7 +15,7 @@ ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
 DROP SCHEMA example.main;
 ```
 
-### Implementation
+## Arrow Flight Server Implementation Notes
 
 The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `drop_schema`.
 

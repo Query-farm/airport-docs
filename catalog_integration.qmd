@@ -1,10 +1,57 @@
 ---
-title: "Catalog Integration with DuckDB"
+title: "Airport/DuckDB Catalog Integration"
+filters:
+  - d2
+d2:
+  layout: elk
+  theme: "GrapeSoda"
 ---
 
-DuckDB maintains a catalog in each database, which serves as the root of a hierarchy. This hierarchy consists of databases and schemas.
+Each DuckDB session maintains its own catalog, which can contain multiple databases. Each database forms the root of a hierarchy that includes schemas, tables, and functions. The diagram below shows the default hierarchy for a DuckDB session using an in-memory database: a single database containing one schema, which in turn can hold multiple tables and functions. The diagram is intended to help you understand the relationships between sessions, databases, schemas, tables, and functions.
 
-The Airport extension allows databases to be attached to the current DuckDB catalog, similar to how [PostgreSQL](https://duckdb.org/docs/extensions/postgres.html#connecting) and [SQLite](https://duckdb.org/docs/extensions/sqlite.html#usage) databases can be attached to a DuckDB session.
+```{.d2 width="80%" echo=false}
+DuckDB: {
+  label: "An in-memory DuckDB database"
+  icon: https://duckdb.org/images/logo-dl/DuckDB_Logo-stacked.png
+  style: {
+    fill: "#FFF4EC"
+  }
+
+  \"memory\" Database {
+    style: {
+      fill: "#D9ABAB"
+    }
+    \"main\" Schema {
+      style:  {
+        fill: "#D3C2D6"
+      }
+      Table {
+        label: "Tables"
+        style: {
+          multiple: true
+        }
+      }
+      ScalarFunction {
+        label: "Scalar Functions"
+        style: {
+          multiple: true
+        }
+
+      }
+      TableReturningFunction {
+        label: "Table Returning Functions"
+        style: {
+          multiple: true
+        }
+
+      }
+    }
+  }
+}
+
+```
+
+The Airport extension allows databases to be attached to the current DuckDB session, similar to how [PostgreSQL](https://duckdb.org/docs/extensions/postgres.html#connecting) and [SQLite](https://duckdb.org/docs/extensions/sqlite.html#usage) databases can be attached to a DuckDB session.
 
 ::: {.callout-note}
 As of DuckDB version 1.2.0, attached databases are not persisted in an on-disk DuckDB database. This means they need to be reattached for each session.
@@ -21,45 +68,7 @@ ATTACH 'database_name' (
 );
 ```
 
-Schema information is only retrieved from the server when a schema provided by an Airport database is referenced for the first time.
-
-## Reviewing Catalogs and Schemas
-
-DuckDB maintains a catalog in every database session. The catalog follows a hierarchy:
-
-**Catalogs &gt; Schemas &gt; Tables and Functions**
-
-The following example demonstrates how running DuckDB with a database called `example.db` results in a database named `example` being attached:
-
-```sql
-$ duckdb example.db
-D SELECT database_name FROM duckdb_databases();
-┌───────────────┐
-│ database_name │
-│    varchar    │
-├───────────────┤
-│ example       │
-│ system        │
-│ temp          │
-└───────────────┘
-```
-
-If all schemas are listed using `duckdb_schemas()`, the `example` database includes a default schema called `main`:
-
-```sql
-$ duckdb example.db
-D SELECT database_name, schema_name FROM duckdb_schemas();
-┌───────────────┬────────────────────┐
-│ database_name │    schema_name     │
-│    varchar    │      varchar       │
-├───────────────┼────────────────────┤
-│ example       │ main               │
-│ system        │ information_schema │
-│ system        │ main               │
-│ system        │ pg_catalog         │
-│ temp          │ main               │
-└───────────────┴────────────────────┘
-```
+Airport retrieves information about an attached database or schema only when an object within it is first referenced. This allows the ATTACH command to run quickly.
 
 ## Attaching an Airport Database
 
@@ -80,10 +89,10 @@ __Attach Arguments:__
 
 | Argument | Type | Description |
 |--------|---|-------------------------------|
-| type | VARCHAR | This must always be the value `AIRPORT`. |
-| location | VARCHAR | This is the location of the Flight server. Typically this will be of the form `grpc://$HOST:PORT` or `grpc+tls://$HOST:$PORT` |
-| secret | VARCHAR | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token`. |
-| auth_token | VARCHAR | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
+| type | `VARCHAR` | This must always be the value `AIRPORT`. |
+| location | `VARCHAR` | This is the location of the Flight server. Typically this will be of the form `grpc://$HOST:PORT` or `grpc+tls://$HOST:$PORT` |
+| secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token`. |
+| auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
 
 Once a database has been attached the tables will be visable in either `SHOW ALL TABLES` or `SELECT * from duckdb_tables()`.
 
@@ -97,6 +106,7 @@ SELECT * FROM tbl2;
 
 This example would find `tbl1` or `tbl2` if they are defined in either the `example` database or the `airport_database_name` database.
 
-## Implementing Catalog Integration for Arrow Flight Servers
+## Arrow Flight Server Implementation Notes
 
-For an Arrow Flight server to provide catalog integration, it must implement a custom Arrow Flight action called `list_schemas` that returns the schema information to callers. See the [server implementation details](server_catalog_integration.qmd).
+For information about how to register an Arrow Flight as an object in the DuckDB catalog refer to [Server Catalog Integration](server_catalog_integration.qmd).
+

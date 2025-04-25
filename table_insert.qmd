@@ -6,9 +6,14 @@ The Airport extension allows data to be inserted into tables it manages. The Arr
 
 ### Support for `RETURNING`
 
-The Airport extension supports the `RETURNING` clause in `INSERT` statements. This feature allows the `INSERT` statement to return the rows that were inserted, after being processed by the server.
+The Airport extension supports the [`RETURNING` clause](https://duckdb.org/docs/stable/sql/statements/insert.html#returning-clause) in `INSERT` statements.
 
-## Example Usage
+From the DuckDB documentation:
+
+> The RETURNING clause may be used to return the contents of the rows that were inserted. This can be useful if some columns are calculated upon insert. For example, if the table contains an automatically incrementing primary key, then the RETURNING clause will include the automatically created primary key. This is also useful in the case of generated columns.
+
+
+## Example
 
 A standard SQL `INSERT` statement is used:
 
@@ -36,7 +41,7 @@ This may change in the future.
 :::
 
 
-## Server Side Implementation Details
+## Arrow Flight Server Implementation Notes
 
 A `DoExchange` Arrow Flight RPC call is made to insert rows. This allows the server to return rows, which may differ from the original input.
 
@@ -54,7 +59,7 @@ A `DoExchange` Arrow Flight RPC call is made to insert rows. This allows the ser
 
 ### Final Metadata Message
 
-When the DuckDB client finishes writing to the `DoExchange` write stream, the server is expected to return a single metadata message that is serialized using msgpack with this structure.
+When the DuckDB client finishes writing to the `DoExchange` write stream, the server is expected to return a single metadata message that is serialized using `msgpack`with this structure.
 
 ```c++
 struct AirportInsertFinalMetadata

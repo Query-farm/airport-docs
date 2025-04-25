@@ -4,7 +4,7 @@ title: "Create"
 
 The Airport extension supports the creation of tables. The Arrow Flight server can decide if the table should actually be created.
 
-## Example Usage
+## Example
 
 For a DuckDB session to create a table, a standard SQL `CREATE TABLE` statement is executed in a schema that is managed by the Airport extension.
 
@@ -20,7 +20,7 @@ CREATE TABLE example.main.employees (
 );
 ```
 
-## Server Side Implementation
+## Arrow Flight Server Implementation Notes
 
 The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `create_table`.
 

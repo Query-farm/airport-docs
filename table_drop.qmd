@@ -4,7 +4,7 @@ title: "Drop"
 
 The Airport extension support dropping tables. The Arrow Flight server can decide if the table should actually be dropped.
 
-### Example Usage
+## Example
 
 For a DuckDB session to drop a table, a standard SQL `DROP TABLE ` statement is executed in a schema that is managed by the Airport extension.
 
@@ -15,7 +15,7 @@ ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
 DROP TABLE example.main.employees;
 ```
 
-### Implementation
+## Arrow Flight Server Implementation Notes
 
 The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `drop_table`.
 
@@ -26,13 +26,10 @@ struct DropItemActionParameters
 {
   // the type of the item to drop, table, schema.
   std::string type;
-
   std::string catalog_name;
   std::string schema_name;
   std::string name;
-
   bool ignore_not_found;
-
   MSGPACK_DEFINE_MAP(type, catalog_name, schema_name, name, ignore_not_found)
 };
 ```

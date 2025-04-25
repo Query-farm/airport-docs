@@ -30,15 +30,13 @@ website:
             - section: "Tables"
               href: tables.qmd
               contents:
-                - text: "Predicate Pushdown"
-                  href: table_predicate_pushdown.qmd
-                - text: "RowId Pseudocolumn"
-                  href: table_row_ids.qmd
-                - text: "Insert Into"
+                - text: "Select"
+                  href: table_select.qmd
+                - text: "Insert"
                   href: table_insert.qmd
                 - text: "Update"
                   href: table_update.qmd
-                - text: "Delete From"
+                - text: "Delete"
                   href: table_delete.qmd
                 - text: "Create"
                   href: table_create.qmd
@@ -46,6 +44,10 @@ website:
                   href: table_drop.qmd
                 - text: "Alter"
                   href: table_alter.qmd
+                - text: "Predicate Pushdown"
+                  href: table_predicate_pushdown.qmd
+                - text: "RowId Pseudocolumn"
+                  href: table_row_ids.qmd
                 - text: "Column Statistics"
                   href: table_column_statistics.qmd
                 - text: "Constraints, Checks, Default Values"
@@ -67,6 +69,9 @@ website:
           contents:
               - text: "Basics"
                 href: server_basics.qmd
+              - text: "DuckDB Catalog Integration"
+                href: server_catalog_integration.qmd
+
 
 format:
   html:

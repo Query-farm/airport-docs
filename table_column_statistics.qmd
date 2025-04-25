@@ -1,8 +1,10 @@
 ---
-title: "Column Statistics"
+title: "Table Column Statistics"
 ---
 
-DuckDB's tables can supply optional statistics that assist efficient query execution. What these statistics consist of vary based on the data type of the column.  These statistics are optional.  Tables provided via the Airport extension can provide these statistics if they choose to.
+DuckDB's tables can optionally supply statistics that assist with efficient query execution. What these statistics consist of vary based on the data type of the column.  Tables provided via the Airport extension can provide these statistics if the Arrow Flight server chooses to do so.
+
+## Arrow Flight Server Implementation Notes
 
 For an Airport based table to provide statitics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.  If the table has opted-in to providing statistics an Arrow Flight `DoAction` RPC call with be made to the server with an action name of `get_flight_column_statistics`.
 
@@ -98,3 +100,8 @@ struct GetFlightColumnStatisticsNumericValue
 ```
 
 By providing column level statistics DuckDB can do a better job with planning and query optimization.
+
+::: {.callout-note}
+There is an [experimental schema](https://arrow.apache.org/docs/format/StatisticsSchema.html) defined by Apache Arrow for statistics.  In the future that schema may be adopted rather than the `msgpack` schema.
+:::
+

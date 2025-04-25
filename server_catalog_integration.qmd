@@ -1,16 +1,200 @@
 ---
-title: "Server Side DuckDB Catalog Integration"
+title: "Airport Servers and the DuckDB Catalog"
+filters:
+  - d2
+d2:
+  layout: elk
+  theme: "GrapeSoda"
 ---
 
-During the early development of the Airport DuckDB extension, Apache Arrow Flight servers did not integrate with the DuckDB catalog. Flights provided by the server could only be listed and accessed using the `airport_list_flights` and `airport_take_flight` table-returning functions.
+The Airport DuckDB extension is designed to provide a seamless user experience by integrating data served via Apache Arrow Flight directly into DuckDB. The primary goal is to make remote Arrow Flights appear and behave like native DuckDB tables and functions.
 
-The Airport DuckDB extension aims to provide a seamless experience, making Airport-provided data behave like any other DuckDB data source. To achieve this, the extension integrates with the DuckDB catalog, allowing Arrow Flights to appear as tables and functions, similar to native database objects.
+## Evolution of Integration
 
-## Catalog Integration
+Initially, the Airport DuckDB extension operated separately from the DuckDB catalog. Discovering and consuming data required using specific table-returning functions, namely `airport_list_flights` and `airport_take_flight`. This approach lacked the transparency of treating remote data as local database objects.
 
-To integrate the Airport extension with the DuckDB catalog, a DuckDB session [attaches](catalog_integration.qmd) an Airport-provided database[^database]. When any object from the attached database is referenced, its contents are retrieved from the Arrow Flight server.
+To address this, the extension now integrates directly with the DuckDB catalog. This enhancement allows Arrow Flights to be represented as standard tables and functions within the database schema, significantly streamlining data access for users.
 
-### Arrow Flight and Catalog Integration
+## How the Airport Extension Simulates a Catalog
+
+This integration works by leveraging the Airport extension's ability to interpret the metadata of Arrow Flights provided by the server, effectively creating a catalog layer on top of Arrow Flight, which itself does not provide one.
+
+The Airport extension relies on additional metadata attached to the flight information.  This metadata is stored in the `app_metadata` field of the `FlightInfo` structure. This metadata signals to Airport whether a specific flight should be treated as a database table, a scalar function, or a table-returning function.  The metadata is a serialized C++ structure named  using `msgpack` named `SerializedFlightAppMetadata`.
+
+::: {.callout-note title="SerializedFlightAppMetadata Structure" collapse="true"}
+
+This is the structure of the metadata that is stored in the `app_metadata` field of the FlightInfo structure.
+```c++
+struct SerializedFlightAppMetadata
+{
+  string type; // set to "table_function" or "table" or "scalar_function"
+
+  // The name of the schema where this item exists.
+  string schema;
+
+  // The name of the catalog or database where this item exists.
+  string catalog;
+
+  // The name of the item.
+  string name;
+
+  // A custom comment for this item.
+  string comment;
+
+  // This must be defined for a table returning function
+  // it is a serialized Arrow schema.
+  std::optional<string> input_schema;
+
+  // The name of the action passed to the Arrow Flight server
+  std::optional<string> action_name;
+
+  // This is the function description for table or scalar functions.
+  std::optional<string> description;
+
+  MSGPACK_DEFINE_MAP(
+      type, schema,
+      catalog, name,
+      comment, input_schema,
+      action_name, description)
+};
+```
+
+For scalar functions, the `input_schema` field must contain a serialized Arrow Schema describing the function's input. The schema of the flight serves as the output schema of the scalar function, which must consist of exactly one element (but can be any Arrow data type).
+
+:::
+
+The interpretation of a server's flights' metadata only happens after the Airport extension is asked to attach to a specific database on the Arrow Flight server via the `ATTACH` command. An Airport database name is simply an identifier; a single Arrow Flight server process can host multiple distinct Airport Databases.
+
+The Airport database acts as the top-level container, analogous to any other DuckDB attached database. Within it, schemas contain the database objects (tables and functions) that are provided by the Arrow flights from the server.
+
+In essence, connecting to an Airport database allows the Airport DuckDB extension to populate the DuckDB catalog with representations of the remote Arrow Flights according to their associated metadata.
+
+The following diagram shows an example of an in-memory DuckDB database and an attached Airport database provided by a remote server.
+
+```{.d2 width="100%" echo=false}
+
+
+DuckDB: {
+  label: "An in-memory DuckDB database"
+  icon: https://duckdb.org/images/logo-dl/DuckDB_Logo-stacked.png
+  style: {
+    fill: "#FFF4EC"
+  }
+
+  \"memory\" Database {
+    style: {
+      fill: "#D9ABAB"
+    }
+    \"main\" Schema {
+      style:  {
+        fill: "#D3C2D6"
+      }
+      Table {
+        label: "Tables"
+        style: {
+          multiple: true
+        }
+      }
+      ScalarFunction {
+        label: "Scalar Functions"
+        style: {
+          multiple: true
+        }
+
+      }
+      TableReturningFunction {
+        label: "Table Returning Functions"
+        style: {
+          multiple: true
+        }
+
+      }
+    }
+  }
+
+
+AirportDatabase {
+      label: "\"manufacturing\" database"
+
+      \"production\" Schema {
+        Tables {
+          label: "Tables"
+        "Factory Orders" {
+        }
+        "Factory Inventory" {
+        }
+        }
+      }
+  }
+
+}
+
+default: |`sql
+-- This database is created by default in DuckDB
+-- by using an in-memory database and is
+-- and is present on the search path
+`|
+default -> DuckDB.\"memory\" database
+
+a: |`sql
+-- attached Airport database by running
+ATTACH 'manufacturing' (
+  TYPE AIRPORT,
+  LOCATION 'grpc://localhost:12345/'
+);
+`|
+
+a -> DuckDB.AirportDatabase
+
+
+  DuckDB.AirportDatabase.\"production\" Schema.Tables."Factory Orders" -> AirportServer.Flights."Factory Orders"
+  DuckDB.AirportDatabase.\"production\" Schema.Tables."Factory Inventory" -> AirportServer.Flights."Factory Inventory"
+
+
+
+  AirportServer {
+    style: {
+      fill: "#bce784"
+    }
+    icon: https://arrow.apache.org/img/arrow-logo_horizontal_black-txt_transparent-bg.png
+    label: "Arrow Flight Server"
+
+    Flights {
+      label: "Available Arrow flights"
+      style: {
+        fill: "#5DD39E"
+      }
+    "Factory Orders" {
+      style: {
+        fill: "#73BCD4"
+      }
+    }
+    "Factory Inventory" {
+      style: {
+        fill: "#73BCD4"
+      }
+    }
+    }
+  }
+
+  AirportServer -> DataStore
+
+  DataStore {
+    label: "Backend Data Store/Database\nCan be PostgreSQL, SQLite, DuckDB"
+    shape: cylinder
+    style: {
+      fill: "#C0AAC5"
+    }
+  }
+
+
+
+
+
+```
+
+
+## Arrow Flight and `ListFlights`
 
 The Arrow Flight RPC interface includes a `ListFlights` method for listing the available flights from a server. It seemed logical to use this method to integrate those flights with the DuckDB catalog. However, several limitations make `ListFlights` unsuitable for this purpose:
 
@@ -71,7 +255,7 @@ If an Airport-provided `list_schemas` schema or database includes a SHA256 check
 
 4. __Missing Hierarchical Structure:__ DuckDB organizes objects within databases, schemas, and then tables/functions. `ListFlights` returns a flat list of flights, making it difficult to represent this hierarchy.
 
-### Alternative Approach: `list_schemas`
+## Alternative Approach: `list_schemas`
 
 Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the Airport extension introduces a separate RPC call, `list_schemas`, invoked via `DoAction`. The key benefits of `list_schemas` include:
 
@@ -81,7 +265,7 @@ Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the A
 
 4. __Efficient Handling of Dynamic Schemas:__ For schemas that change frequently, SHA256 checksums are optional.  Without a SHA256 checksum the schema information will not be cached by DuckDB.
 
-### Retrieving Catalog and Schema Information
+## Retrieving Catalog and Schema Information
 
 Database schema information is retrieved using an Arrow Flight RPC action called via `DoAction`[^1] with the name `list_schemas` and a `msgpack` encoded argument. `msgpack` is an alternative to JSON[^msgpack] that is both fast and capable of handling embedded data. The `list_schemas` request is a `msgpack` map structured as follows:
 
@@ -153,7 +337,7 @@ struct AirportSerializedSchema
 
 To help with efficiency, the entire contents of a catalog can be provided via a single URL or inline.  Or each individual schema can provide its own URL or inline serialization.  This is accomplished by having a `AirportSerializedContentsWithSHA256Hash` at catalog level `AirportSerializedCatalogRoot` as well as in each `AirportSerializedSchema` structure.
 
-#### Schema Serialization Methods
+### Schema Serialization Methods
 
 The `AirportSerializedContentsWithSHA256Hash` structure provides schema or catalog content, either inline or via an external URL with SHA256 validation.  If an external URL is provided, the contents is assumed to the same as the inline serialization with the SHA256 value of the contents being verified.
 
@@ -184,7 +368,7 @@ struct AirportSerializedContentsWithSHA256Hash
 ```
 The type and format of the inline serialized data varies depends on if the content is describing an entire catalog or a specific schema.
 
-#### Catalog Inline Serialization
+### Catalog Inline Serialization
 
 If the `AirportSerializedContentsWithSHA256Hash` is describing an entire catalog the serialized data consists of a vector of pairs of strings.  The pairs of strings are:
 
@@ -193,7 +377,7 @@ If the `AirportSerializedContentsWithSHA256Hash` is describing an entire catalog
 
 The SHA256 value is required since, it is referenced in the `schemas` field of the `AirportSerializedCatalogRoot`.  Since each schema has the SHA256 provided the schemas will be cached by DuckDB on disk.  If a schema can change, it should not be provided inline at the catalog level, instead it should be provided inline at the `schema` field of the `AirportSerializedCatalogRoot`.
 
-#### Schema Inline Serialization
+### Schema Inline Serialization
 
 If the `AirportSerializedContentsWithSHA256Hash` is describing a single schema the serialized data consists of a ZStandard compressed `msgpack` array of serialized Apache Arrow `FlightInfo` structures.
 

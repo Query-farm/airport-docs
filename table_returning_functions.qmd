@@ -2,11 +2,9 @@
 title: "Table Returning Functions"
 ---
 
-The Airport extension for DuckDB supports having Arrow Flight servers provide table returning functions.  Table returning functions are SQL functions that return an arbitrary number of rows.
+The Airport extension for DuckDB supports having Arrow Flight servers provide table returning functions.  Table returning functions are SQL functions that return an arbitrary number of rows conforming to a schema.  The schema can be dynamically defined based on the input to the function.
 
-Table returning functions can have dynamic data types, i.e. their output types can change based on their input parameters.
-
-## Examples
+## Example
 
 An example of a SQL query with a table returning function is:
 
@@ -14,7 +12,7 @@ An example of a SQL query with a table returning function is:
 SELECT * from custom_function('arg1');
 ```
 
-In addition to taking scalar parameters table returning functions can be what are called "in-out" functions, where can they receive the output of another query then produce results.
+In addition to taking scalar parameters table returning functions can be what are called "in-out" functions, where can they receive the output of another query as an input.
 
 An example of calling an "in-out" table returning function is:
 
@@ -26,46 +24,11 @@ SELECT * from in_out_function('arg1',
 
 The rows from the `employees` table will be sent incrementally to Arrow Flight server.
 
-## Catalog Integration
+## Arrow Flight Server Implementation Notes
 
-For the Airport extension to define a table returning function from an Arrow Flight server, there must be information provided in the `app_metadata` of the `FlightInfo`.
+### DuckDB Catalog Integration
 
-This information is encoded using `msgpack` following the following structure.
-
-```c++
-struct SerializedFlightAppMetadata
-{
-  string type; // set to "table_function"
-
-  // The name of the schema where this item exists.
-  string schema;
-
-  // The name of the catalog or database where this item exists.
-  string catalog;
-
-  // The name of the table returning function.
-  string name;
-
-  // A custom comment for this item.
-  string comment;
-
-  // This must be defined for a table returning function
-  // it is a serialized Arrow schema.
-  std::optional<string> input_schema;
-
-  // The name of the action passed to the Arrow Flight server
-  std::optional<string> action_name;
-
-  // This is the function description for table or scalar functions.
-  std::optional<string> description;
-
-  MSGPACK_DEFINE_MAP(
-      type, schema,
-      catalog, name,
-      comment, input_schema,
-      action_name, description)
-};
-```
+For information about how to register an Arrow Flight as a table returning function refer to [Server Catalog Integration](server_catalog_integration.html).
 
 ### Supporting the `ANY` DuckDB Data Type
 

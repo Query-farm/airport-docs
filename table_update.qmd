@@ -5,7 +5,7 @@ title: "Update Table"
 The Airport extension allows tables that is manages to be updated.  The Arrow Flight server is responsible for storing and persisting the updated data if it chooses to do so.
 
 
-## Example Usage
+## Example
 
 A standard SQL `UPDATE` statement is used:
 
@@ -37,4 +37,4 @@ This may change in the future.
 :::
 
 
-## Server Side Implementation Details
+## Arrow Flight Server Implementation Notes

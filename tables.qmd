@@ -4,59 +4,21 @@ title: "Tables"
 
 Tables are fundamental to database systems, representing collections of data organized by rows and associated data types.
 
-Apache Arrow Flight, however, does not natively support the concept of tables. Instead, it handles collections of flights. A flight from an Arrow Flight server can represent a table because it has a schema and can return its contents as a series of record batches.
+Apache Arrow Flight, however, does not natively support the concept of tables. Instead, it handles collections of flights. A flight from an Arrow Flight server can represent a table because it has a fixed schema.  The Arrow flight server can return the contents of a flight either by streaming it back to the client or by returning URLs to where the contents of the flight can be obtained.
 
 In traditional databases, tables support both reading and modification. Reading typically involves `SELECT` statements, while modifications occur through `UPDATE`, `DELETE`, or `INSERT` operations. While Arrow Flight servers are not required to support all these operations, the Airport extension facilitates all of them.
 
+## Arrow Flight Server Implementation Notes
 
-### Server Side Integration
+### DuckDB Catalog Integration
 
-The Airport extension allows a flight to represent a table by embedding additional metadata in the `FlightInfo` structure’s `app_metadata` field. This metadata is encoded using `msgpack` with the following structure:
-
-```c++
-struct SerializedFlightAppMetadata
-{
-  string type;
-
-  // The name of the schema where this item exists.
-  string schema;
-
-  // The name of the catalog or database where this item exists.
-  string catalog;
-
-  // The name of the table returning function.
-  string name;
-
-  // A custom comment for this item.
-  string comment;
-
-  // This must be defined for a table returning function
-  // it is a serialized Arrow schema.
-  std::optional<string> input_schema;
-
-  // The name of the action passed to the Arrow Flight server
-  std::optional<string> action_name;
-
-  // This is the function description for table or scalar functions.
-  std::optional<string> description;
-
-  MSGPACK_DEFINE_MAP(
-      type, schema,
-      catalog, name,
-      comment, input_schema,
-      action_name, description)
-};
-```
-
-The type field is set to "table". The schema for the table matches the schema of the flight in the `FlightInfo` structure.
+For information about how to register an Arrow Flight as a table refer to [Server Catalog Integration](server_catalog_integration.html).
 
 ### Supporting Different Operations
 
 #### Select
 
-**FIXME: this needs to explain the call to get_flight_endpoints along with the evaluation of multiple endpoints.**
-
-To retrieve data from a flight, the Airport extension performs a `DoGet` Flight RPC operation. It passes the flight descriptor to the server and requests data from each endpoint, streaming the data into the DuckDB execution engine. The extension also passes ticket information and custom headers in the `DoGet` request.
+See the [details for this operation](table_select.qmd).
 
 #### Insert
 
