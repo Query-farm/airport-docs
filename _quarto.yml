@@ -96,6 +96,8 @@ website:
                     href: server_action_create_schema.qmd
                   - text: "create_table"
                     href: server_action_create_table.qmd
+                  - text: "create_transaction"
+                    href: server_action_create_transaction.qmd
                   - text: "drop_not_null"
                     href: server_action_drop_not_null.qmd
                   - text: "drop_schema"

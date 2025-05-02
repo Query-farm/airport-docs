@@ -1,0 +1,21 @@
+---
+title: "`create_transaction` Action"
+---
+
+The `create_transaction` action is used to obtain a new transaction identifier.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.  It is just the name of the database name as a string.
+
+## Output Results
+
+The `create_table` action is expected to return a `msgpack` encoded structure.
+
+```c++
+struct GetTransactionIdentifierResult
+{
+  std::optional<std::string> identifier;
+  MSGPACK_DEFINE(identifier)
+};
+```
