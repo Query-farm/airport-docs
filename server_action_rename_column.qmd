@@ -1,0 +1,37 @@
+---
+title: "`rename_column` Action"
+---
+
+The `rename_column` action is used to rename a column that exists in a table as part of the `ALTER` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+// The base class for all alter parameters.
+struct AirportAlterBase
+{
+  //! Catalog name to alter
+  std::string catalog;
+  //! Schema name to alter
+  std::string schema;
+  //! Entry name to alter
+  std::string name;
+  bool ignore_not_found;
+};
+
+struct AirportAlterTableRenameColumnParameters : AirportAlterBase
+{
+  std::string old_name;
+  std::string new_name;
+
+  MSGPACK_DEFINE_MAP(catalog, schema, name, ignore_not_found, new_name, old_name);
+};
+```
+
+## Return Value
+
+The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+
+

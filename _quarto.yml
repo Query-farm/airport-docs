@@ -3,6 +3,12 @@ project:
 
 website:
   title: "Airport for DuckDB"
+  announcement:
+    icon: info-circle
+    dismissable: true
+    content: "This is a pre-release documentation and is subject to change and revision."
+    type: info
+    position: below-navbar
   navbar:
     left:
       - href: index.qmd
@@ -71,13 +77,65 @@ website:
                 href: server_basics.qmd
               - text: "DuckDB Catalog Integration"
                 href: server_catalog_integration.qmd
+              - section: "Actions"
+                href: server_actions.qmd
+                contents:
+                  - text: "add_column"
+                    href: server_action_add_column.qmd
+                  - text: "add_constraint"
+                    href: server_action_add_constraint.qmd
+                  - text: "add_field"
+                    href: server_action_add_field.qmd
+                  - text: "catalog_version"
+                    href: server_action_catalog_version.qmd
+                  - text: "change_column_type"
+                    href: server_action_change_column_type.qmd
+                  - texT: "column_statistics"
+                    href: server_action_column_statistics.qmd
+                  - text: "create_schema"
+                    href: server_action_create_schema.qmd
+                  - text: "create_table"
+                    href: server_action_create_table.qmd
+                  - text: "drop_not_null"
+                    href: server_action_drop_not_null.qmd
+                  - text: "drop_schema"
+                    href: server_action_drop_schema.qmd
+                  - text: "drop_table"
+                    href: server_action_drop_table.qmd
+                  - text: "endpoints"
+                    href: server_action_endpoints.qmd
+                  - text: "list_schemas"
+                    href: server_action_list_schemas.qmd
+                  - text: "remove_column"
+                    href: server_action_remove_column.qmd
+                  - text: "remove_field"
+                    href: server_action_remove_field.qmd
+                  - text: "rename_column"
+                    href: server_action_rename_column.qmd
+                  - text: "rename_field"
+                    href: server_action_rename_field.qmd
+                  - text: "rename_table"
+                    href: server_action_rename_table.qmd
+                  - text: "set_default"
+                    href: server_action_set_default.qmd
+                  - text: "set_not_null"
+                    href: server_action_set_not_null.qmd
+                  - text: "table_function_flight_info"
+                    href: server_action_table_function_flight_info.qmd
+
+
+
+
+
 
 
 format:
   html:
     theme:
-      light: dark
-
+      light: flatly
+      dark: darkly
+    fontsize: 1.1em
+    mainfont: Roboto,Open Sans, Helvetica
     css: styles.css
     toc: true
 

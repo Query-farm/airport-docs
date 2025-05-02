@@ -1,17 +1,14 @@
 ---
-title: "Table Column Statistics"
+title: "`column_statistics` Action"
 ---
 
-DuckDB's tables can optionally supply statistics that assist with efficient query execution. What these statistics consist of vary based on the data type of the column.  Tables provided via the Airport extension can provide these statistics if the Arrow Flight server chooses to do so.
+The `get_flight_column_statitics` action is used to provide DuckDB with statitics about a field in a table.These statitics allow DuckDB to execute queries more efficienty.An Arrow Flight server can optionally choose to implement this action.
 
-## Arrow Flight Server Implementation Notes
+## Input Parameters
 
-For an Airport based table to provide statitics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.  If the table has opted-in to providing statistics an Arrow Flight `DoAction` RPC call with be made to the server with an action name of `column_statistics`.
+There is a single `msgpack` serialized parameter passed to the action.
 
-The action will be provided a parameter with this `msgpack` encoded message.
-
-```c++
-struct GetFlightColumnStatistics
+```c++ struct GetFlightColumnStatistics
 {
   std::string flight_descriptor;
   std::string column_name;
@@ -21,9 +18,12 @@ struct GetFlightColumnStatistics
 };
 ```
 
-The `flight_descriptor` field is the Arrow Flight serialized FlightDescriptor structure.  The `type` field is the DuckDB data type name, i.e. `VARCHAR`, `TIMESTAMP WITH TIME ZONE`.
+The `flight_descriptor` field is the Arrow Flight serialized FlightDescriptor structure.The `type` field is the DuckDB data type name,
+i.e. `VARCHAR`, `TIMESTAMP WITH TIME ZONE`.
 
-The response to the the `DoAction` call is the `GetFlightColumnStatisticsResult` structure.
+## Output Results
+
+The response is a `msgpack` encoded `GetFlightColumnStatisticsResult` structure.
 
 ```c++
 struct GetFlightColumnStatisticsResult
@@ -42,15 +42,17 @@ struct GetFlightColumnStatisticsResult
   MSGPACK_DEFINE_MAP(has_null, has_no_null, distinct_count, numeric_stats, string_stats)
 };
 ```
+
 This in turn references a few additional structures.  The first is for strings.
 
+
 ```c++
-  struct GetFlightColumnStatisticsStringData
-  {
-    std::string min;
-    std::string max;
-    MSGPACK_DEFINE_MAP(min, max)
-  };
+struct GetFlightColumnStatisticsStringData
+{
+  std::string min;
+  std::string max;
+  MSGPACK_DEFINE_MAP(min, max)
+};
 ```
 
 Returning statistics for numeric types is a bit more complicated since there are different levels of precision and `msgpack` doesn't support 128-bit integers.  So they've been split into a high and low 64-bit integer.
@@ -89,19 +91,16 @@ struct GetFlightColumnStatisticsNumericValue
   double double_;
 
   MSGPACK_DEFINE_MAP(
-    boolean, tinyint,
-    smallint, integer,
-    bigint, utinyint,
-    usmallint, uinteger,
-    ubigint,
-    hugeint_high, hugeint_low,
-    float_, double_)
+      boolean, tinyint,
+      smallint, integer,
+      bigint, utinyint,
+      usmallint, uinteger,
+      ubigint,
+      hugeint_high, hugeint_low,
+      float_, double_)
 };
 ```
-
-By providing column level statistics DuckDB can do a better job with planning and query optimization.
 
 ::: {.callout-note}
 There is an [experimental schema](https://arrow.apache.org/docs/format/StatisticsSchema.html) defined by Apache Arrow for statistics.  In the future that schema may be adopted rather than the `msgpack` schema.
 :::
-

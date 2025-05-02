@@ -10,7 +10,7 @@ There’s currently no industry-wide standard for serializing filter predicates 
 
 Since support for predicate pushdown is optional in Arrow Flight servers, the Airport extension still applies a final round of filtering on the client side. A future optimization may allow servers to signal when filtering has already been applied, making the final step redundant and potentially improving query performance.
 
-Assume a DuckDB client is running a query where predicate pushdown is applicable. When the Airport extension requests Arrow Flight endpoints, it includes predicate information in the `get_flight_endpoints` `DoAction` RPC call.
+Assume a DuckDB client is running a query where predicate pushdown is applicable. When the Airport extension requests Arrow Flight endpoints, it includes predicate information in the `endpoints` `DoAction` RPC call.
 
 The Arrow Flight server responds with a set of endpoints, each optionally containing an opaque `ticket` field. The `ticket` field may embed any details needed for filtering. It's common for the servers to replicate the predicate information across all endpoints.
 

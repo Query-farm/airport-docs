@@ -44,9 +44,9 @@ The Airport extension does two different things, depending if the table returnin
 
 #### Regular Table Returning Function
 
-When the table returning function is called.  The Airport extension will make a `DoAction` Arrow Flight RPC call to the server with an action named `get_flight_info_table_function` to obtain a `FlightInfo` which will then be called with the `DoGet` Arrow Flight RPC method.  It is expected the server may interpret the parameters and return a new schema or otherwise encode the parameters in the returned `ticket` field of the `FlightInfo`.
+When the table returning function is called.  The Airport extension will make a `DoAction` Arrow Flight RPC call to the server with an action named `table_function_flight_info` to obtain a `FlightInfo` which will then be called with the `DoGet` Arrow Flight RPC method.  It is expected the server may interpret the parameters and return a new schema or otherwise encode the parameters in the returned `ticket` field of the `FlightInfo`.
 
-The `get_flight_info_table_function` action receive this `msgpack` encoded map of parameters as its input:
+The `table_function_flight_info` action receive this `msgpack` encoded map of parameters as its input:
 
 ```c++
 struct GetFlightInfoTableFunctionParameters
@@ -62,7 +62,7 @@ struct GetFlightInfoTableFunctionParameters
 
 The `parameters` field contains a serialized Arrow Record Batch with the parameter values.  The field names of the record batch are the same as defined by the input schema of the function.
 
-The `get_flight_info_table_function` is expected to return a single serialized Arrow `FlightInfo` structure, that will then be used to retrieve the data.  The custom action of ``get_flight_info_table_function` is used because it allows additional data to be serialized compared with the `GetFlightInfo` Arrow RPC method.
+The `table_function_flight_info` is expected to return a single serialized Arrow `FlightInfo` structure, that will then be used to retrieve the data.  The custom action of ``table_function_flight_info` is used because it allows additional data to be serialized compared with the `GetFlightInfo` Arrow RPC method.
 
 
 #### In-Out Table Function

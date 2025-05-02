@@ -1,0 +1,33 @@
+---
+title: "`endpoints` Action"
+---
+
+This `endpoints` action returns the Arrow Flight endpoints for a flight descriptor. By using the action it is possible to pass along the query predicate information to the server.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+struct AirportEndpointParameters
+{
+  std::string json_filters;
+  std::vector<idx_t> column_ids;
+
+  MSGPACK_DEFINE_MAP(json_filters, column_ids)
+};
+
+struct AirportGetFlightEndpointsRequest
+{
+  std::string descriptor;
+  AirportEndpointParameters parameters;
+
+  MSGPACK_DEFINE_MAP(descriptor, parameters)
+};
+
+```
+
+## Output Results
+
+The `endpoints` action is expected to return a single `msgpack` encoded result which is a `vector<std::string>` of serialized `FlightEndpoint` structures.
+

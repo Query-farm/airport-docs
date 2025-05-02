@@ -8,7 +8,7 @@ d2:
 ---
 
 
-The **Airport extension** for DuckDB enables a powerful *Data-as-a-Service* (DaaS) model.
+The **Airport extension** for DuckDB enables you to offer powerful *Data-as-a-Service* (DaaS) solutions.
 
 ## What is Data-as-a-Service?
 
@@ -37,7 +37,7 @@ Leveraging [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html), Air
 
 A typical DaaS deployment using Airport looks like this:
 
-```{.d2 width="80%" echo=false}
+```{.d2 width="90%" echo=false}
 direction: right
 
 Clients: {
@@ -81,9 +81,9 @@ ArrowFlightServer -> DataStore
 3. **Arrow Flight Server**
     - Built using any Arrow-compatible language (Python, Java, Rust, C++, Go). Handles query requests.
 4. **Data Store**
-    - The source of the data. Arrow Flight can:
-      1. Stream data directly via Arrow IPC.
-      2. Return a reference (e.g., URL to Parquet or CSV on a CDN).
+    - The source of the data. The Arrow Flight server can:
+      1. Stream data directly from the server in the [Arrow IPC format](https://arrow.apache.org/docs/format/Columnar.html#format-ipc).
+      2. Return a [reference via a `data://` URI](table_select.qmd#data-uris-as-endpoint-locations). (e.g., URL to Parquet or CSV on a CDN).
 
 
 ### Additional Elements
@@ -91,7 +91,7 @@ ArrowFlightServer -> DataStore
 These components enhance security, observability, and monetization:
 
 1. **Authentication & Authorization**
-    - Validate requests and enforce access rules. Optional row-level filtering is possible.
+    - Validate requests and enforce access rules. Optional column and row level filtering is possible.
 2. **Observability & Logging**
     - Log all requests for auditing, debugging, and performance insights.
 3. **Subscription Management**

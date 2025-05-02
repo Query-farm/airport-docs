@@ -1,0 +1,25 @@
+---
+title: "`catalog_version` Action"
+---
+
+This `catalog_version` action is used to determine the current version of the database provided by an Arrow Flight server.  By indicating that a catalog version has changed, DuckDB refreshes the contents the database's schemas rather than using cached data.
+
+## Input Parameters
+
+The name of the database is passed as a string to the action.
+
+## Output Result.
+
+There is a single `msgpack` expected result from the action.
+
+```c++
+struct GetCatalogVersionResult
+{
+  uint64_t catalog_version;
+  bool is_fixed;
+  MSGPACK_DEFINE(catalog_version, is_fixed)
+};
+```
+
+If the `is_fixed` field is true, DuckDB will cache the returned catalog version and never query the Arrow Flight server for it again during the current DuckDB session.
+

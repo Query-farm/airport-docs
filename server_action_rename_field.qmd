@@ -1,0 +1,39 @@
+---
+title: "`rename_field` Action"
+---
+
+The `rename_field` action is used to rename a field in a structure that exists in a table as part of the `ALTER` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+// The base class for all alter parameters.
+struct AirportAlterBase
+{
+  //! Catalog name to alter
+  std::string catalog;
+  //! Schema name to alter
+  std::string schema;
+  //! Entry name to alter
+  std::string name;
+  bool ignore_not_found;
+};
+
+struct AirportAlterTableRenameFieldParameters : AirportAlterBase
+{
+  //! Path to source field
+  std::vector<std::string> column_path;
+  //! Column new name
+  std::string new_name;
+
+  MSGPACK_DEFINE_MAP(catalog, schema, name, column_path, new_name);
+};
+```
+
+## Return Value
+
+The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+
+

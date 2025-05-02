@@ -1,0 +1,28 @@
+---
+title: "`drop_schema` Action"
+---
+
+This `drop_schema` action is used to delete a schema in a database as part of the `DROP SCHEMA` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+struct DropItemActionParameters
+{
+  std::string type;
+
+  std::string catalog_name;
+  std::string schema_name;
+  std::string name;
+
+  bool ignore_not_found;
+
+  MSGPACK_DEFINE_MAP(type, catalog_name, schema_name, name, ignore_not_found)
+};
+```
+
+The `type` field of the parameters will be set to the value `schema`.
+
+The return value if any from the `drop_schema` action is ignored, if there is an error it is expected that an exception will be raised.

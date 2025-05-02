@@ -1,0 +1,25 @@
+---
+title: "`create_schema` Action"
+---
+
+This `create_schema` action is used to create a schema in a database as part of the `CREATE SCHEMA` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+struct AirportCreateSchemaParameters
+{
+  string catalog_name;
+  string schema;
+
+  std::optional<string> comment;
+  unordered_map<string, string> tags;
+
+  MSGPACK_DEFINE_MAP(catalog_name, schema, comment, tags)
+};
+```
+
+The return value from `create_schema` action discarded. If an error occurrs it is expected that a Arrow Flight exception will be raised.
+

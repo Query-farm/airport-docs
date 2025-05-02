@@ -1,0 +1,39 @@
+---
+title: "`add_column` Action"
+---
+
+This `add_column` action is used to add a column to a table as part of the `ALTER` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+// The base class for all alter parameters.
+struct AirportAlterBase
+{
+  //! Catalog name to alter
+  std::string catalog;
+  //! Schema name to alter
+  std::string schema;
+  //! Entry name to alter
+  std::string name;
+  bool ignore_not_found;
+};
+
+struct AirportAlterTableAddColumnParameters : AirportAlterBase
+{
+  // This is a serialized Arrow schema with the column_name
+  // and the arrow type of the column.
+  std::string column_schema;
+  bool if_column_not_exists;
+
+  MSGPACK_DEFINE_MAP(catalog, schema, name, ignore_not_found, if_column_not_exists, column_schema);
+};
+```
+
+## Return Value
+
+The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+
+

@@ -1,0 +1,36 @@
+---
+title: "`drop_not_null` Action"
+---
+
+This `drop_not_null` action is used to remove a `NOT NULL` constraint on a column in a table.  It is sent as part of the `ALTER` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+// The base class for all alter parameters.
+struct AirportAlterBase
+{
+  //! Catalog name to alter
+  std::string catalog;
+  //! Schema name to alter
+  std::string schema;
+  //! Entry name to alter
+  std::string name;
+  bool ignore_not_found;
+};
+
+struct AirportAlterTableDropNotNullParameters : AirportAlterBase
+{
+  std::string column_name;
+
+  MSGPACK_DEFINE_MAP(catalog, schema, name, column_name);
+};
+```
+
+## Return Value
+
+The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+
+

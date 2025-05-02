@@ -4,13 +4,13 @@ title: "Frequently Asked Questions"
 
 1. Could Airport be implemented without Arrow Flight?
 
-Yes, but using REST would limit features that require bi-directional data flow. However, since Airport relies on gRPC, it is not currently compatible with WebAssembly or browser environments.
+    Yes, but using REST would limit features that require bi-directional data flow. However, since Airport relies on gRPC, it is not currently compatible with WebAssembly or browser environments.
 
 2. Why is `msgpack` used rather than JSON?
 
-`msgpack` allows binary data to be included in its serialization where JSON does not since JSON is UTF-8 encoded.
+    `msgpack` allows binary data to be included in its serialization where JSON does not since JSON is UTF-8 encoded.
 
 3. Does the Airport extention work with Webassembly/WASM?
 
-It does not at this time because it has a dependency on gRPC and protobuf.
+    It does not at this time because it has a dependency on gRPC and protobuf.
 

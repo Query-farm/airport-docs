@@ -8,7 +8,7 @@ By default, DuckDB caches the entire catalog catalog contents, schemas with tabl
 
 ## Arrow Flight Server Implementation
 
-The Airport extension issues a `DoAction` Arrow Flight RPC call with the action name `get_catalog_version`, passing the target catalog's name as a single parameter.
+The Airport extension issues a `DoAction` Arrow Flight RPC call with the action name `catalog_version`, passing the target catalog's name as a single parameter.
 
 The response is a `msgpack` encoded structure:
 

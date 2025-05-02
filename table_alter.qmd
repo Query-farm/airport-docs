@@ -2,4 +2,47 @@
 title: "Alter"
 ---
 
-The Airport extension doesn't currently support altering tables once they are created.  If possible the extension may be extended to support this in the future.  If you're interested in this function please contact the author.
+The Airport extension supports altering tables. The Arrow Flight server can decide if the alteration should be applied..
+
+## Example
+
+For a DuckDB session to alter a table, a standard SQL `ALTER TABLE` statement is executed in a schema that is managed by the Airport extension.
+
+```sql
+-- Attach an Airport database
+ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
+
+-- assume that there is a `main` schema
+-- already in the `example` database
+CREATE TABLE example.main.employees (
+  name varchar,
+  id integer
+);
+
+ALTER TABLE example.main.employees DROP COLUMN id;
+```
+
+## Arrow Flight Server Implementation Notes
+
+The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name that corresponds to the type of alteration being performed.
+
+The types of alterations that can be performed are.
+
+| Action Name | Description |
+|-------------|-------------|
+| `rename_column` | Rename a column. |
+| `rename_field` | Rename a field in a structure. |
+| `rename_table` | Rename a table. |
+| `add_column` | Add a column to a table. |
+| `add_field` | Add a field to a structure. |
+| `remove_column` | Remove a column from a table. |
+| `remove_field` | Remove a field from a structure. |
+| `set_default` | Set a default value for a field. |
+| `change_column_type` | Change the type of a column. |
+| `set_not_null` | Set a field to not allow null values. |
+| `drop_not_null` | Allow a field to contain null values. |
+| `add_constraint` | Add a constraint to a field. |
+
+Each type of alteration takes a different parameter structure. Refer to the parameter types defined in [`airport_alter_parameters.hpp`](https://github.com/Query-farm/duckdb-airport-extension/blob/main/src/include/storage/airport_alter_parameters.hpp)
+
+All actions are presumed not to return a value, but should raise an exception upon error.

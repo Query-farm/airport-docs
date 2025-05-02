@@ -1,0 +1,38 @@
+---
+title: "`change_column_type` Action"
+---
+
+This `change_column_type` action is used to change the type of an existing field in table as part of the `ALTER` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+// The base class for all alter parameters.
+struct AirportAlterBase
+{
+  //! Catalog name to alter
+  std::string catalog;
+  //! Schema name to alter
+  std::string schema;
+  //! Entry name to alter
+  std::string name;
+  bool ignore_not_found;
+};
+
+struct AirportAlterTableChangeColumnTypeParameters : AirportAlterBase
+{
+  std::string column_schema;
+  std::string expression;
+
+  MSGPACK_DEFINE_MAP(catalog, schema, name, column_schema, expression);
+};
+
+```
+
+## Return Value
+
+The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+
+

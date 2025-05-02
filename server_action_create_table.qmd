@@ -1,0 +1,40 @@
+---
+title: "`create_table` Action"
+---
+
+This `create_table` action is used to create a table in a database as part of the `CREATE TABLE` SQL command.
+
+## Input Parameters
+
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+struct AirportCreateTableParameters
+{
+  string catalog_name;
+  string schema_name;
+  string table_name;
+
+  // The serialized Arrow schema for the table.
+  string arrow_schema;
+
+  // This will be "error", "ignore", or "replace"
+  string on_conflict;
+
+  // The list of constraint expressions.
+  vector<uint64_t> not_null_constraints;
+  vector<uint64_t> unique_constraints;
+  vector<string> check_constraints;
+
+  MSGPACK_DEFINE_MAP(
+    catalog_name, schema_name,
+    table_name, arrow_schema,
+    on_conflict, not_null_constraints,
+    unique_constraints, check_constraints)
+};
+```
+
+## Output Results
+
+The `create_table` action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) result that represents an Apache Flight that can be utilized to obtain the contents of the table.
+
