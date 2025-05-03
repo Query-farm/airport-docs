@@ -90,7 +90,7 @@ website:
                     href: server_action_catalog_version.qmd
                   - text: "change_column_type"
                     href: server_action_change_column_type.qmd
-                  - texT: "column_statistics"
+                  - text: "column_statistics"
                     href: server_action_column_statistics.qmd
                   - text: "create_schema"
                     href: server_action_create_schema.qmd

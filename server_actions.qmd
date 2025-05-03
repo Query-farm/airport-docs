@@ -2,32 +2,32 @@
 title: "Server Actions"
 ---
 
-
 When implementing an Arrow Flight server that integrates with the Airport Extension for DuckDB, you may need to handle several specific actions within the Arrow Flight `DoAction` RPC handler.
 
 These actions are summarized below along with their parameters and expected input and output types.
 
+
 | Action Name | Required | Description |
 |-------------|----------|-------------|
-| `add_column` | no | Add a column to a table. |
-| `add_constraint` | no | Add a constraint to a field. |
-| `add_field` | no | Add a field to a structure. |
-| `catalog_version` | no | [Return the current version identifier for the catalog](catalog_current_version.qmd). |
-| `change_column_type` | no | Change the type of a column. |
-| `column_statistics` | no | [Return the column level statistics for a flight](table_column_statistics.qmd). |
-| `create_schema` | no | [Create a schema](schema_create.qmd). |
-| `create_table` | no | [Create a table](table_create.qmd). |
-| `create_transaction` | no | [Create a new transaction identifier](transactions.qmd). |
-| `drop_not_null` | no | Allow a field to contain null values. |
-| `drop_schema` | no | [Drop a schema](schema_drop.qmd). |
-| `drop_table` | no | [Drop a table](table_drop.qmd). |
-| `endpoints` | yes | [Return the endpoints for a specific flight](table_select.qmd). |
-| `table_function_flight_info` | no | Return the FlightInfo for a table returning function. |
-| `list_schemas` | yes | [List all schemas for a database](server_catalog_integration.qmd). |
-| `remove_column` | no | Remove a column from a table. |
-| `remove_field` | no | Remove a field from a structure. |
-| `rename_column` | no | Rename a column. |
-| `rename_field` | no | Rename a field in a structure. |
-| `rename_table` | no | Rename a table. |
-| `set_default` | no | Set a default value for a field. |
-| `set_not_null` | no | Set a field to not allow null values. |
+| [`add_column`](server_action_add_column.qmd "Add a column to a table") | no | Add a column to a table. |
+| [`add_constraint`](server_action_add_constraint.qmd "Add a constraint to a field") | no | Add a constraint to a field. |
+| [`add_field`](server_action_add_field.qmd "Add a field to a structure") | no | Add a field to a structure. |
+| [`catalog_version`](server_action_catalog_version.qmd "Get the current catalog version") | no | Get the current catalog version. |
+| [`change_column_type`](server_action_change_column_type.qmd "Change the type of a column") | no | Change the type of a column. |
+| [`column_statistics`](server_action_column_statistics.qmd "Get column-level statistics for a flight") | no | Get column-level statistics for a flight. |
+| [`create_schema`](server_action_create_schema.qmd "Create a new schema") | no | Create a new schema. |
+| [`create_table`](server_action_create_table.qmd "Create a new table") | no | Create a new table. |
+| [`create_transaction`](server_action_create_transaction.qmd "Create a new transaction identifier") | no | Create a new transaction identifier. |
+| [`drop_not_null`](server_action_drop_not_null.qmd "Allow a field to accept null values") | no | Drop NOT NULL constraint from a field. |
+| [`drop_schema`](server_action_drop_schema.qmd "Delete an existing schema") | no | Drop a schema. |
+| [`drop_table`](server_action_drop_table.qmd "Delete an existing table") | no | Drop a table. |
+| [`endpoints`](server_action_endpoints.qmd "Get the endpoints for a flight") | yes | Get the endpoints for a specific flight. |
+| [`list_schemas`](server_action_list_schemas.qmd "List all schemas in the database") | yes | List all schemas in the database. |
+| [`remove_column`](server_action_remove_column.qmd "Remove a column from a table") | no | Remove a column from a table. |
+| [`remove_field`](server_action_remove_field.qmd "Remove a field from a structure") | no | Remove a field from a structure. |
+| [`rename_column`](server_action_rename_column.qmd "Rename a column") | no | Rename a column. |
+| [`rename_field`](server_action_rename_field.qmd "Rename a field in a structure") | no | Rename a field in a structure. |
+| [`rename_table`](server_action_rename_table.qmd "Rename a table") | no | Rename a table. |
+| [`set_default`](server_action_set_default.qmd "Set a default value for a field") | no | Set a default value for a field. |
+| [`set_not_null`](server_action_set_not_null.qmd "Disallow null values in a field") | no | Set a field to NOT NULL. |
+| [`table_function_flight_info`](server_action_table_function_flight_info.qmd "Get FlightInfo for a table function") | no | Get FlightInfo for a table-returning function. |

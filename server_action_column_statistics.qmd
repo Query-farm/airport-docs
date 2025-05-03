@@ -8,7 +8,8 @@ The `get_flight_column_statitics` action is used to provide DuckDB with statitic
 
 There is a single `msgpack` serialized parameter passed to the action.
 
-```c++ struct GetFlightColumnStatistics
+```c++
+struct GetFlightColumnStatistics
 {
   std::string flight_descriptor;
   std::string column_name;
