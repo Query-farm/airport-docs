@@ -17,25 +17,4 @@ DROP SCHEMA example.main;
 
 ## Arrow Flight Server Implementation Notes
 
-The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `drop_schema`.
-
-The `drop_schema` action will be passed a single `msgpack` encoded parameter that utilizes this structure:
-
-```c++
-struct DropItemActionParameters
-{
-  std::string type;
-
-  std::string catalog_name;
-  std::string schema_name;
-  std::string name;
-
-  bool ignore_not_found;
-
-  MSGPACK_DEFINE_MAP(type, catalog_name, schema_name, name, ignore_not_found)
-};
-```
-
-The `type` field of the parameters will be set to the value `schema`.
-
-The return value if any frum the `drop_schema` action is ignored, if there is an error it is expected that an exception will be raised.
+The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of [`drop_schema`](server_action_drop_schema.qmd).

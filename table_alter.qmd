@@ -30,19 +30,20 @@ The types of alterations that can be performed are.
 
 | Action Name | Description |
 |-------------|-------------|
-| `rename_column` | Rename a column. |
-| `rename_field` | Rename a field in a structure. |
-| `rename_table` | Rename a table. |
-| `add_column` | Add a column to a table. |
-| `add_field` | Add a field to a structure. |
-| `remove_column` | Remove a column from a table. |
-| `remove_field` | Remove a field from a structure. |
-| `set_default` | Set a default value for a field. |
-| `change_column_type` | Change the type of a column. |
-| `set_not_null` | Set a field to not allow null values. |
-| `drop_not_null` | Allow a field to contain null values. |
-| `add_constraint` | Add a constraint to a field. |
+| [`add_column`](server_action_add_column.qmd "Add a column to a table") | Add a column to a table. |
+| [`add_constraint`](server_action_add_constraint.qmd "Add a constraint to a field") | Add a constraint to a field. |
+| [`add_field`](server_action_add_field.qmd "Add a field to a structure") | Add a field to a structure. |
+| [`change_column_type`](server_action_change_column_type.qmd "Change the type of a column") | Change the type of a column. |
+| [`drop_not_null`](server_action_drop_not_null.qmd "Drop NOT NULL constraint from a field") | Drop NOT NULL constraint from a field. |
+| [`remove_column`](server_action_remove_column.qmd "Remove a column from a table") | Remove a column from a table. |
+| [`remove_field`](server_action_remove_field.qmd "Remove a field from a structure") | Remove a field from a structure. |
+| [`rename_column`](server_action_rename_column.qmd "Rename a column") | Rename a column. |
+| [`rename_field`](server_action_rename_field.qmd "Rename a field in a structure") | Rename a field in a structure. |
+| [`rename_table`](server_action_rename_table.qmd "Rename a table") | Rename a table. |
+| [`set_default`](server_action_set_default.qmd "Set a default value for a field") | Set a default value for a field. |
+| [`set_not_null`](server_action_set_not_null.qmd "Set a field to NOT NULL") | Set a field to NOT NULL. |
 
-Each type of alteration takes a different parameter structure. Refer to the parameter types defined in [`airport_alter_parameters.hpp`](https://github.com/Query-farm/duckdb-airport-extension/blob/main/src/include/storage/airport_alter_parameters.hpp)
+
+Each type of alteration takes a different parameter structure.
 
 All actions are presumed not to return a value, but should raise an exception upon error.

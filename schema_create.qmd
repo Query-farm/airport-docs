@@ -19,22 +19,6 @@ CREATE SCHEMA example.main;
 
 ## Arrow Flight Server Implementation Notes
 
-The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of `create_schema`.
+The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of [`create_schema`](server_action_create_schema.qmd).
 
-The single parameter provided to the `create_schema` action will be a `msgpack` encoded representation of this structure:
-
-```c++
-struct AirportCreateSchemaParameters
-{
-  string catalog_name;
-  string schema;
-
-  std::optional<string> comment;
-  unordered_map<string, string> tags;
-
-  MSGPACK_DEFINE_MAP(catalog_name, schema, comment, tags)
-};
-```
-
-The return value from `create_schema` action discarded. If an error occurrs it is expected that a Arrow Flight exception will be raised.
 
