@@ -36,7 +36,7 @@ The gRPC header `airport-duckdb-column-ids` will contain a comma-separated list 
 
 ### Endpoint / Location Lookup
 
-To fetch data from a flight, the Airport extension performs a `DoAction` RPC call named `endpoints`, instead of the standard `GetFlightInfo` RPC call. This is done because:
+To fetch data from a flight, the Airport extension performs a `DoAction` RPC named `endpoints`, instead of the standard `GetFlightInfo` RPC. This is done because:
 
 1. The schema is already known and doesn’t need to be returned.
 2. Filter predicates can be serialized and sent, allowing the server to filter endpoints. `GetFlightInfo` doesn't allow additional data beyond the `FlightDescriptor` to be passed.
@@ -65,7 +65,7 @@ The request is a `msgpack`-serialized structure:
 
 The server responds with a `msgpack`-serialized `std::vector<std::string>` of `FlightEndpoint` objects. These are deserialized and processed in parallel using DuckDB’s thread pool. The union of all returned endpoints represents the complete set of data of the flight.
 
-Each endpoint contains one or more locations where the data resides. Arrow Flight locations usually point to servers capable of serving data via the `DoGet` RPC call, but the Airport extension adds additional funcitonality.
+Each endpoint contains one or more locations where the data resides. Arrow Flight locations usually point to servers capable of serving data via the `DoGet` RPC, but the Airport extension adds additional funcitonality.
 
 #### `data://` URIs as Endpoint Locations
 

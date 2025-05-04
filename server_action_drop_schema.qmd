@@ -25,4 +25,4 @@ struct DropItemActionParameters
 
 The `type` field of the parameters will be set to the value `schema`.
 
-The return value if any from the `drop_schema` action is ignored, if there is an error it is expected that an exception will be raised.
+The return value from the action is ignored, if there is an error it is expected that an exception will be raised.

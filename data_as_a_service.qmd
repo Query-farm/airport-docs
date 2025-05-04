@@ -75,7 +75,7 @@ ArrowFlightServer -> DataStore
 ### Component Overview
 
 1. **DuckDB as the Client**
-    - Requires version 1.2.0 or newer. It can run standalone or be embedded.
+    - Requires version 1.3.0 or newer. It can run standalone or be embedded.
 2. **Load Balancer**
     - Distributes requests across multiple Arrow Flight server instances. Must support HTTP/2.
 3. **Arrow Flight Server**
@@ -91,7 +91,7 @@ ArrowFlightServer -> DataStore
 These components enhance security, observability, and monetization:
 
 1. **Authentication & Authorization**
-    - Validate requests and enforce access rules. Optional column and row level filtering is possible.
+    - Validate requests and enforce access rules. [Column and row level filtering is possible](server_row_and_column_filtering.qmd).
 2. **Observability & Logging**
     - Log all requests for auditing, debugging, and performance insights.
 3. **Subscription Management**

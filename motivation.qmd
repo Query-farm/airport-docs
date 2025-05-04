@@ -5,68 +5,179 @@ author: "Rusty Conover"
 
 # The Dream of Universal Data Access via SQL
 
-The Airport extension for DuckDB strives to enable access to __"any data, anywhere, on all systems, all via SQL."__
+The Airport extension for DuckDB aims to fulfill a bold vision:
+**_"Any data. Anywhere. Accessible via SQL."_**
 
-An imagined testimonial:
+An imagined user testimonial captures this dream:
 
-> When I begin my work, I simply launch DuckDB. It provides all the data and functionality I need from my organization. I don’t have to worry about connecting to other systems myself.  I do a lot of reporting for ecommerce, so I need to access sales data from the websites, inventory and supplier orders, and performance metrics from the servers. Even the data we buy from vendors is available in DuckDB. All this data updates without me having to do anything, and I can time travel using SQL to view how the data looked in the past. Additionally, machine learning models and time series forecasts are easy to build. Create new models is fast and automated using SQL functions, and extracting data for other systems is as simple as a COPY TO SQL statement.
+> I start my day by launching DuckDB. That’s it. All the data I need is right there—sales data from our websites, inventory and supplier records, server metrics, and even data we license from third-party vendors. I don’t worry about connections or integrations—it's just there. The data stays current automatically, and I can even time travel through it using SQL. Building machine learning models and forecasts is just as seamless. I write a SQL function, and new models are created and updated automatically. When I need to extract data for another system, I use a simple `COPY TO` SQL statement.
+
+### Industry Specific Uses
+
+::: {.panel-tabset}
+
+## Sales
+
+> “When I start my day, I just open DuckDB. Everything’s there — ecommerce sales, inventory, supplier data, server metrics, even vendor feeds. I don't worry about pipelines or syncing. It just works.
+
+For example, to check yesterday’s total revenue:
+
+```sql
+SELECT SUM(total_price)
+FROM sales_data
+WHERE order_date = CURRENT_DATE - INTERVAL 1 DAY;
+```
+
+To identify items low on stock across all warehouses:
+
+```sql
+SELECT item_id, SUM(stock) AS total_stock
+FROM warehouse_inventory
+GROUP BY item_id
+HAVING total_stock < 10;
+```
+
+When I need to analyze how our supplier performance affects delivery times:
+
+```sql
+SELECT supplier_id, AVG(delivery_time)
+FROM supplier_orders
+WHERE order_status = 'completed'
+GROUP BY supplier_id;
+```
+
+Even training a forecast model is built into SQL:
+
+```sql
+SELECT forecast_sales(product_id, sales_date, quantity_sold)
+FROM sales_data;
+```
+
+And if I want to export that cleaned dataset for our finance team:
+
+```sql
+COPY (SELECT * FROM monthly_financial_summary)
+TO 's3://our-bucket/exports/summary.parquet' (FORMAT 'parquet');
+```
+
+It’s all just SQL — live, versioned, and automated.
 
 
-## FIXME: Explain more of the story of how rather than going into the technical details of how.
+## Finance
 
-::: {.callout-tip}
-## FIXME: add examples of work with multiple attach statements.
+> “With DuckDB, I don’t need to wrangle CSVs or deal with third-party tools — I just query. Everything from market data to internal reports is there.
+
+To compute yesterday’s portfolio performance:
+
+```sql
+SELECT portfolio_id, SUM(value_change_usd)
+FROM trades
+WHERE trade_date = CURRENT_DATE - INTERVAL 1 DAY
+GROUP BY portfolio_id;
+```
+
+To detect anomalies in wire transfers:
+
+```sql
+SELECT account_id, amount, transfer_time
+FROM wire_transfers
+WHERE amount > 1000000
+  AND transfer_time > CURRENT_TIMESTAMP - INTERVAL 1 HOUR;
+```
+
+To calculate monthly expense ratios:
+
+```sql
+SELECT fund_id, SUM(expenses) / SUM(aum) AS expense_ratio
+FROM fund_ledger
+WHERE month = '2025-04'
+GROUP BY fund_id;
+```
+
+To publish this for auditors:
+
+```sql
+COPY (
+  SELECT * FROM expense_ratios_view
+) TO 's3://audit-bucket/ratios-2025-04.parquet' (FORMAT 'parquet');
+```
+
+I get a modern financial data platform with just SQL.
+
+
 :::
 
 
 
-DuckDB excels at single-node query execution, Airport extends DuckDB to access data from data from distributed systems and services. With Airport, users can interact with this data as if it was any other data in the database.
+
+# Building Toward That Dream
+
+DuckDB is exceptional at single-node analytics and local data querying. Airport extends DuckDB’s power outward, making remote and distributed data sources feel as accessible as local tables. Through Airport, users can query, insert, delete, and functionally interact with remote data sources—without even realizing they aren’t local.
+
+Airport is designed to unlock SQL access to everything from NoSQL databases and legacy systems to modern REST APIs, IMAP, SNMP, Spark, and proprietary vendor systems.
+
+::: {.callout-tip}
+## Coming Soon
+Examples of working with multiple `ATTACH` statements to unify remote services into a single SQL interface.
+:::
+
+# How This Becomes Reality
+
+SQLite and DuckDB radically simplified SQL by eliminating the need for a database server. While DuckDB continues to add support for modern cloud data formats like Delta Lake and Apache Iceberg, a significant gap remains: bridging the distance between where data lives and making it directly accessible in DuckDB. Entire careers and companies have formed around solving this challenge through complex ETL pipelines.
+
+Airport bridges this gap using [Apache Arrow Flight](https://arrow.apache.org/docs/format/Flight.html), a high-performance, RPC-based protocol for exchanging Arrow-formatted data across systems. With Airport, developers can build services that:
+
+- Appear as native DuckDB tables and functions
+- Respond to queries using Arrow Flight
+- Handle data as streams, not just batches
+
+The result? Distributed data can be queried as if it were a local database table.
+
+Airport isn't just about *reading* remote data—it’s also about providing services and compute logic via SQL-accessible interfaces. You can register functions, expose filtered datasets, even implement custom authorization—all while keeping SQL the user's only interface.
 
 
+Airport’s seamless connection to remote systems allows users to bypass traditional data extraction and transformation processes, ensuring that queries return fresh, live data. The simplicity of SQL access extends not just to familiar data sources, but to a new world of services like NoSQL databases, legacy systems, and modern cloud platforms.
 
+# Key Ingredients
 
-## How to make this dream a reality
+## DuckDB
 
-SQLite and DuckDB have revolutionized SQL querying by removing the complexity of managing a database server. However, they fall short in handling data access beyond the HTTP protocol and somewhat nascent Lakehouse formats like Delta Lake and Apache Iceberg.
+DuckDB supports an impressive range of data formats out of the box: CSV, Parquet, Delta Lake, Excel, PostgreSQL, MySQL, and more. But not every source that exists is natively supported, and wrapping each one in a new C++ extension is infeasible.
 
-The Airport extension bridges this gap by enabling developers to build services that both provide and consume data within DuckDB. Using Arrow Flight, these services appear similar to native tables and functions in DuckDB, allowing users to query, insert, and delete data as if interacting with local tables — all without realizing they're accessing remote services.
+Airport solves this by abstracting the data interface between the DuckDB and data via Arrow Flight. Developers can implement connectors (a.k.a services/servers) in the language of their choice, decoupled from DuckDB’s internals, and surface the data in DuckDB as needed.
 
-It is my intention that Airport could extend DuckDB’s reach to unconventional data sources, including NoSQL databases, IMAP, Spark, DataBricks, Snowflake, Prometheus, REST APIs, SNMP, and legacy systems.
+## Apache Arrow
 
-By leveraging Arrow Flight, Airport eliminates the need for intermediate data extraction and transformation before the data can be used in a query system. Similar to how REST handles data retrieval and updates via HTTP requests, Arrow Flight provides a streamlined interface for requesting and publishing data. Through configuration, Airport exposes this data as tables, functions, and schemas directly within DuckDB.
+Apache Arrow provides the serialization format underpinning this architecture. Arrow Flight adds gRPC-based transport, enabling efficient data movement across language and system boundaries.
 
+DuckDB already supports reading Arrow data efficiently via the C Data Interface. So when Airport serves Arrow Flight streams to DuckDB, the integration is fast, streaming, and zero-copy where possible.
 
+Arrow's broad ecosystem—C++, Python, Rust, Java, Go, and more—means anyone can build a server that integrates cleanly with Airport.
 
+# Mixing the Ingredients
 
+While the combination of DuckDB and Apache Arrow is powerful, it comes with challenges:
 
-## The ingredients of the dream.
+1. Non-relational Data Sources: Some systems, like NoSQL databases or legacy systems, aren’t relational in nature, requiring custom mapping to make them accessible as tables.
+2. Efficient Filtering: How to ensure filtering is both efficient and consistent across distributed systems with varying data formats.
+3. Authentication and Authorization: Securing access to data across multiple external systems.
+4. Failover and Scalability: Ensuring data is available even in the event of service failures or heavy demand.
+5. Exposing Functions as Services: Beyond data, Airport also enables the exposure of functions and complex operations from external systems.
+6. Data as a Service: Treating data as a service (DaaS), where users can access it without worrying about how it is hosted or transformed.
+7. Multiple Services: Airport enables multiple services to coexist and be queried seamlessly, making integration easier.
+8. Cost of Data Transfer: Considering the cost implications of querying and transferring large datasets across systems.
+9. Transactional Guarantees: Ensuring data consistency across distributed services, especially for transactional workloads.
 
-#### DuckDB
+# The Road Ahead
 
-DuckDB supports a wide range of data formats, including CSV, Excel, Parquet, Delta Lake, Apache Iceberg, PostgreSQL, and MySQL. However, transforming data from the source into a compatible format can be complex and introduce latency and freshness concerns.
+While Airport has already brought immense power to DuckDB by simplifying access to remote data, we have big plans for the future:
 
-Given the diversity of data formats and storage systems, expecting DuckDB to handle all past and future formats and data sources in C++ is unrealistic. Airport provides a way to connect to data sources without requiring a new extension for each one.  These connections can evolve as needed at their own pace.
+- Expanding Support for More Data Sources: We’re working on integrating even more data formats and services to ensure Airport can access every type of data in your ecosystem.
 
-#### Apache Arrow
+- Enhanced Documentation and Tools: Expect more robust documentation, tools, and best practices to make integration even easier.
 
-Apache Arrow plays a crucial role in this architecture. DuckDB provides an efficient, streaming, multithreaded query engine, while Apache Arrow and Arrow Flight offer standardized connectivity to data sources.
+# Conclusion
 
-The Arrow IPC format allows efficient data exchange between processes in different programming languages, with support for streaming data, extensible data types, and compression. Arrow Flight defines an RPC interface (built on gRPC) for sharing data using the Arrow IPC format.
+Airport hopes to redefine how businesses can access and query data, offering SQL-level integration with distributed data services. By removing the need for complex ETL workflows and enabling seamless connectivity, Airport empowers analysts and developers to focus on the insights and decisions that matter, rather than worrying about data pipelines or service integration.
 
-DuckDB's integration with Apache Arrow allows Airport to read Arrow data via the C Data Interface. To DuckDB, data from Arrow Flight is just like any other Arrow data.
-
-Apache Arrow has implementations in all of a major langauges including C++, Python, Go, Rust, Java and others. This means that servers that want to offer data to the Airport extension can be written in any of those languages, reducing the friction of implementation.
-
-
-## Mixing the Ingredients
-
-1. The challenges is that some systems aren't really relational at their core.
-2. How to efficiently perform filtering.
-3. Authentication and authorization.
-4. Failover and scale.
-5. Beyond data, exposing functions.
-6. Complexity of exposiing a service
-7. Data as a Service, in addition to Software as a Service
-8. Who says there needs be on only one service.
-9. Cost for data transfer and impact of queries.
-10. Transactional guarantees.
+Whether you're in healthcare, finance, ecommerce, or any other data-driven industry, Airport brings the promise of universal data access to life — making it as simple as writing a SQL query.

@@ -10,19 +10,23 @@ website:
     type: info
     position: below-navbar
   navbar:
+    background: primary
+    search: true
     left:
       - href: index.qmd
         text: Home
+      - text: "Vision / Motivation"
+        href: motivation.qmd
+      - text: "Data-as-a-Service"
+        href: data_as_a_service.qmd
+      - text: "Data Strategy"
+        href: rethinking_data_strategy_airport_extension.qmd
   sidebar:
       style: "docked"
-      search: true
       contents:
-        - text: "Motivation"
-          href: motivation.qmd
-        - text: "Data-as-a-Service"
-          href: data_as_a_service.qmd
-        - text: "SQL Functions"
-          href: duckdb_functions.qmd
+        - text: "Extension API"
+          href: extension_api.qmd
+        - text: "---"
         - text: "Catalog Integration"
           href: catalog_integration.qmd
           contents:
@@ -32,7 +36,6 @@ website:
                   href: schema_create.qmd
                 - text: "Drop"
                   href: schema_drop.qmd
-
             - section: "Tables"
               href: tables.qmd
               contents:
@@ -49,9 +52,7 @@ website:
                 - text: "Drop"
                   href: table_drop.qmd
                 - text: "Alter"
-                  href: table_alter.qmd
-                - text: "Predicate Pushdown"
-                  href: table_predicate_pushdown.qmd
+                  hre f: table_alter.qmd
                 - text: "RowId Pseudocolumn"
                   href: table_row_ids.qmd
                 - text: "Column Statistics"
@@ -60,24 +61,30 @@ website:
                   href: table_constraints.qmd
                 - text: "Transactions"
                   href: transactions.qmd
-            - scalar_functions.qmd
-            - table_returning_functions.qmd
-            - catalog_current_version.qmd
-        - text: "Authentication"
-          href: request_authentication.qmd
-        - text: "Standard Request Headers"
-          href: standard_headers.qmd
-        - text: "Version Support"
-          href: version_support.qmd
-        - text: "FAQ"
-          href: faq.qmd
-        - section: "Flight Server Implementation"
+            - text: "Scalar Functions"
+              href: scalar_functions.qmd
+            - text: "Table Returning Functions"
+              href: table_returning_functions.qmd
+            - text: "Versioning"
+              href: catalog_current_version.qmd
+        - text: "---"
+        - section: "Server Development"
           contents:
               - text: "Basics"
                 href: server_basics.qmd
-              - text: "DuckDB Catalog Integration"
+              - text: "Catalog Integration"
                 href: server_catalog_integration.qmd
-              - section: "Actions"
+              - text: "Predicate Pushdown"
+                href: server_predicate_pushdown.qmd
+              - text: "Authentication"
+                href: request_authentication.qmd
+              - text: "Row and Column Level Filtering"
+                href: server_row_and_column_filtering.qmd
+              - text: "Client Versioning"
+                href: server_client_versioning.qmd
+              - text: "Request Headers"
+                href: standard_headers.qmd
+              - section: "RPC Actions"
                 href: server_actions.qmd
                 contents:
                   - text: "add_column"
@@ -124,19 +131,14 @@ website:
                     href: server_action_set_not_null.qmd
                   - text: "table_function_flight_info"
                     href: server_action_table_function_flight_info.qmd
-
-
-
-
-
-
+        - text: "---"
+        - text: "FAQ"
+          href: faq.qmd
+        - text: "---"
 
 format:
   html:
-    theme:
-      light: flatly
-      dark: darkly
-    fontsize: 1.1em
+    theme: zephyr
     mainfont: Roboto,Open Sans, Helvetica
     css: styles.css
     toc: true

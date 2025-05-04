@@ -41,7 +41,7 @@ This may change in the future.
 
 If the table does has a [rowid pseudocolumn](table_row_ids.qmd) the update can be performed.
 
-A `DoExchange` Arrow Flight RPC call is made to update rows. This allows the server to return rows (needed for the `RETURNING` clause), the rows may differ from the original input supplied.  On the write stream of the `DoExchange` call only the rowid pseudocolumn will be sent to the server along with all of the new column values.
+A `DoExchange` Arrow Flight RPC is made to update rows. This allows the server to return rows (needed for the `RETURNING` clause), the rows may differ from the original input supplied.  On the write stream of the `DoExchange` call only the rowid pseudocolumn will be sent to the server along with all of the new column values.
 
 ### Supplied gRPC Headers for `DoExchange` request.
 
@@ -52,7 +52,7 @@ A `DoExchange` Arrow Flight RPC call is made to update rows. This allows the ser
 
 ### Final Metadata Message
 
-When the DuckDB client finishes writing to the write stream of the `DoExchange` RPC call, the server is expected to return a single metadata message on the read stream that is serialized using `msgpack`with this structure.
+When the DuckDB client finishes writing to the write stream of the `DoExchange` RPC, the server is expected to return a single metadata message on the read stream that is serialized using `msgpack`with this structure.
 
 ```c++
 struct AirportUpdateFinalMetadata

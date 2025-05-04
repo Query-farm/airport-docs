@@ -17,4 +17,4 @@ DROP TABLE example.main.employees;
 
 ## Arrow Flight Server Implementation Notes
 
-The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name of [`drop_table`](server_action_drop_table.qmd).
+The Airport extension will perform a `DoAction` Arrow Flight RPC with a method name of [`drop_table`](server_action_drop_table.qmd).

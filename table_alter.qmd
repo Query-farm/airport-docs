@@ -24,9 +24,9 @@ ALTER TABLE example.main.employees DROP COLUMN id;
 
 ## Arrow Flight Server Implementation Notes
 
-The Airport extension will perform a `DoAction` Arrow Flight RPC call with a method name that corresponds to the type of alteration being performed.
+The Airport extension will perform a `DoAction` Arrow Flight RPC with a method name that corresponds to the type of alteration being performed.
 
-The types of alterations that can be performed are.
+The types of alterations that can be performed are:
 
 | Action Name | Description |
 |-------------|-------------|
@@ -42,7 +42,6 @@ The types of alterations that can be performed are.
 | [`rename_table`](server_action_rename_table.qmd "Rename a table") | Rename a table. |
 | [`set_default`](server_action_set_default.qmd "Set a default value for a field") | Set a default value for a field. |
 | [`set_not_null`](server_action_set_not_null.qmd "Set a field to NOT NULL") | Set a field to NOT NULL. |
-
 
 Each type of alteration takes a different parameter structure.
 

@@ -8,7 +8,7 @@ The Airport extension for DuckDB primarily interacts with external systems, so t
 
 In database systems, data consistency refers to ensuring that data remains accurate and reliable across transactions. This typically means that when a transaction reads data, it sees a stable and correct view of the data, even if other transactions are modifying it concurrently.
 
-To achieve consistency within the Airport extension for DuckDB, a `DoAction` Arrow Flight RPC call is made at the start of a transaction. The action name is `create_transaction`. This call returns an optional unique identifier, which is included in subsequent RPC calls via the `airport-transaction-id` header. If servers respect this identifier that they issue, the extension can ensure that data requested within the same transaction remains consistent.
+To achieve consistency within the Airport extension for DuckDB, a `DoAction` Arrow Flight RPC is made at the start of a transaction. The action name is `create_transaction`. This call returns an optional unique identifier, which is included in subsequent RPCs via the `airport-transaction-id` header. If servers respect this identifier that they issue, the extension can ensure that data requested within the same transaction remains consistent.
 
 From the perspective of the Airport extension, data requested with the same transaction identifier should be consistent (even across tables). It is the server's responsibility to reject transaction identifiers that can no longer guarantee consistency and raise an appropriate Arrow Flight exception. This mechanism allows clients to rely on consistent data views while interacting with external systems.
 

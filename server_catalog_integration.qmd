@@ -11,7 +11,7 @@ The Airport DuckDB extension is designed to provide a seamless user experience b
 
 ## Evolution of Integration
 
-Initially, the Airport DuckDB extension operated separately from the DuckDB catalog. Discovering and consuming data required using specific table-returning functions, namely `airport_list_flights` and `airport_take_flight`. This approach lacked the transparency of treating remote data as local database objects.
+Initially, the Airport DuckDB extension operated separately from the DuckDB catalog. Discovering and consuming data required using specific table-returning functions, namely `airport_flights` and `airport_take_flight`. This approach lacked the transparency of treating remote data as local database objects.
 
 To address this, the extension now integrates directly with the DuckDB catalog. This enhancement allows Arrow Flights to be represented as standard tables and functions within the database schema, significantly streamlining data access for users.
 
@@ -198,7 +198,7 @@ a -> DuckDB.AirportDatabase
 
 The Arrow Flight RPC interface includes a `ListFlights` method for listing the available flights from a server. It seemed logical to use this method to integrate those flights with the DuckDB catalog. However, several limitations make `ListFlights` unsuitable for this purpose:
 
-1. __Performance Overhead:__ An Arrow Flight server can provide thousands of flights. Serializing all flights in response to a `ListFlights` RPC call can be CPU-intensive. Since serialization occurs at the gRPC level, the current implementation of Arrow does not support response caching when flights remain unchanged.
+1. __Performance Overhead:__ An Arrow Flight server can provide thousands of flights. Serializing all flights in response to a `ListFlights` RPC can be CPU-intensive. Since serialization occurs at the gRPC level, the current implementation of Arrow does not support response caching when flights remain unchanged.
 
 2. __Large Schema Sizes:__ Apache Arrow schemas can be large, especially when dealing with hundreds of tables. Compressing responses could help but would add additional CPU overhead to the Flight server.
 
@@ -257,7 +257,7 @@ If an Airport-provided `list_schemas` schema or database includes a SHA256 check
 
 ## Alternative Approach: `list_schemas`
 
-Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the Airport extension introduces a separate RPC call, `list_schemas`, invoked via `DoAction`. The key benefits of `list_schemas` include:
+Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the Airport extension introduces a separate RPC, `list_schemas`, invoked via `DoAction`. The key benefits of `list_schemas` include:
 
 1. __Flexible Response Delivery:__ Responses can be provided inline or via an external URL, validated and cached based off of a SHA256 checksum. This enables CDN support and client-side caching.
 

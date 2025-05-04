@@ -1,0 +1,16 @@
+---
+title: "Server–Client Versioning"
+---
+
+The integration between the Airport DuckDB extension and Arrow Flight servers is expected to evolve over time. Versioning changes have already occurred during the development of the extension.
+
+To ensure compatibility, each Arrow Flight RPC request includes a custom gRPC header named `airport-user-agent`, similar in purpose to the `User-Agent` header used by web browsers. This header allows servers to determine whether a client is compatible with the expected protocol version.
+
+The current value of this header is `airport/20240820`. Servers may validate client compatibility by requiring the header value to be lexicographically greater than or equal to a minimum supported version.
+
+To retrieve the current value of the `airport-user-agent` header from within DuckDB, execute the following query:
+
+```sql
+SELECT airport_user_agent();
+```
+

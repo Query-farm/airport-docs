@@ -1,0 +1,100 @@
+---
+title: "Rethinking Data Strategy: Airport as a Foundation for the Modern Data Stack"
+author: "Rusty Conover"
+---
+
+# SQL as a Strategic Interface for Everything
+
+Your data stack is too complex.
+
+You’ve invested in warehouses, ETL tools, orchestration systems, reverse ETL, semantic layers, cataloging systems, and lineage trackers—only to find your teams still drowning in complexity and waiting on data. The "modern" data stack has become a patchwork of brittle tools, requiring constant stitching and monitoring.
+
+**What if querying any data—internal or external, structured or unstructured—was as simple as writing a SQL query?**
+
+This is the promise of the [Airport Extension for DuckDB](https://arrow.apache.org/docs/format/Flight.html): a universal interface for live, versioned, and queryable data across your entire ecosystem, powered by SQL and built upon open standards like Apache Arrow Flight.
+
+---
+
+# The Problem: Operational Gravity Is Pulling Us Down
+
+Data gravity—the idea that data attracts services and infrastructure—has turned into operational gravity. We've become tied to the tools we deploy rather than the value we extract. Building reliable pipelines and maintaining data freshness across systems like Snowflake, S3, BigQuery, DynamoDB, and dozens more is now the core job of data teams—not modeling, analysis, or insights.
+
+Even with aggressive investments in infrastructure, most organizations still suffer from:
+
+- Long lead times for integrating new data sources
+- Inconsistent freshness and lineage
+- Siloed systems with limited cross-domain queries
+- High cloud egress and processing costs
+
+---
+
+# The Strategic Shift: Treat Data as a Service, SQL as the Interface
+
+Airport turns remote systems into **first-class citizens in DuckDB**, accessible via SQL—without forcing you to replicate, extract, or transform them into the warehouse.
+
+Your developers, analysts, and machine learning teams can:
+
+- Query live production data from APIs or NoSQL stores using familiar SQL
+- Join across distributed systems in a single query
+- Register server-side functions or ML models as SQL-callable
+- Extract cleaned or transformed data via `COPY TO` commands with zero engineering overhead
+
+Think of Airport as **a data virtualization fabric** built with SQL as the API layer.
+
+---
+
+# Why Now? Because ETL Is Dead Weight
+
+Airport doesn’t eliminate your warehouse—but it **relegates it to one of many endpoints**, not the center of the universe. It offers a more agile and cost-efficient approach:
+
+- **Time-to-insight shrinks**: You don’t have to wait for pipelines to be built or tables to land.
+- **Developer velocity increases**: Building a new connector or service is as simple as standing up a Flight server.
+- **Data ownership remains distributed**: Teams can serve their data and business logic via Arrow Flight endpoints without forcing centralization.
+
+If the last decade was about "unifying" the data warehouse, the next will be about **federating access across everything**—with SQL as the lingua franca.
+
+---
+
+# What Airport Unlocks for Your Org
+
+**1. Platform Agility**
+
+Add, test, and deprecate data systems without rearchitecting pipelines.
+
+**2. Universal Observability**
+
+Expose operational metrics, app logs, third-party data, and service traces as SQL tables.
+
+**3. Data Mesh Ready**
+
+Airport aligns perfectly with data mesh principles: each domain can operate and expose its own data product—served over Arrow Flight, queried via DuckDB.
+
+**4. Reduced Costs**
+
+No unnecessary data replication, no expensive egress for staging-to-staging copies.
+
+**5. Developer Flexibility**
+
+Build connectors in any language (Python, Go, Rust, Java), leveraging Arrow Flight’s open ecosystem.
+
+---
+
+# What You Can Do Today
+
+- **Start piloting DuckDB with Airport** to connect real-time sources like DynamoDB, APIs, or internal services.
+
+- **Encourage your platform team** to standardize Flight as the transport layer for new internal services.
+
+- **Begin measuring latency and operational cost** differences between Airport-based access and traditional ETL.
+
+- **Make SQL the first-class interface for your operational, analytical, and ML workloads.**
+
+---
+
+# A New Mental Model for the Data Platform
+
+Instead of building workflows to copy data toward your warehouse, **build interfaces that serve it where it lives**. Airport provides the SQL runtime, Arrow Flight handles the transport, and DuckDB ties it all together for both ad-hoc and production workflows.
+
+This isn’t another ETL tool. This is a strategic pivot—from brittle pipelines to programmable data services.
+
+If you're rebuilding or simplifying your data platform, **Airport isn’t just an extension—it's a foundation**.

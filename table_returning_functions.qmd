@@ -44,7 +44,7 @@ The Airport extension does two different things, depending if the table returnin
 
 #### Regular Table Returning Function
 
-When the table returning function is called.  The Airport extension will make a `DoAction` Arrow Flight RPC call to the server with an action named `table_function_flight_info` to obtain a `FlightInfo` which will then be called with the `DoGet` Arrow Flight RPC method.  It is expected the server may interpret the parameters and return a new schema or otherwise encode the parameters in the returned `ticket` field of the `FlightInfo`.
+When the table returning function is called.  The Airport extension will make a `DoAction` Arrow Flight RPC to the server with an action named `table_function_flight_info` to obtain a `FlightInfo` which will then be called with the `DoGet` Arrow Flight RPC method.  It is expected the server may interpret the parameters and return a new schema or otherwise encode the parameters in the returned `ticket` field of the `FlightInfo`.
 
 The `table_function_flight_info` action receive this `msgpack` encoded map of parameters as its input:
 
@@ -67,7 +67,7 @@ The `table_function_flight_info` is expected to return a single serialized Arrow
 
 #### In-Out Table Function
 
-In the case of an "in-out" table returning function a `DoExchange` Arrow RPC call is made.
+In the case of an "in-out" table returning function a `DoExchange` Arrow RPC is made.
 
 The input schema for the `DoExchange` call is the schema of the "in" table.  The serialized parameters to the table returning function are sent an initial metadata message on the `DoExchange` stream.  The parameters are Arrow Record Batch with a single row.
 

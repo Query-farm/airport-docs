@@ -1,0 +1,46 @@
+---
+title: "Row and Column Level Filtering"
+---
+
+The Airport extension for DuckDB enables **row-level** and **column-level** filtering based on the identity of the user making the request. This functionality allows organizations to enforce fine-grained access control policies directly within the Arrow Flight server.
+
+The easiest way to understand this is through a few examples.
+
+## Row-Level Filtering
+
+Imagine a database table that stores order data for all customers. Each row includes a `customer_id` field. The goal is to allow customers to query the table but only see orders they themselves have placed.
+
+This can be achieved by having the Arrow Flight server automatically append a predicate to every query that enforces:
+
+```sql
+customer_id = <requesting_user_id>
+```
+
+Since Arrow Flight returns data in the Arrow IPC format, the server can efficiently stream the filtered results back to the client after applying the predicate. This enables secure, per-user access without modifying the original SQL queries.
+
+## Column-Level Filtering
+
+Consider a products table that includes both public fields (e.g., product name and description) and sensitive internal fields (e.g., cost and supplier pricing). The requirement is to allow general users to query product details but restrict access to cost data unless the user is part of the accounting group.
+
+The Arrow Flight server can return different schemas for the same table depending on the requesting user’s identity or group membership. For example:
+
+- If the user is in the accounting group, all columns are returned.
+- Otherwise, sensitive columns like cost_price are omitted from the schema.
+
+This ensures sensitive data is never even transmitted to unauthorized users.
+
+## Write-Level Filtering
+
+Beyond read filtering, the Arrow Flight server can also enforce write-level policies. These may include:
+
+- Restricting which users or groups can append or update rows.
+- Validating new rows against business rules.
+- Enforcing column-level constraints during writes.
+
+Such policies help maintain data integrity and simplify security auditing.
+
+## Implications
+
+By pushing filtering logic into the Arrow Flight server, data access policies are centralized, consistent, and enforced at the transport layer. While applying filters can add some server-side processing overhead—especially for complex predicates—the benefits in security, auditability, and simplification of client logic often outweigh the cost.
+
+This approach unlocks a wide range of secure data-sharing scenarios across teams and organizations.

@@ -6,7 +6,7 @@ DuckDB's tables can optionally supply statistics that assist with efficient quer
 
 ## Arrow Flight Server Implementation Notes
 
-For an Airport based table to provide statitics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.  If the table has opted-in to providing statistics an Arrow Flight `DoAction` RPC call with be made to the server with an action name of `column_statistics`.
+For an Airport based table to provide statitics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.  If the table has opted-in to providing statistics an Arrow Flight `DoAction` RPC with be made to the server with an action name of `column_statistics`.
 
 The action will be provided a parameter with this `msgpack` encoded message.
 

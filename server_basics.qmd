@@ -1,0 +1,112 @@
+---
+title: "Server Basics"
+---
+
+Writing an Arrow Flight server that works with the Airport DuckDB extension can be either simple or complex depending on how much functionality you want to support. At a basic level, a Flight server simply exposes data over Arrow Flights. But with additional effort, it can evolve into a programmable, secure service that responds efficiently to SQL queries, supports user-defined functions, and integrates deeply with DuckDB.
+
+This guide will walk you through the basics of writing an Arrow Flight server and how to extend it to support the Airport extension for DuckDB.
+
+## Why Write a Flight Server?
+
+An Arrow Flight server allows you to:
+
+- Expose data as Arrow Flights to any compatible client, including the Airport extension for DuckDB.
+- Define scalar functions and table-returning functions.
+- Authenticate and authorize clients and individual requests.
+- Enforce row-level security or custom query routing.
+- Integrate deeply with DuckDB to allow Arrow Flights to be exposed as tables, schemas, and functions.
+
+This gives you full control over what data is exposed and how it behaves—useful for services that want to implement security, transformation, or caching logic near the data.
+
+## Learn the Basics First
+
+Before diving into Airport-specific functionality, it's important to get comfortable with the core Arrow Flight API. The Apache Arrow project maintains tutorials in multiple languages:
+
+- [Python Flight Cookbook](https://arrow.apache.org/cookbook/py/flight.html)
+- [Java Flight Cookbook](https://arrow.apache.org/cookbook/java/flight.html)
+- [C++ Flight Cookbook](https://arrow.apache.org/cookbook/cpp/flight.html)
+
+These cookbooks will help you understand:
+
+- Starting a Flight server.
+- Registering `FlightInfo` metadata.
+- Responding to `DoGet` requests with Arrow record batches.
+- Basic authentication via headers or middleware.
+
+Once you've worked through one of the tutorials, you'll have a minimal Flight server that can serve Arrow tables to clients.
+
+It's also beneficial to review the [Arrow Flight protocol definition](https://github.com/apache/arrow/blob/main/format/Flight.proto), which defines the gRPC messages and services used by Flight. Pay special attention to:
+
+- `FlightInfo` and `FlightEndpoint`
+- `DoGet`, `DoExchange`, and `DoAction` RPCs
+
+
+## Airport Extension Integration Levels
+
+The Airport extension for DuckDB expects Flight servers to implement a few additional capabilities. Depending on how deeply you want to integrate, choose the appropriate level:
+
+### Level 1: Schema Discovery
+
+To have Arrow Flights appear in DuckDB as schemas, tables, and functions, your server must implement the `DoAction` RPC with support for the `list_schemas` action. This allows DuckDB to enumerate the top-level schemas exposed by your server when a client attaches a database.
+
+See: [`list_schemas` implementation guide](server_action_list_schemas.qmd)
+
+For more efficient query execution, your server can implement support for predicate pushdown. This allows DuckDB to send filter expressions to your server, letting it reduce data volume before returning results.
+
+See: [predicate pushdown guide](server_predicate_pushdown.qmd)
+
+### Level 2: Data Modification (`DoExchange`)
+
+To support SQL operations that modify data:
+
+```sql
+INSERT INTO your_table ...
+DELETE FROM your_table ...
+UPDATE your_table SET ...
+```
+
+your Flight server must implement the `DoExchange` RPC. This enables bi-directional streaming of Arrow data:
+
+- DuckDB streams INSERT values to your server.
+- Your server processes changes (e.g., writes to a database or API).
+- You can optionally return metadata or status responses.
+
+Implementing this enables editable datasets exposed over SQL.
+
+### Level 3: Functions
+
+You can also expose custom logic to DuckDB clients using scalar or table-returning functions:
+
+- Scalar functions require `DoExchange`.
+- Table-returning functions can use either `DoGet` or `DoExchange`.
+
+These functions behave like UDFs and allow you to express logic or access external systems directly from SQL:
+
+```sql
+SELECT my_custom_fn('some_input');
+SELECT * FROM my_table_fn('param1', 42);
+```
+
+## Authentication and Authorization
+
+Arrow Flight supports various mechanisms to secure your server:
+
+- Authentication: Validate clients using tokens, API keys, or credentials passed via headers.
+- Authorization: Implement custom logic to control access to schemas, tables, or functions.
+- Rate Limiting & Quotas: Enforce per-user or per-query restrictions if needed.
+
+The Arrow Flight protocol gives you full flexibility—whether you need simple API key checks or deep integration with external services.
+
+## Next Steps
+
+To build a complete Airport-compatible server:
+
+- Start with the Arrow cookbooks to build a minimal Flight server.
+- Add `DoAction` support for `list_schemas` to expose flights as DuckDB objects in the DuckDB cataog.
+- Implement `DoExchange` to enable data modification and function calls.
+- Support predicate pushdown for efficient filtering (optional).
+- Add authentication and authorization logic to protect your data.
+
+By implementing these pieces, your Arrow Flight server becomes a powerful, SQL-accessible service that integrates seamlessly with DuckDB via the Airport extension.
+
+
