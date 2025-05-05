@@ -2,32 +2,99 @@
 title: "Frequently Asked Questions"
 ---
 
-1. Could Airport be implemented without Arrow Flight?
+## Architecture and Design
 
-    Yes, but using REST would limit features that require bi-directional data flow. However, since Airport relies on gRPC, it is not currently compatible with WebAssembly or browser environments.
+#### 1. Could Airport be implemented without Arrow Flight?
 
-2. Why is `msgpack` used rather than JSON?
+  Yes, but using REST would restrict features that rely on bi-directional streaming. Airport uses gRPC, which currently limits compatibility with WebAssembly and browser-based environments.
 
-    `msgpack` allows binary data to be included in its serialization where JSON does not since JSON is UTF-8 encoded.
+#### 2. Why is `msgpack` used instead of JSON?
 
-3. Does the Airport extention work with Webassembly/WASM?
+  `msgpack` supports efficient binary serialization, including raw binary data, while JSON is limited to UTF-8 encoded text and does not support arbitrary binary content.
 
-    It does not at this time because it has a dependency on gRPC and protobuf.
+#### 3. Why does the extension take a long time to build?
 
-4. What version of DuckDB is supported?
+  The build process is lengthy due to the size and complexity of the extension’s dependencies, particularly `arrow`, `curl`, and `msgpack`.
 
-    DuckDB 1.3.0, in the [`main`](https://github.com/Query-farm/duckdb-airport-extension/tree/main) branch of the extension.
+## Compatibility and Platform Support
 
-5. What dependencies does the Airport extension have?
+#### 4. Does the Airport extension work with WebAssembly/WASM?
 
-    The Airport extension relies on the following [`vcpkg`](https://vcpkg.io/en/) packages:
+  No. Airport depends on gRPC and Protocol Buffers, which are not currently supported in standard WASM environments.
 
-      - [`msgpack`](https://vcpkg.io/en/package/msgpack.html)
-      - [`arrow`](https://vcpkg.io/en/package/arrow.html)
-      - [`curl`](https://vcpkg.io/en/package/curl.html)
+  If the support for gRPC in WebAssembly changes, this status could change.
 
-    The specific versions of these dependencies are determined by the active commit of `vcpkg` used in the DuckDB extension build. The commit identifier is specified in the [`extension-ci-tools`](https://github.com/duckdb/extension-ci-tools) repository.
+#### 5. What version of DuckDB is supported?
 
-6. Why does the extension take a long time to build?
+  Airport targets DuckDB version 1.3.0, available on the [`main`](https://github.com/Query-farm/duckdb-airport-extension/tree/main) branch of the extension repository.
 
-    The extension's dependendencies are quite complicated and large.
+#### 6. Is Airport compatible with Windows, macOS, and Linux?
+
+  Yes. Airport builds and runs on all platforms supported by DuckDB, including Windows, macOS, and Linux. Most development is tested on macOS.
+
+## Installation and Dependencies
+
+#### 7. How do I install the Airport extension in DuckDB?
+
+  You can install the extension using the DuckDB CLI:
+
+  ```sql
+  INSTALL airport FROM community;
+  LOAD airport;
+  ```
+
+  See the [installation instructions](https://github.com/Query-farm/duckdb-airport-extension#installation) for more details.
+
+#### 8. What dependencies does the Airport extension have?
+
+Airport depends on the following [`vcpkg`](https://vcpkg.io/en/) packages:
+
+- [`msgpack`](https://vcpkg.io/en/package/msgpack.html)
+- [`arrow`](https://vcpkg.io/en/package/arrow.html)
+- [`curl`](https://vcpkg.io/en/package/curl.html)
+
+The specific versions are determined by the commit of `vcpkg` used in the DuckDB extension build process, as specified in the [`extension-ci-tools`](https://github.com/duckdb/extension-ci-tools) repository.
+
+---
+
+## Licensing
+
+#### 9. What is the software license for the Airport extension?
+
+The Airport extension is licensed under the [MIT license](https://opensource.org/licenses/MIT), the same as DuckDB.
+
+Arrow Flight servers used with Airport may use different software licenses independently.
+
+---
+
+## Security
+
+#### 10. Does Airport support authentication or TLS?
+
+Authentication and TLS are currently handled by the Arrow Flight server configuration.
+
+---
+
+## Usage and Features
+
+#### 11. What can I do with Airport?
+
+Airport enables DuckDB to query remote Arrow Flight servers as if they were local SQL tables. This supports external data access, streaming integration, and federated queries.
+
+#### 12. Can I use Airport with custom Arrow Flight servers?
+
+Yes. Airport can connect to any Arrow Flight server that implements the standard protocol and provides schemas compatible with DuckDB.
+
+---
+
+## Troubleshooting and Support
+
+#### 13. What should I do if the extension fails to build or load?
+
+Ensure you are using a supported DuckDB version (1.3.0 or greater). If building from source, verify that all `vcpkg` dependencies are correctly resolved.
+
+For further help, open an issue on the [GitHub repository](https://github.com/Query-farm/duckdb-airport-extension/issues).
+
+#### 14. How can I debug connectivity or performance issues?
+
+Enable verbose logging in DuckDB, and inspect any error messages during extension loading or queries. You may also use gRPC tracing tools or network diagnostics to analyze connectivity with Arrow Flight servers.
