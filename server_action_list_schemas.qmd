@@ -55,7 +55,7 @@ Each schema is represented as a `AirportSerializedSchema` structure:
 struct AirportSerializedSchema
 {
   // The name of the schema
-  std::string schema;
+  std::string name;
   // The description of the schema
   std::string description;
   // Any tags to apply to the schema.

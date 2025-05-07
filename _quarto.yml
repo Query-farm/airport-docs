@@ -15,12 +15,14 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - text: "Vision / Motivation"
-        href: motivation.qmd
-      - text: "Data-as-a-Service"
-        href: data_as_a_service.qmd
-      - text: "Data Strategy"
-        href: rethinking_data_strategy_airport_extension.qmd
+      - text: "Why use Airport?"
+        menu:
+          - text: "Why Airport Exists"
+            href: motivation.qmd
+          - text: "Airport as part of Data-as-a-Service"
+            href: data_as_a_service.qmd
+          - text: "Rethinking Data Strategy"
+            href: rethinking_data_strategy_airport_extension.qmd
   sidebar:
       style: "docked"
       contents:

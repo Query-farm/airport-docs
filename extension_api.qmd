@@ -9,16 +9,20 @@ These functions are added to the `main` schema:
 * [`airport_flights`](#airport_flights)
 * [`airport_take_flight`](#airport_take_flight)
 * [`airport_user_agent`](#airport_user_agent)
+* [`airport_action`](#airport_action)
 
 These macros are added to the `main` schema:
 
 * [`airport_databases`](#airport_databases)
 
+
 ::: {.callout-tip}
 Calling `airport_flights` and `airport_take_flight` are considered a lower level interface.  Airport also [integrates with the DuckDB catalog](catalog_integration.qmd) the allows Arrow Flights to operate much like DuckDB Tables.
 :::
 
-## Function Descriptions
+---
+
+## Descriptions
 
 ### <a name="airport_flights">`airport_flights`</a>
 
@@ -122,21 +126,23 @@ airport_user_agent()
 
 ---
 
-### <a name="airport_databases">`airport_databases`</a>
+### <a name="airport_action">`airport_action`</a>
 
-This is a table returning macro that requests an Arrow Flight from the specified server with the fixed name of `__databases`.  Its purpose is to allow the list of possible databases that could be attached to be listed.
+This is a table returning function that calls the `DoAction` RPC and returns the results as a table returning function.
 
 __Example:__
 
 ```sql
-SELECT * FROM airport_databases('grpc://localhost:8815/');
+SELECT * FROM airport_action('grpc://localhost:8815/', 'list_schemas');
 ```
 
 __Function Signature:__
 
 ```sql
-airport_databases(
+airport_action(
   location,
+  action_name,
+  parameter,
   auth_token="token_value",
   secret="secret_name",
   headers={})
@@ -153,9 +159,47 @@ All arguments passed by name are optional.
 | Argument | Type | Description |
 |--------|---|-------------------------------|
 | location | `VARCHAR` | This is the location of the Flight server |
+| action_name | `VARCHAR` | The name of the action. |
+| parameter | `VARCHAR` | An optional parameter value to supply to the action. |
 | auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
 | secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
 | headers | `MAP(VARCHAR, VARCHAR)` | A map of extra gRPC headers to send with requests to the Flight server. |
+
+__Returning Value:__
+
+There is a single column returned called `action` with a type of `BLOB`.  A `DoAction` RPC can return multiple results, but since the server does not provide any type information about the response the raw bytes are returned.
+
+---
+
+### <a name="airport_databases">`airport_databases`</a>
+
+This is a table returning macro that requests an Arrow Flight from the specified server with the fixed name of `__databases`.  Its purpose is to allow the list of possible databases that could be attached to be listed.
+
+__Example:__
+
+```sql
+SELECT * FROM airport_databases('grpc://localhost:8815/');
+```
+
+__Function Signature:__
+
+```sql
+airport_databases(
+  location
+)
+```
+
+__Arguments:__
+
+:::{.callout-note}
+
+All arguments passed by name are optional.
+
+:::
+
+| Argument | Type | Description |
+|--------|---|-------------------------------|
+| location | `VARCHAR` | This is the location of the Flight server |
 
 __Returning Value:__
 

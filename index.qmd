@@ -1,5 +1,5 @@
 ---
-title: "Airport Extension for DuckDB"
+title: "Airport for DuckDB"
 ---
 
 <img src="https://duckdb.org/images/logo-dl/DuckDB_Logo-stacked.png" style="float:right" width="100px" alt="DuckDB Logo"/>
