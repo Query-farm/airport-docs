@@ -6,7 +6,15 @@ The `create_transaction` action is used to obtain a new transaction identifier.
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.  It is just the name of the database name as a string.
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+struct AirportGetCatalogVersionParams
+{
+  string catalog_name;
+  MSGPACK_DEFINE_MAP(catalog_name);
+};
+```
 
 ## Output Results
 
@@ -16,6 +24,6 @@ The `create_table` action is expected to return a `msgpack` encoded structure.
 struct GetTransactionIdentifierResult
 {
   std::optional<std::string> identifier;
-  MSGPACK_DEFINE(identifier)
+  MSGPACK_DEFINE_MAP(identifier)
 };
 ```

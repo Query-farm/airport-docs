@@ -6,7 +6,15 @@ This `catalog_version` action is used to determine the current version of the da
 
 ## Input Parameters
 
-The name of the database is passed as a string to the action.
+There is a single `msgpack` serialized parameter passed to the action.
+
+```c++
+struct AirportGetCatalogVersionParams
+{
+  string catalog_name;
+  MSGPACK_DEFINE_MAP(catalog_name);
+};
+```
 
 ## Output Result.
 
@@ -17,7 +25,7 @@ struct GetCatalogVersionResult
 {
   uint64_t catalog_version;
   bool is_fixed;
-  MSGPACK_DEFINE(catalog_version, is_fixed)
+  MSGPACK_DEFINE_MAP(catalog_version, is_fixed)
 };
 ```
 
