@@ -21,5 +21,6 @@ struct AirportCreateSchemaParameters
 };
 ```
 
-The return value from `create_schema` action discarded. If an error occurrs it is expected that a Arrow Flight exception will be raised.
+## Output Result
 
+The Arrow Flight server responds with a single `msgpack`-serialized message containing a `AirportSerializedContentsWithSHA256Hash` as describe in the [`list_schemas`](server_action_list_schemas.qmd) RPC.
