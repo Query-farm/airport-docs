@@ -33,6 +33,6 @@ struct AirportRemoveTableColumnParameters : AirportAlterBase
 
 ## Return Value
 
-The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
 
 
