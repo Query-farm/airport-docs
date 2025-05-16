@@ -269,6 +269,17 @@ Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the A
 
 Database schema information is retrieved using an Arrow Flight RPC action called via `DoAction`[^1] with the name [`list_schemas`](server_action_list_schemas.qmd).
 
+## Case Sensitivity
+DuckDB [table and identifier names are case-insensitive](https://duckdb.org/docs/stable/sql/dialect/keywords_and_identifiers.html) but the names are not transformed (or standardized to a particular case) before they are sent to the Arrow Flight server. As such a query like
+
+```sql
+SELECT FROM from FooBar;
+```
+
+Will look for a table named `FooBar`.
+
+It is the responsibility of the server to match the behavior of DuckDB.
+
 [^1]:
     From the Arrow Flight documentation:
 

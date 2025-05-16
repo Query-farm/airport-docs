@@ -20,6 +20,18 @@ CREATE TABLE example.main.employees (
 );
 ```
 
+## Apache Arrow Extension Types
+
+DuckDB supports several custom data types—such as `uuid`, `tinyint`, `hugeint`, `uhugeint`, `time_tz`, `json`, `bit`, and `varint`—using Apache Arrow’s extension type mechanism. These extension types preserve rich type information when exchanging data with other users of Apache Arrow.
+
+To include extension type metadata when exporting data to Arrow, enable lossless conversion by setting the `arrow_lossless_conversion` configuration option:
+
+```sql
+SET arrow_lossless_conversion = true;
+```
+
+This ensures that DuckDB emits the appropriate Arrow extension types, allowing Arrow Flight servers to interpret the data with full type fidelity.
+
 ## Arrow Flight Server Implementation Notes
 
 The Airport extension will perform a `DoAction` Arrow Flight RPC with a method name of [`create_table`](server_action_create_table.qmd).

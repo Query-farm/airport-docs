@@ -38,6 +38,10 @@ When the scalar function is invoked, a [DoExchange](https://arrow.apache.org/doc
 
 For information about how to register an Arrow Flight as a scalar function refer to [Server Catalog Integration](server_catalog_integration.html).
 
+### Supporting the `ANY` Type
+
+Scalar function arguments in DuckDB can use the `ANY` type. Since Apache Arrow does not natively support a generic `ANY` column type, a workaround is used: if a field in the Arrow schema contains metadata with the key `is_any_type` and a non-empty value, that field is treated as having the DuckDB ANY type.
+
 ### Supplied gRPC Headers for `DoExchange` request.
 
 | Header Name        | Description                              |

@@ -84,6 +84,8 @@ website:
                 href: server_row_and_column_filtering.qmd
               - text: "Client Versioning"
                 href: server_client_versioning.qmd
+              - text: "Data Types"
+                href: server_data_types.qmd
               - text: "Request Headers"
                 href: standard_headers.qmd
               - section: "RPC Actions"

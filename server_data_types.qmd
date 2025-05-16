@@ -1,0 +1,25 @@
+---
+title: "Data Types"
+---
+
+Arrow Flight servers can choose which data types they support. Since Arrow Flight builds on Apache Arrow, it can serialize any data type that Arrow supports—including complex nested types like structs, maps, and unions.
+
+
+::: {.callout-warning}
+Support for specific data types can vary between Apache Arrow implementations in different programming languages.
+
+Be sure to check whether the data types you need are supported in your chosen language. For instance, the `sparse_union` type is not well supported in Python with PyArrow.
+:::
+
+## Apache Arrow Extension Types
+
+
+DuckDB extends Apache Arrow with several custom data types—such as `uuid`, `tinyint`, `hugeint`, `uhugeint`, `time_tz`, `json`, `bit`, and `varint`—using Arrow’s extension type mechanism. These extension types help preserve rich type information when sharing data with other Arrow-compatible tools.
+
+To ensure this metadata is included when exporting data to Arrow, enable lossless conversion by setting the following configuration option:
+
+```sql
+SET arrow_lossless_conversion = true;
+```
+
+This setting instructs DuckDB to emit Arrow extension types, allowing Arrow Flight servers to retain and interpret full type information accurately.
