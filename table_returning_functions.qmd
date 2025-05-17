@@ -36,7 +36,7 @@ If you wish to use the DuckDB ANY datatype, create a standard Arrow field in a s
 
 ### Schemas for Table Returning In-Out Functions
 
-If the table returning function is desired to be an "in-out" function, there must be one and only one field in the Arrow input schema with a metadata key named `is_table_input`  with a non empty string value.  This column will be treated as the `TABLE` DuckDB data type by the Airport extension.
+If the table returning function is desired to be an "in-out" function, there must be one and only one field in the Arrow input schema with a metadata key named `is_table_type`  with a non empty string value.  This column will be treated as the `TABLE` DuckDB data type by the Airport extension.
 
 ### Implementation
 
