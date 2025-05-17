@@ -14,7 +14,13 @@ struct AirportEndpointParameters
   std::string json_filters;
   std::vector<idx_t> column_ids;
 
-  MSGPACK_DEFINE_MAP(json_filters, column_ids)
+  // The parameters to the table function, which should
+  // be included in the opaque ticket data returned
+  // for each endpoint.
+  std::string table_function_parameters;
+  std::string table_function_input_schema;
+
+  MSGPACK_DEFINE_MAP(json_filters, column_ids, table_function_parameters, table_function_input_schema)
 };
 
 struct AirportGetFlightEndpointsRequest
