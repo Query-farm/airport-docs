@@ -18,6 +18,12 @@ CREATE TABLE example.main.employees (
   name varchar,
   id integer
 );
+
+-- You can also CREATE TABLE AS
+CREATE TABLE more_employees AS (
+  SELECT * from source_table
+);
+
 ```
 
 ## Apache Arrow Extension Types
