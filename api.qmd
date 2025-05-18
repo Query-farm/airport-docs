@@ -1,0 +1,216 @@
+---
+title: "Extension API"
+---
+
+When the Airport extension is loaded into a DuckDB session it supplies a number of functions that can be called.
+
+These functions are added to the `main` schema:
+
+* [`airport_flights`](#airport_flights)
+* [`airport_take_flight`](#airport_take_flight)
+* [`airport_user_agent`](#airport_user_agent)
+* [`airport_action`](#airport_action)
+
+These macros are added to the `main` schema:
+
+* [`airport_databases`](#airport_databases)
+
+
+::: {.callout-tip}
+Calling `airport_flights` and `airport_take_flight` are considered a lower level interface.  Airport also [integrates with the DuckDB catalog](catalog_integration.qmd) the allows Arrow Flights to operate much like DuckDB Tables.
+:::
+
+---
+
+## Descriptions
+
+### `airport_flights`
+
+This is a table returning function[^1] that produces a list of Arrow Flights that are available at the server specified.  Optionally criteria can be supplied that may be used by the server as it chooses.
+
+__Example:__
+
+```sql
+SELECT * FROM airport_flights('grpc://127.0.0.1:8815', null);
+```
+
+__Function Signature:__
+
+```sql
+airport_flights(
+  location,
+  criteria,
+  auth_token="token_value",
+  secret="secret_name")
+```
+
+__Arguments:__
+
+:::{.callout-note}
+
+All arguments passed by name are optional.
+
+:::
+
+| Argument | Type | Description |
+|--------|---|-------------------------------|
+| location | `VARCHAR` | This is the location of the Flight server. Typically this will be of the form `grpc://$HOST:PORT` or `grpc+tls://$HOST:$PORT` |
+| criteria | `VARCHAR` | This is free-form criteria to pass to the Flight server that may be used to filter the list of returned. |
+| auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
+| secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the auth_token. |
+
+---
+
+### `airport_take_flight`
+
+This is a table returning function that returns the contents of an Arrow Flight.
+
+__Example:__
+
+```sql
+SELECT * FROM airport_take_flight('grpc://localhost:8815/', ['example-stream']);
+```
+
+__Function Signature:__
+
+```sql
+airport_take_flight(
+  location,
+  descriptor,
+  auth_token="token_value",
+  secret="secret_name",
+  ticket="ticket_value",
+  at_unit='VERSION' | 'TIMESTAMP',
+  at_value='42',
+  headers={})
+```
+
+__Arguments:__
+
+:::{.callout-note}
+
+All arguments passed by name are optional.
+
+:::
+
+| Argument | Type | Description |
+|--------|---|-------------------------------|
+| location | `VARCHAR` | This is the location of the Flight server |
+| descriptor | `ANY` | This is the descriptor of the flight.  If it is a `VARCHAR` or `BLOB` it is interpreted as a CMD flight descriptor, if it is an `ARRAY` or `VARCHAR[]` it is considered a path-based descriptor.  Any other type results in an error being raised.  |
+| auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
+| secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
+| ticket | `BLOB` | This is the ticket (an opaque binary token) supplied to the Flight server it overrides any ticket supplied from the server by a call to `GetFlightInfo` from DuckDB. |
+| headers | `MAP(VARCHAR, VARCHAR)` | A map of extra gRPC headers to send with requests to the Flight server. |
+| at_unit | `VARCHAR` | The point-in-time specification unit can be `TIMESTAMP` or `VERSION` |
+| at_value | `VARCHAR` | The point-in-time specification value |
+
+### `airport_user_agent`
+
+This is a scalar function that returns the current Airport user agent header value.  This value is sent to all Arrow Flight servers to that they can determine if they are compatible with this version of the Airport extension.
+
+__Example:__
+
+```sql
+SELECT airport_user_agent();
+```
+
+__Function Signature:__
+
+```sql
+airport_user_agent()
+
+┌──────────────────────┐
+│ airport_user_agent() │
+│       varchar        │
+├──────────────────────┤
+│ airport/20240820     │
+└──────────────────────┘
+```
+
+---
+
+### `airport_action`
+
+This is a table returning function that calls the `DoAction` RPC and returns the results as a table returning function.
+
+__Example:__
+
+```sql
+SELECT * FROM airport_action('grpc://localhost:8815/', 'list_schemas');
+```
+
+__Function Signature:__
+
+```sql
+airport_action(
+  location,
+  action_name,
+  parameter,
+  auth_token="token_value",
+  secret="secret_name",
+  headers={})
+```
+
+__Arguments:__
+
+:::{.callout-note}
+
+All arguments passed by name are optional.
+
+:::
+
+| Argument | Type | Description |
+|--------|---|-------------------------------|
+| location | `VARCHAR` | This is the location of the Flight server |
+| action_name | `VARCHAR` | The name of the action. |
+| parameter | `VARCHAR` | An optional parameter value to supply to the action. |
+| auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
+| secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
+| headers | `MAP(VARCHAR, VARCHAR)` | A map of extra gRPC headers to send with requests to the Flight server. |
+
+__Returning Value:__
+
+There is a single column returned called `action` with a type of `BLOB`.  A `DoAction` RPC can return multiple results, but since the server does not provide any type information about the response the raw bytes are returned.
+
+---
+
+### `airport_databases`
+
+This is a table returning macro that requests an Arrow Flight from the specified server with the fixed name of `__databases`.  Its purpose is to allow the list of possible databases that could be attached to be listed.
+
+__Example:__
+
+```sql
+SELECT * FROM airport_databases('grpc://localhost:8815/');
+```
+
+__Function Signature:__
+
+```sql
+airport_databases(
+  location
+)
+```
+
+__Arguments:__
+
+:::{.callout-note}
+
+All arguments passed by name are optional.
+
+:::
+
+| Argument | Type | Description |
+|--------|---|-------------------------------|
+| location | `VARCHAR` | This is the location of the Flight server |
+
+__Returning Value:__
+
+It is up to the server to determine the schema it wishes to return for the `__databases` flight, but it is suggested that it follow this schema.
+
+| Field Name | Type | Description |
+|-----|------|-------------|
+| name | `VARCHAR` | The name of the database that can be used in an `ATTACH` call to the Arrow Flight server. |
+| description | `VARCHAR` | An optional description of the database. |
+
+[^1]: Table returning functions like their name suggest return "tables" (with rows and columns), this is contrased by scalar functions that return a single scalar value.  Common examples in DuckDB of table returning functions are [`read_csv()`](https://duckdb.org/docs/data/csv/overview.html) or [`read_parquet()`](https://duckdb.org/docs/data/parquet/overview.html).

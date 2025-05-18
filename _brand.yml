@@ -1,0 +1,12 @@
+typography:
+  fonts:
+    - family: Noto Sans
+      source: google
+    - family: Headland One
+      source: google
+    - family: Fira Code
+      source: google
+
+  base: Noto Sans
+  headings: Headland One
+  monospace: Fira Code
