@@ -59,7 +59,6 @@ All arguments passed by name are optional.
 | auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
 | secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the auth_token. |
 
-
 ---
 
 ### <a name="airport_take_flight">`airport_take_flight`</a>
@@ -100,6 +99,8 @@ All arguments passed by name are optional.
 | secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
 | ticket | `BLOB` | This is the ticket (an opaque binary token) supplied to the Flight server it overrides any ticket supplied from the server by a call to `GetFlightInfo` from DuckDB. |
 | headers | `MAP(VARCHAR, VARCHAR)` | A map of extra gRPC headers to send with requests to the Flight server. |
+| at_unit | `VARCHAR` | The point-in-time specification unit can be `TIMESTAMP` or `VERSION` |
+| at_value | `VARCHAR` | The point-in-time specification value |
 
 ### <a name="airport_user_agent">`airport_user_agent`</a>
 
