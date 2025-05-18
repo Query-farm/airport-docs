@@ -44,32 +44,31 @@ The Airport extension does two different things, depending if the table returnin
 
 #### Regular Table Returning Function
 
-When the table returning function is called.  The Airport extension will make a `DoAction` Arrow Flight RPC to the server with an action named `table_function_flight_info` to obtain a `FlightInfo` which will then be called with the `DoGet` Arrow Flight RPC method.  It is expected the server may interpret the parameters and return a new schema or otherwise encode the parameters in the returned `ticket` field of the `FlightInfo`.
-
-The `table_function_flight_info` action receive this `msgpack` encoded map of parameters as its input:
-
-```c++
-struct GetFlightInfoTableFunctionParameters
-{
-  std::string schema_name;
-  std::string action_name;
-  std::string parameters;
-  std::string table_input_schema;
-
-  MSGPACK_DEFINE_MAP(schema_name, action_name, parameters, table_input_schema)
-};
-```
-
-The `parameters` field contains a serialized Arrow Record Batch with the parameter values.  The field names of the record batch are the same as defined by the input schema of the function.
-
-The `table_function_flight_info` is expected to return a single serialized Arrow `FlightInfo` structure, that will then be used to retrieve the data.  The custom action of ``table_function_flight_info` is used because it allows additional data to be serialized compared with the `GetFlightInfo` Arrow RPC method.
-
+When the table returning function is called.  The Airport extension will make a `DoAction` Arrow Flight RPC to the server with an action named [`table_function_flight_info`](server_action_table_function_flight_info.qmd) to obtain a `FlightInfo` which will then be called with the `DoGet` Arrow Flight RPC method.  It is expected the server may interpret the parameters and return a new schema or otherwise encode the parameters in the returned `ticket` field of the `FlightInfo`.
 
 #### In-Out Table Function
 
 In the case of an "in-out" table returning function a `DoExchange` Arrow RPC is made.
 
-The input schema for the `DoExchange` call is the schema of the "in" table.  The serialized parameters to the table returning function are sent an initial metadata message on the `DoExchange` stream.  The parameters are Arrow Record Batch with a single row.
+The input schema for the `DoExchange` call is the schema of the "in" table.  The serialized parameters to the table returning function are sent an initial metadata message on the `DoExchange` stream.  This message is `msgpack` encoded.
+
+```c++
+struct AirportTableFunctionInOutParameters
+{
+  std::string json_filters;
+  std::vector<idx_t> column_ids;
+
+  // The parameters to the table function, which should
+  // be included in the opaque ticket data returned
+  // for each endpoint.
+  std::string parameters;
+
+  std::string at_unit;
+  std::string at_value;
+
+  MSGPACK_DEFINE_MAP(json_filters, column_ids, parameters, at_unit, at_value)
+};
+```
 
 The rows produced by the function are read from the `DoExchange` stream.
 

@@ -2,7 +2,13 @@
 title: "`endpoints` Action"
 ---
 
-This `endpoints` action returns the Arrow Flight endpoints for a flight descriptor. By using the action it is possible to pass along the query predicate information to the server.
+This `endpoints` action returns the Arrow Flight endpoints for a flight descriptor. By using the action it is possible to pass along additional information to the server.
+
+This information is:
+
+  - query predicates
+  - referenced columns ids
+  - point in time specification
 
 ## Input Parameters
 
@@ -20,7 +26,12 @@ struct AirportEndpointParameters
   std::string table_function_parameters;
   std::string table_function_input_schema;
 
-  MSGPACK_DEFINE_MAP(json_filters, column_ids, table_function_parameters, table_function_input_schema)
+  // Specify the point in time information if not specified
+  // these fields are empty strings.
+  std::string at_unit;
+  std::string at_value;
+
+  MSGPACK_DEFINE_MAP(json_filters, column_ids, table_function_parameters, table_function_input_schema, at_unit, at_value)
 };
 
 struct AirportGetFlightEndpointsRequest
@@ -35,5 +46,72 @@ struct AirportGetFlightEndpointsRequest
 
 ## Output Results
 
-The `endpoints` action is expected to return a single `msgpack` encoded result which is a `vector<std::string>` of serialized `FlightEndpoint` structures.
+The server responds with a `msgpack`-serialized `std::vector<std::string>` of `FlightEndpoint` objects. These are deserialized and processed in parallel using DuckDB’s thread pool. The union of all returned endpoints represents the complete set of data of the flight.
 
+Each endpoint contains one or more locations where the data resides. Arrow Flight locations usually point to servers capable of serving data via the `DoGet` RPC, but the Airport extension adds additional funcitonality.
+
+#### `data://` URIs as Endpoint Locations
+
+DuckDB’s Airport extension expands Arrow Flight by supporting `data://` URIs as endpoint locations. These URIs embed a serialized DuckDB function call:
+
+`data:application/x-msgpack-duckdb-function-call;base64,{DATA}`
+
+The embedded data is a base64-encoded msgpack structure representing:
+
+```c++
+struct AirportDuckDBFunctionCall
+{
+    std::string function_name;
+    // This is the serialized Arrow IPC table containing
+    // both the arguments and the named parameters for the function
+    // call.
+    std::string data;
+
+    MSGPACK_DEFINE_MAP(function_name, data)
+};
+```
+
+The data field contains an Arrow table with arguments and named parameters:
+
+* Arguments are named `arg_0`, `arg_1`, etc.
+* Named parameters use the name of the parameter and are set to the parameter value.
+* It is expected the Arror table only contains one row.
+
+This mechanism allows DuckDB to treat function calls (e.g., reading CSV/ Parquet/JSON files or Iceberg/Delta Lake tables) as Flight endpoint sources.
+
+#### Example: Calling `read_csv` via PyArrow
+
+Here's how to create a `data://` URI that calls `read_csv` using PyArrow:
+
+```python
+import pyarrow as pa
+
+dict_to_msgpack_duckdb_call_data_uri(
+    {
+        "function_name": "read_csv",
+        # So arguments could be a record batch.
+        "data": serialize_arrow_ipc_table(
+            pa.Table.from_pylist(
+                [
+                    {
+                        "arg_0": [
+                            "/tmp/example-0.csv",
+                            "/tmp/example-1.csv",
+                            "/tmp/example-2.csv",
+                        ],
+                        "hive_partitioning": False,
+                    }
+                ],
+                schema=pa.schema(
+                    [
+                        pa.field("arg_0", pa.list_(pa.string())),
+                        pa.field("hive_partitioning", pa.bool_()),
+                    ]
+                ),
+            )
+        ),
+    }
+)
+```
+
+If the location is a `grpc://` URI, the extension performs an Arrow Flight `DoGet` RPC with the flight descriptor and ticket, streaming the data as necessary.

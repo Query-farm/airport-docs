@@ -1,0 +1,26 @@
+---
+title: "Time Travel"
+---
+
+As of version 1.3.0, DuckDB supports time travel (also known as point-in-time) SQL queries, allowing users to query the historical state of a table.
+
+
+Some examples are:
+
+```sql
+-- Query table as it existed at a specific timestamp
+SELECT * FROM example.main.exployees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
+
+-- Query table by a specific version number
+SELECT * FROM example.main.employees AT (VERSION => 42);
+```
+
+Arrow Flight servers may optionally implement support for time travel queries. If a requested timestamp or version is not available - or if the server chooses not to support time travel - it may raise an appropriate exception.
+
+Point-in-time information is relevant in the following server actions:
+
+- [`endpoints`](server_action_endpoints.qmd)
+- [`table_function_flight_info`](server_action_table_function_flight_info.qmd)
+
+It is also passed to [table returning functions](table_returning_functions.qmd) that have a table as a parameter (in/out table functions);
+

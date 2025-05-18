@@ -82,6 +82,8 @@ website:
                 href: request_authentication.qmd
               - text: "Row and Column Level Filtering"
                 href: server_row_and_column_filtering.qmd
+              - text: "Time Travel"
+                href: server_time_travel.qmd
               - text: "Client Versioning"
                 href: server_client_versioning.qmd
               - text: "Data Types"

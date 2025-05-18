@@ -17,7 +17,13 @@ struct AirportTableFunctionFlightInfoParameters
   std::string parameters;
   std::string table_input_schema;
 
-  MSGPACK_DEFINE_MAP(catalog, schema_name, action_name, parameters, table_input_schema)
+  // Specify the point in time information if not specified
+  // these fields are empty strings.
+  std::string at_unit;
+  std::string at_value;
+
+
+  MSGPACK_DEFINE_MAP(catalog, schema_name, action_name, parameters, table_input_schema, at_unit, at_value)
 };
 ```
 

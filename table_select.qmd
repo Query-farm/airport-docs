@@ -20,6 +20,12 @@ CREATE TABLE example.main.employees (
 );
 
 SELECT * FROM example.main.employees;
+
+-- Queries that specify a point in time
+-- or version of the table are supported, if
+-- the Arrow flight server supports it.
+SELECT * FROM example.main.exployees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
+SELECT * FROM example.main.employees AT (VERSION => 42);
 ```
 
 You can join Airport tables with other tables or use multiple Airport sources in a single query. DuckDB fetches them in parallel, constrained only by available threads. If a table appears multiple times, each use results in a separate request.
