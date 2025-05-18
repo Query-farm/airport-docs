@@ -36,10 +36,6 @@ You can join Airport tables with other tables or use multiple Airport sources in
 
 To learn how to register an Arrow Flight data a a DuckDB table, refer to [Server Catalog Integration](server_catalog_integration.html).
 
-#### Projection Optimization
-
-The gRPC header `airport-duckdb-column-ids` will contain a comma-separated list of column indexes that are requested in the query.  The Arrow Flight server can return nulls for columns that are not requested.  This can be used to reduce the amount of data that is sent in the response.
-
 ### Endpoint / Location Lookup
 
 To fetch data from a flight, the Airport extension performs a `DoAction` RPC named [`endpoints`](server_action_endpoints.qmd), instead of the standard `GetFlightInfo` RPC. This is done because:

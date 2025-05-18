@@ -2,15 +2,17 @@
 title: "Airport for DuckDB"
 ---
 
-<img src="https://duckdb.org/images/logo-dl/DuckDB_Logo-stacked.png" style="float:right" width="100px" alt="DuckDB Logo"/>
-
 The **Airport** extension brings [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) support to [DuckDB](https://duckdb.org), enabling DuckDB to query, modify, and store data via Arrow Flight servers. A DuckDB extension is a plugin that expands DuckDB's core functionality by adding new capabilities.
-
-
 
 To understand the rationale behind the development of this extension, check out the [motivation for creating the extension](motivation.qmd).
 
+
 ## Getting started
+
+<img src="airport-duck-2.jpg" style="float:right; width:250px; padding: 1em;" alt="DuckDB Logo"/>
+
+
+
 
 The Airport extension is a [DuckDB community extension](https://duckdb.org/community_extensions/).
 To install it, run the following SQL inside DuckDB:

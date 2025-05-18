@@ -3,18 +3,37 @@ project:
 
 website:
   title: "Airport for DuckDB"
+  site-url: https://airport.query.farm
+  repo-url: https://github.com/Query-farm/airport-docs
+  google-analytics: "G-GW0ZEXZ43G"
+  cookie-consent: true
+
+  page-footer:
+    left: |
+      &copy; 2025 <a href="https://query.farm">Query.Farm</a>
+    right: |
+      Built for: <a href="https://duckdb.org"><img src="https://duckdb.org/images/logo-dl/DuckDB_Logo-horizontal.png" style="height: 2em; padding-right: 2em;" alt="DuckDB Logo"/></a>
+      Made in: <a href="https://www.miami.gov/Home"><img src="https://upload.wikimedia.org/wikipedia/commons/8/86/City_of_Miami_Primary.svg" height="40px"/></a>
+      <a href="https://www.charlottesville.gov"><img src="https://www.charlottesville.gov/ImageRepository/Document?documentID=10798" height="40px"/></a>
+      <a href="https://europa.eu"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" height="40px"/></a>
   announcement:
     icon: info-circle
     dismissable: true
-    content: "This is a pre-release documentation and is subject to change and revision."
+    content: "This is a pre-release documentation and is subject to change. Airport will be released after DuckDB 1.3.0 is released."
     type: info
     position: below-navbar
   navbar:
-    background: primary
     search: true
+    pinned: true
+    right:
+      - icon: github
+        href: https://github.com/Query-farm/duckdb-airport-extension
+        aria-label: GitHub
     left:
       - href: index.qmd
         text: Home
+      - text: Features
+        href: features.qmd
       - text: "Why use Airport?"
         menu:
           - text: "Why Airport Exists"
@@ -23,11 +42,13 @@ website:
             href: data_as_a_service.qmd
           - text: "Rethinking Data Strategy"
             href: rethinking_data_strategy_airport_extension.qmd
+
   sidebar:
       style: "docked"
+      logo-alt: A duck at an airport
       contents:
         - text: "Extension API"
-          href: extension_api.qmd
+          href: api.qmd
         - text: "---"
         - text: "Catalog Integration"
           href: catalog_integration.qmd
@@ -144,7 +165,7 @@ website:
 
 format:
   html:
-    theme: zephyr
+    theme: [zephyr, theme.scss]
     mainfont: Roboto,Open Sans, Helvetica
     css: styles.css
     toc: true

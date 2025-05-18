@@ -6,7 +6,7 @@ title: "Frequently Asked Questions"
 
 #### 1. Could Airport be implemented without Arrow Flight?
 
-  Yes, but using REST would restrict features that rely on bi-directional streaming. Airport uses gRPC, which currently limits compatibility with WebAssembly and browser-based environments.
+  Yes, but using REST would restrict features that rely on bi-directional streaming. Airport uses [gRPC](https://grpc.io), which currently limits compatibility with WebAssembly and browser-based environments.
 
 #### 2. Why is `msgpack` used instead of JSON?
 
@@ -85,16 +85,35 @@ Airport enables DuckDB to query remote Arrow Flight servers as if they were loca
 
 Yes. Airport can connect to any Arrow Flight server that implements the standard protocol and provides schemas compatible with DuckDB.
 
+#### 13. What is the difference between Airport and MotherDuck?
+
+The Airport Extension and MotherDuck both enhance DuckDB’s capabilities by enabling remote access to data and computation, but they differ significantly in architecture, ownership, and flexibility.
+
+| Feature             | **Airport Extension**                                                | **MotherDuck**                                                |
+| ------------------- | ------------------------------- | ------------------------------------ |
+| **Type**            | Open-source DuckDB extension                                         | Hosted DuckDB service                                         |
+| **Ownership**       | Community-driven (MIT licensed)                                      | Commercial product by [MotherDuck](https://motherduck.com)    |
+| **Installation**    | Install via `INSTALL airport from community` and use locally                 | Requires signup and a managed backend                         |
+| **Data Location**   | Query data from *any* Arrow Flight server        | Queries run against data stored in the MotherDuck cloud       |
+| **Execution Model** | DuckDB is the engine, Airport proxies remote access via Arrow Flight.  All data processing still occurrs in DuckDB | DuckDB queries are **pushed** to the cloud and executed there |
+| **Extensibility**   | Easily implement your own Flight servers and functions               | Closed-source backend, not user-extensible                    |
+| **Security**        | Security is the responsibility of Arrow Flight servers | Cloud security managed by MotherDuck                          |
+| **Use Cases**       | Access arbitrary, dynamic, and private sources from SQL              | Collaborate on cloud-native DuckDB databases                  |
+| **Data Federation** | Yes — Airport can federate over REST APIs, files, databases          | Limited to what MotherDuck integrates natively                |
+| **License**         | MIT (open source)                                                    | Commercial (proprietary backend)                              |
+
+
+
 ---
 
 ## Troubleshooting and Support
 
-#### 13. What should I do if the extension fails to build or load?
+#### 14. What should I do if the extension fails to build or load?
 
 Ensure you are using a supported DuckDB version (1.3.0 or greater). If building from source, verify that all `vcpkg` dependencies are correctly resolved.
 
 For further help, open an issue on the [GitHub repository](https://github.com/Query-farm/duckdb-airport-extension/issues).
 
-#### 14. How can I debug connectivity or performance issues?
+#### 15. How can I debug connectivity or performance issues?
 
 Enable verbose logging in DuckDB, and inspect any error messages during extension loading or queries. You may also use gRPC tracing tools or network diagnostics to analyze connectivity with Arrow Flight servers.
