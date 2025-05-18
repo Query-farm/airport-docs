@@ -6,23 +6,25 @@ The Airport extension brings [Arrow Flight](https://arrow.apache.org/blog/2019/1
 
 ## Key Features
 
-Supported SQL Actions:
+### Supported SQL:
 
+- Databases
+  - [`ATTACH`](catalog_integration.qmd#attaching-an-airport-database)
+  - `DETACH`
 - Tables
-  - `SELECT`
-  - `UPDATE`
-  - `INSERT`
-  - `DELETE`
-  - `CREATE TABLE`
-  - `CREATE TABLE AS`
-  - `DROP`
-  - `ALTER TABLE`
+  - [`SELECT`](table_select.qmd)
+  - [`UPDATE`](table_update.qmd)
+  - [`INSERT`](table_insert.qmd)
+  - [`DELETE`](table_delete.qmd)
+  - [`CREATE TABLE`](table_create.qmd)
+  - [`DROP`](table_drop.qmd)
+  - [`ALTER TABLE`](table_alter.qmd)
 - Schemas
-  - `CREATE SCHEMA`
-  - `DROP SCHEMA`
-
+  - [`CREATE SCHEMA`](schema_create.qmd)
+  - [`DROP SCHEMA`](schema_drop.qmd)
 
 ### Time Travel
+
 Airport supports time travel on tables where supported by the remote system. You can query previous versions of data or audit historical changes using standard SQL idioms.
 
 ### Custom Scalar Functions (UDFs)

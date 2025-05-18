@@ -36,6 +36,16 @@ You can join Airport tables with other tables or use multiple Airport sources in
 
 To learn how to register an Arrow Flight data a a DuckDB table, refer to [Server Catalog Integration](server_catalog_integration.html).
 
+### Time Travel / Point in Time Lookup
+
+When a query includes time travel or point-in-time semantics, the Airport extension issues a [`flight_info`](server_action_flight_info.qmd) RPC. This retrieves the `FlightInfo` structure representing the table as it existed at that specific moment in time. This ensures that queries reflect the correct schema, even if the table has evolved over time.
+
+::: {.callout-caution}
+
+If the table schema has changed over time, currently DuckDB crashes when using a time travel query.  This is tracked in issue: [#17531](https://github.com/duckdb/duckdb/issues/17531).
+:::
+
+
 ### Endpoint / Location Lookup
 
 To fetch data from a flight, the Airport extension performs a `DoAction` RPC named [`endpoints`](server_action_endpoints.qmd), instead of the standard `GetFlightInfo` RPC. This is done because:
