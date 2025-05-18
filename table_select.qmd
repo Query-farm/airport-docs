@@ -40,11 +40,6 @@ To learn how to register an Arrow Flight data a a DuckDB table, refer to [Server
 
 When a query includes time travel or point-in-time semantics, the Airport extension issues a [`flight_info`](server_action_flight_info.qmd) RPC. This retrieves the `FlightInfo` structure representing the table as it existed at that specific moment in time. This ensures that queries reflect the correct schema, even if the table has evolved over time.
 
-::: {.callout-caution}
-
-If the table schema has changed over time, currently DuckDB crashes when using a time travel query.  This is tracked in issue: [#17531](https://github.com/duckdb/duckdb/issues/17531).
-:::
-
 
 ### Endpoint / Location Lookup
 
