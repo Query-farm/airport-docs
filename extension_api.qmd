@@ -24,7 +24,7 @@ Calling `airport_flights` and `airport_take_flight` are considered a lower level
 
 ## Descriptions
 
-### <a name="airport_flights">`airport_flights`</a>
+### `airport_flights`
 
 This is a table returning function[^1] that produces a list of Arrow Flights that are available at the server specified.  Optionally criteria can be supplied that may be used by the server as it chooses.
 
@@ -61,7 +61,7 @@ All arguments passed by name are optional.
 
 ---
 
-### <a name="airport_take_flight">`airport_take_flight`</a>
+### `airport_take_flight`
 
 This is a table returning function that returns the contents of an Arrow Flight.
 
@@ -80,6 +80,8 @@ airport_take_flight(
   auth_token="token_value",
   secret="secret_name",
   ticket="ticket_value",
+  at_unit='VERSION' | 'TIMESTAMP',
+  at_value='42',
   headers={})
 ```
 
@@ -102,7 +104,7 @@ All arguments passed by name are optional.
 | at_unit | `VARCHAR` | The point-in-time specification unit can be `TIMESTAMP` or `VERSION` |
 | at_value | `VARCHAR` | The point-in-time specification value |
 
-### <a name="airport_user_agent">`airport_user_agent`</a>
+### `airport_user_agent`
 
 This is a scalar function that returns the current Airport user agent header value.  This value is sent to all Arrow Flight servers to that they can determine if they are compatible with this version of the Airport extension.
 
@@ -127,7 +129,7 @@ airport_user_agent()
 
 ---
 
-### <a name="airport_action">`airport_action`</a>
+### `airport_action`
 
 This is a table returning function that calls the `DoAction` RPC and returns the results as a table returning function.
 
@@ -172,7 +174,7 @@ There is a single column returned called `action` with a type of `BLOB`.  A `DoA
 
 ---
 
-### <a name="airport_databases">`airport_databases`</a>
+### `airport_databases`
 
 This is a table returning macro that requests an Arrow Flight from the specified server with the fixed name of `__databases`.  Its purpose is to allow the list of possible databases that could be attached to be listed.
 
