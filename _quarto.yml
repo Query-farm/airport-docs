@@ -7,7 +7,7 @@ website:
   repo-url: https://github.com/Query-farm/airport-docs
   repo-branch: master
   repo-actions: [edit, source, issue]
-  google-analytics: "G-GW0ZEXZ43G"
+  google-analytics: "G-NQTYGWQD1B"
   cookie-consent: true
   favicon: farm-icon.png
   open-graph: true
@@ -51,7 +51,6 @@ website:
 
   sidebar:
       style: "docked"
-      logo-alt: A duck at an airport
       contents:
         - text: "Extension API"
           href: api.qmd
