@@ -72,3 +72,21 @@ Rusty Conover presented the Airport extension in a presentation titled *"Airport
 
 {{< video https://www.youtube.com/watch?v=-AfgEiE2kaI>}}
 
+
+<div class="card p-4 my-4 bg-note-subtle border border-black rounded-3">
+### Fly High with Airport and DuckDB ✈️ {.unnumbered .unlisted}
+
+Stay connected with Airport — get the latest data source integrations, SQL tips, and project news delivered right to your inbox. We only send updates when there’s something truly exciting.
+
+<form
+  action="https://buttondown.com/api/emails/embed-subscribe/queryfarm-airport"
+  method="post"
+  class="d-flex mt-3"
+>
+  <label class="form-label "for="email"></label>
+  <input type="email" name="email" placeholder="you@example.com" class="form-control me-2" required>
+  <input type="hidden" value="1" name="embed" />
+  <button type="submit" class="btn btn-primary">Subscribe</button>
+</form>
+
+</div>

@@ -1,0 +1,27 @@
+---
+title: "Airport for DuckDB Newsletter"
+---
+
+The **Airport** extension brings [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) support to [DuckDB](https://duckdb.org), allowing you to query remote APIs, serve data securely, and expand DuckDB’s functionality with remote SQL functions.
+
+Whether you’re building Data-as-a-Service platforms or just want more flexible data access — Airport gives DuckDB wings.
+
+
+<div class="card p-4 my-4 bg-note-subtle border border-black rounded-3">
+
+### Stay on the Runway with Airport Updates
+
+Sign up for Airport news — new data connectors, SQL hacks, and project insights — sent straight to your inbox, but only when it counts.
+
+<form
+  action="https://buttondown.com/api/emails/embed-subscribe/queryfarm-airport"
+  method="post"
+  class="d-flex mt-3"
+>
+  <label class="form-label "for="email"></label>
+  <input type="email" name="email" placeholder="you@example.com" class="form-control me-2" required>
+  <input type="hidden" value="1" name="embed" />
+  <button type="submit" class="btn btn-primary">Subscribe</button>
+</form>
+
+</div>

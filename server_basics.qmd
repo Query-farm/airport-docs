@@ -110,3 +110,21 @@ To build a complete Airport-compatible server:
 By implementing these pieces, your Arrow Flight server becomes a powerful, SQL-accessible service that integrates seamlessly with DuckDB via the Airport extension.
 
 
+<div class="card p-4 my-4 bg-note-subtle border border-black rounded-3">
+### Ready for Takeoff with Airport? {.unnumbered .unlisted}
+
+Subscribe for exclusive updates on new Airport features, powerful SQL tricks, and fresh data tools — delivered only when we have something worth sharing.
+
+<form
+  action="https://buttondown.com/api/emails/embed-subscribe/queryfarm-airport"
+  method="post"
+  class="d-flex mt-3"
+>
+  <label class="form-label "for="email"></label>
+  <input type="email" name="email" placeholder="you@example.com" class="form-control me-2" required>
+  <input type="hidden" value="1" name="embed" />
+  <button type="submit" class="btn btn-primary">Subscribe</button>
+</form>
+
+</div>
+

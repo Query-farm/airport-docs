@@ -40,6 +40,8 @@ website:
         text: Home
       - text: Features
         href: features.qmd
+      - text: Newsletter
+        href: newsletter.qmd
       - text: "Why use Airport?"
         menu:
           - text: "Why Airport Exists"
