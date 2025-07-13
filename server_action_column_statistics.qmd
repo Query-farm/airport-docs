@@ -2,7 +2,7 @@
 title: "`column_statistics` Action"
 ---
 
-The `get_flight_column_statitics` action is used to provide DuckDB with statitics about a field in a table.These statitics allow DuckDB to execute queries more efficienty.An Arrow Flight server can optionally choose to implement this action.
+The `column_statitics` action is used to provide DuckDB with statistics about a field in a table. These statistics allow DuckDB to execute queries more efficiently. An Arrow Flight server can optionally choose to implement this action on a table by table basis.
 
 ## Input Parameters
 
@@ -19,89 +19,19 @@ struct GetFlightColumnStatistics
 };
 ```
 
-The `flight_descriptor` field is the Arrow Flight serialized FlightDescriptor structure.The `type` field is the DuckDB data type name,
-i.e. `VARCHAR`, `TIMESTAMP WITH TIME ZONE`.
+The `flight_descriptor` field is the Arrow Flight serialized FlightDescriptor structure.
+
+The `type` field is the DuckDB data type name, i.e. `VARCHAR`, `TIMESTAMP WITH TIME ZONE`.
 
 ## Output Results
 
-The response is a `msgpack` encoded `GetFlightColumnStatisticsResult` structure.
+The response is a Arrow `RecordBatch` serialized using the IPC Format.  The schema of the response should contain these fields.
 
-```c++
-struct GetFlightColumnStatisticsResult
-{
-  //! Whether or not the segment can contain NULL values
-  bool has_null;
-  //! Whether or not the segment can contain values that are not null
-  bool has_no_null;
-  // estimate that one may have even if distinct_stats==nullptr
-  idx_t distinct_count;
+| Field Name | Type | Description     |
+|------------|------|-----------------|
+| `has_not_null` | `BOOLEAN` | Indicate if the field contains a value that is not null. |
+| `has_null` | `BOOLEAN` | Indicate if the field contains a value that is null. |
+| `distinct_count` | `UINT64` | Indicate the number of distinct values in the field. |
+| `min` | Depends on column type | The minimum value of the field. |
+| `max` | Depends on column type | The maximum value of the field. |
 
-  //! Numeric and String stats
-  GetFlightColumnStatisticsNumericStatsData numeric_stats;
-  GetFlightColumnStatisticsStringData string_stats;
-
-  MSGPACK_DEFINE_MAP(has_null, has_no_null, distinct_count, numeric_stats, string_stats)
-};
-```
-
-This in turn references a few additional structures.  The first is for strings.
-
-
-```c++
-struct GetFlightColumnStatisticsStringData
-{
-  std::string min;
-  std::string max;
-  MSGPACK_DEFINE_MAP(min, max)
-};
-```
-
-Returning statistics for numeric types is a bit more complicated since there are different levels of precision and `msgpack` doesn't support 128-bit integers.  So they've been split into a high and low 64-bit integer.
-
-```c++
-struct GetFlightColumnStatisticsNumericStatsData
-{
-  //! Whether or not the value has a max value
-  bool has_min;
-  //! Whether or not the segment has a min value
-  bool has_max;
-  //! The minimum value of the segment
-  GetFlightColumnStatisticsNumericValue min;
-  //! The maximum value of the segment
-  GetFlightColumnStatisticsNumericValue max;
-
-  MSGPACK_DEFINE_MAP(has_min, has_max, min, max)
-};
-
-struct GetFlightColumnStatisticsNumericValue
-{
-  bool boolean;
-  int8_t tinyint;
-  int16_t smallint;
-  int32_t integer;
-  int64_t bigint;
-  uint8_t utinyint;
-  uint16_t usmallint;
-  uint32_t uinteger;
-  uint64_t ubigint;
-
-  uint64_t hugeint_high;
-  uint64_t hugeint_low;
-
-  float float_;
-  double double_;
-
-  MSGPACK_DEFINE_MAP(
-      boolean, tinyint,
-      smallint, integer,
-      bigint, utinyint,
-      usmallint, uinteger,
-      ubigint,
-      hugeint_high, hugeint_low,
-      float_, double_)
-};
-```
-
-::: {.callout-note}
-There is an [experimental schema](https://arrow.apache.org/docs/format/StatisticsSchema.html) defined by Apache Arrow for statistics.  In the future that schema may be adopted rather than the `msgpack` schema.
-:::

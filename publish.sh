@@ -4,4 +4,4 @@ source ./.venv/bin/activate
 
 quarto render
 cd _site
-aws s3 sync --delete --cache-control "max-age=0" . s3://query-farm-airport-docs/
+aws s3 sync --delete --cache-control "public, max-age=15" . s3://query-farm-airport-docs/
