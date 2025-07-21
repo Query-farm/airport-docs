@@ -6,10 +6,11 @@ When the Airport extension is loaded into a DuckDB session it supplies a number 
 
 These functions are added to the `main` schema:
 
+* [`airport_action`](#airport_action)
 * [`airport_flights`](#airport_flights)
 * [`airport_take_flight`](#airport_take_flight)
 * [`airport_user_agent`](#airport_user_agent)
-* [`airport_action`](#airport_action)
+* [`airport_version`](#airport_version)
 
 These macros are added to the `main` schema:
 
@@ -214,3 +215,28 @@ It is up to the server to determine the schema it wishes to return for the `__da
 | description | `VARCHAR` | An optional description of the database. |
 
 [^1]: Table returning functions like their name suggest return "tables" (with rows and columns), this is contrased by scalar functions that return a single scalar value.  Common examples in DuckDB of table returning functions are [`read_csv()`](https://duckdb.org/docs/data/csv/overview.html) or [`read_parquet()`](https://duckdb.org/docs/data/parquet/overview.html).
+
+----
+
+### `airport_version`
+
+This is a scalar function that returns the current version of the Airport extension.
+
+__Example:__
+
+```sql
+SELECT airport_version();
+```
+
+__Function Signature:__
+
+```sql
+airport_version()
+
+┌───────────────────┐
+│ airport_version() │
+│      varchar      │
+├───────────────────┤
+│ 20260713.01       │
+└───────────────────┘
+```

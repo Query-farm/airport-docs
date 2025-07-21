@@ -19,15 +19,6 @@ website:
       &copy; 2025 <a href="https://query.farm">query.farm</a>
     right: |
       Built for: <a href="https://duckdb.org"><img src="https://duckdb.org/images/logo-dl/DuckDB_Logo-horizontal.png" style="height: 2em; padding-right: 2em;" alt="DuckDB Logo"/></a>
-      Made in: <a href="https://www.miami.gov/Home"><img src="https://upload.wikimedia.org/wikipedia/commons/8/86/City_of_Miami_Primary.svg" height="40px"/></a>
-      <a href="https://www.charlottesville.gov"><img src="https://www.charlottesville.gov/ImageRepository/Document?documentID=10798" height="40px"/></a>
-      <a href="https://europa.eu"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/Flag_of_Europe.svg" height="40px"/></a>
-  announcement:
-    icon: info-circle
-    dismissable: true
-    content: "This is a pre-release documentation and is subject to change. Airport will be released after DuckDB 1.3.0 is released."
-    type: info
-    position: below-navbar
   navbar:
     search: true
     pinned: true

@@ -10,7 +10,7 @@ The Airport extension brings [Arrow Flight](https://arrow.apache.org/blog/2019/1
 
 - Databases
   - [`ATTACH`](catalog_integration.qmd#attaching-an-airport-database)
-  - `DETACH`
+  - [`DETACH`](catalog_integration.qmd#attaching-an-airport-database)
 - Tables
   - [`SELECT`](table_select.qmd)
   - [`UPDATE`](table_update.qmd)

@@ -62,10 +62,10 @@ A `DoExchange` Arrow Flight RPC is made to insert rows. This allows the server t
 When the DuckDB client finishes writing to the write stream of the `DoExchange` RPC, the server is expected to return a single metadata message on the read stream that is serialized using `msgpack`with this structure.
 
 ```c++
-struct AirportInsertFinalMetadata
+struct AirportChangedFinalMetadata
 {
-  uint64_t total_inserted;
-  MSGPACK_DEFINE_MAP(total_inserted)
+  uint64_t total_changed;
+  MSGPACK_DEFINE_MAP(total_changed)
 };
 ```
 

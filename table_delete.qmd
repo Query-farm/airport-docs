@@ -51,10 +51,10 @@ A `DoExchange` Arrow Flight RPC is made to delete rows. This allows the server t
 When the DuckDB client finishes writing to the write stream of the `DoExchange` RPC, the server is expected to return a single metadata message on the read stream that is serialized using `msgpack`with this structure.
 
 ```c++
-struct AirportDeleteFinalMetadata
+struct AirportChangedFinalMetadata
 {
-  uint64_t total_deleted;
-  MSGPACK_DEFINE_MAP(total_deleted)
+  uint64_t total_changed;
+  MSGPACK_DEFINE_MAP(total_changed)
 };
 ```
 This message informs the client of the total number of rows successfully deleted from the table.
