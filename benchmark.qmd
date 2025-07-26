@@ -1,0 +1,94 @@
+---
+title: "Airport I/O Benchmarks"
+format:
+  html:
+    toc: true
+    code-fold: true
+    theme: cosmo
+    code-tools: true
+---
+
+This document presents some benchmarks of core operations using the **Airport** extension for DuckDB. The benchmarks cover scalar functions, table creation, and selection operations involving both `BIGINT` and 32-byte string data. Results are measured in execution time (`duration_sec`), CPU usage (`cpu_sec`), and system CPU usage (`cpu_system`), and include throughput in rows per second.
+
+All tests were conducted using 40M to 100M rows, simulating high-throughput analytical workloads.
+
+# Summary Table
+
+| Operation                                | Rows        | Mean Duration (s) | Rows/sec          |
+|------------------------------------------|-----------:|------------------:|-----------------:|
+| Scalar Function Echo BIGINT              | 100M       | 2.06              | 48.56M           |
+| Scalar Function Add BIGINT               | 100M       | 3.42              | 29.27M           |
+| Scalar Function Echo 32-byte string      | 40M        | 1.07              | 37.36M           |
+| Create remote table from 32-byte string  | 40M        | 3.53              | 11.33M           |
+| Select from 32-byte string table         | 40M        | 1.10              | 36.21M           |
+| Create remote table from BIGINT          | 100M       | 12.22             | 8.18M            |
+| Select from remote BIGINT table          | 100M       | 2.39              | 41.78M           |
+
+_Note: Rows rounded to 2 decimal places for clarity._
+
+# Scalar Function Benchmarks
+
+## Echo BIGINT
+
+- **Duration (mean):** 2.06s
+- **Rows/sec:** 48.56M
+- This represents a nearly zero-cost server side scalar operation, a `BIGINT` is sent to the server and the value is echoed back.
+
+## Add BIGINT
+
+- **Duration (mean):** 3.42s
+- **Rows/sec:** 29.27M
+- Slightly more expensive than echo, as it performs arithmetic computation, two `BIGINT` values are sent to the server, and a `BIGINT` is returned.
+
+## Echo 32-byte String
+
+- **Duration (mean):** 1.07s
+- **Rows/sec:** 37.36M
+- High throughput despite operating on 32-byte strings, showing efficient memory handling.
+
+# Remote Table Creation
+
+## Create Remove Table from 32-byte String
+
+- **Duration:** 3.53s
+- **Rows/sec:** 11.33M
+- Performance reflects single threaded serialization and data transport overhead.
+
+## Create Remote Table from BIGINT
+
+- **Duration:** 12.22s
+- **Rows/sec:** 8.18M
+- Performance reflects single threaded serialization and data transport overhead.
+
+# Select Queries
+
+## Select from 32-byte String Table
+
+- **Duration (mean):** 1.10s
+- **Rows/sec:** 36.21M
+- Very fast reads from the remote table, indicating efficient decoding.
+
+## Select from BIGINT Table
+
+- **Duration (mean):** 2.39s
+- **Rows/sec:** 41.78M
+- Excellent performance, even at scale (100M rows), shows the power of Arrow Flight transport.
+
+# Observations
+
+- **Scalar functions** scale well, with `Echo BIGINT` and `Echo 32-byte String` both exceeding 35M Rows/sec.
+- **Table creation** is the most costly, especially for large datasets due to single threaded insert speeds.
+- **Select queries** from remote tables using Airport are fast, often exceeding 40M Rows/sec.
+- System CPU usage remains low, indicating good kernel-level efficiency with I/O.
+
+# Conclusion
+
+These benchmarks show that the **Airport** extension for DuckDB delivers high throughput and low-latency data access via Apache Arrow Flight, particularly for read-heavy workloads.
+
+It is especially suitable for:
+
+- Real-time analytics
+- High-volume batch reads
+- Remote function calls with low overhead
+
+Further work may explore concurrency scaling and performance under streaming ingestion.
