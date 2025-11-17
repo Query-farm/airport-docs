@@ -102,7 +102,7 @@ The Arrow Flight protocol gives you full flexibility—whether you need simple A
 To build a complete Airport-compatible server:
 
 - Start with the Arrow cookbooks to build a minimal Flight server.
-- Add `DoAction` support for `list_schemas` to expose flights as DuckDB objects in the DuckDB cataog.
+- Add `DoAction` support for `list_schemas` to expose flights as DuckDB objects in the DuckDB catalog.
 - Implement `DoExchange` to enable data modification and function calls.
 - Support predicate pushdown for efficient filtering (optional).
 - Add authentication and authorization logic to protect your data.
