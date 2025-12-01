@@ -45,4 +45,4 @@ The types of alterations that can be performed are:
 
 Each type of alteration takes a different parameter structure.
 
-All actions are presumed not to return a value, but should raise an exception upon error.
+All actions are not expected to return a value, but should raise an exception upon error.

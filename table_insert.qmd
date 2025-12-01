@@ -2,7 +2,7 @@
 title: "Insert"
 ---
 
-The Airport extension allows data to be inserted into tables it manages. The Arrow Flight server is responsible for storing and persisting the data if it chooses to do so.
+The Airport extension allows data to be inserted into tables it manages. The Arrow Flight server is responsible for storing and persisting the data.
 
 ### Support for `RETURNING`
 

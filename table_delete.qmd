@@ -2,7 +2,7 @@
 title: "Delete"
 ---
 
-The Airport extension allows tables that it manages to have rows deleted.  The Arrow Flight server is responsible for performing the deletes to the data if it chooses.
+The Airport extension allows tables that it manages to have rows deleted.  The Arrow Flight server is responsible for deleting the data if it chooses to do so.
 
 ## Example
 
@@ -22,7 +22,7 @@ DELETE FROM example.main.employees where id = 5;
 ```
 
 ::: {.callout-caution}
-For an Airport managed table to perform a `DELETE` operation it must have a [`rowid` pseudocolumn](table_row_ids.qmd).
+For an Airport-managed table to perform a `DELETE` operation it must have a [`rowid` pseudocolumn](table_row_ids.qmd).
 :::
 
 ::: {.callout-tip}

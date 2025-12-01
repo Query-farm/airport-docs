@@ -56,7 +56,7 @@ All arguments passed by name are optional.
 | Argument | Type | Description |
 |--------|---|-------------------------------|
 | location | `VARCHAR` | This is the location of the Flight server. Typically this will be of the form `grpc://$HOST:PORT` or `grpc+tls://$HOST:$PORT` |
-| criteria | `VARCHAR` | This is free-form criteria to pass to the Flight server that may be used to filter the list of returned. |
+| criteria | `VARCHAR` | This is free-form criteria to pass to the Flight server that may be used to filter the list of returned flights. |
 | auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
 | secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the auth_token. |
 

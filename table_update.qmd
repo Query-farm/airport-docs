@@ -2,7 +2,7 @@
 title: "Update Table"
 ---
 
-The Airport extension allows tables that it manages to be updated.  The Arrow Flight server is responsible for storing and persisting the updated data if it chooses to do so.
+The Airport extension allows tables that it manages to be updated.  The Arrow Flight server is responsible for storing and persisting the updated data.
 
 
 ## Example
@@ -25,7 +25,7 @@ UPDATE example.main.employees set id = 5 where id = 1;
 ```
 
 ::: {.callout-caution}
-For an Airport managed table to perform an `UPDATE` operation it must have a [`rowid` pseudocolumn](table_row_ids.qmd).
+For an Airport-managed table to perform an `UPDATE` operation it must have a [`rowid` pseudocolumn](table_row_ids.qmd).
 :::
 
 ::: {.callout-tip}
