@@ -4,7 +4,7 @@ title: "Catalog Versioning"
 
 Multiple DuckDB sessions can simultaneously access a single Arrow Flight server. When one session modifies or creates an object in the database or catalog that other clients have attached, those clients will detect the change the next time they run a query. For instance, if one session creates a table, that table will be visible to other clients after its creation.
 
-By default, DuckDB caches the entire catalog catalog contents, schemas with tables and functions. However, before executing each query, DuckDB verifies that the cached information is still valid by checking the version of the catalog, which is represented as an integer value. If the version has changed, DuckDB refreshes the cached information from the Arrow Flight server.
+By default, DuckDB caches the entire catalog contents, schemas with tables and functions. However, before executing each query, DuckDB verifies that the cached information is still valid by checking the version of the catalog, which is represented as an integer value. If the version has changed, DuckDB refreshes the cached information from the Arrow Flight server.
 
 ## Arrow Flight Server Implementation
 

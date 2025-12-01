@@ -96,7 +96,7 @@ __Attach Arguments:__
 
 Once a database has been attached the tables will be visible in either `SHOW ALL TABLES` or `SELECT * from duckdb_tables()`.
 
-To make the tables accessible without using full qualification in the queries you may want to update the search path to include the newly attached database as show in the following example:
+To make the tables accessible without using full qualification in the queries you may want to update the search path to include the newly attached database as shown in the following example:
 
 ```sql
 SET search_path = 'example,airport_database_name';

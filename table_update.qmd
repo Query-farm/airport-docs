@@ -2,7 +2,7 @@
 title: "Update Table"
 ---
 
-The Airport extension allows tables that is manages to be updated.  The Arrow Flight server is responsible for storing and persisting the updated data if it chooses to do so.
+The Airport extension allows tables that it manages to be updated.  The Arrow Flight server is responsible for storing and persisting the updated data if it chooses to do so.
 
 
 ## Example
@@ -39,7 +39,7 @@ This may change in the future.
 
 ## Arrow Flight Server Implementation Notes
 
-If the table does has a [rowid pseudocolumn](table_row_ids.qmd) the update can be performed.
+If the table has a [rowid pseudocolumn](table_row_ids.qmd) the update can be performed.
 
 A `DoExchange` Arrow Flight RPC is made to update rows. This allows the server to return rows (needed for the `RETURNING` clause), the rows may differ from the original input supplied.  On the write stream of the `DoExchange` call only the rowid pseudocolumn will be sent to the server along with all of the new column values.
 
@@ -52,7 +52,7 @@ A `DoExchange` Arrow Flight RPC is made to update rows. This allows the server t
 
 ### Final Metadata Message
 
-When the DuckDB client finishes writing to the write stream of the `DoExchange` RPC, the server is expected to return a single metadata message on the read stream that is serialized using `msgpack`with this structure.
+When the DuckDB client finishes writing to the write stream of the `DoExchange` RPC, the server is expected to return a single metadata message on the read stream that is serialized using `msgpack` with this structure.
 
 ```c++
 struct AirportChangedFinalMetadata

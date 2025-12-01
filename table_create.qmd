@@ -12,7 +12,7 @@ For a DuckDB session to create a table, a standard SQL `CREATE TABLE` statement 
 -- Attach an Airport database
 ATTACH 'example' (TYPE AIRPORT, location 'grpc://localhost:50312/');
 
--- assume that there is a `main` schema
+-- Assume that there is a `main` schema
 -- already in the `example` database
 CREATE TABLE example.main.employees (
   name varchar,

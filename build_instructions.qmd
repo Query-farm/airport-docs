@@ -28,7 +28,7 @@ export VCPKG_TOOLCHAIN_PATH=`pwd`/vcpkg/scripts/buildsystems/vcpkg.cmake
 GEN=ninja make
 ```
 
-Building the extension will build all of its dependencies, `protobuf`, `grpc`, `arrow` and others, this can take somewhat long time depending on the resources of the system being used to build the extension.
+Building the extension will build all of its dependencies, `protobuf`, `grpc`, `arrow` and others, this can take some time depending on the resources of the system being used to build the extension.
 
 ## Alternative to building from source
 

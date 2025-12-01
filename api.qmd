@@ -100,14 +100,14 @@ All arguments passed by name are optional.
 | descriptor | `ANY` | This is the descriptor of the flight.  If it is a `VARCHAR` or `BLOB` it is interpreted as a CMD flight descriptor, if it is an `ARRAY` or `VARCHAR[]` it is considered a path-based descriptor.  Any other type results in an error being raised.  |
 | auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
 | secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token` |
-| ticket | `BLOB` | This is the ticket (an opaque binary token) supplied to the Flight server it overrides any ticket supplied from the server by a call to `GetFlightInfo` from DuckDB. |
+| ticket | `BLOB` | This is the ticket (an opaque binary token) supplied to the Flight server; it overrides any ticket supplied from the server by a call to `GetFlightInfo` from DuckDB. |
 | headers | `MAP(VARCHAR, VARCHAR)` | A map of extra gRPC headers to send with requests to the Flight server. |
 | at_unit | `VARCHAR` | The point-in-time specification unit can be `TIMESTAMP` or `VERSION` |
 | at_value | `VARCHAR` | The point-in-time specification value |
 
 ### `airport_user_agent`
 
-This is a scalar function that returns the current Airport user agent header value.  This value is sent to all Arrow Flight servers to that they can determine if they are compatible with this version of the Airport extension.
+This is a scalar function that returns the current Airport user agent header value.  This value is sent to all Arrow Flight servers so that they can determine if they are compatible with this version of the Airport extension.
 
 __Example:__
 
@@ -214,7 +214,7 @@ It is up to the server to determine the schema it wishes to return for the `__da
 | name | `VARCHAR` | The name of the database that can be used in an `ATTACH` call to the Arrow Flight server. |
 | description | `VARCHAR` | An optional description of the database. |
 
-[^1]: Table returning functions like their name suggest return "tables" (with rows and columns), this is contrased by scalar functions that return a single scalar value.  Common examples in DuckDB of table returning functions are [`read_csv()`](https://duckdb.org/docs/data/csv/overview.html) or [`read_parquet()`](https://duckdb.org/docs/data/parquet/overview.html).
+[^1]: Table returning functions like their name suggest return "tables" (with rows and columns), this is contrasted by scalar functions that return a single scalar value.  Common examples in DuckDB of table returning functions are [`read_csv()`](https://duckdb.org/docs/data/csv/overview.html) or [`read_parquet()`](https://duckdb.org/docs/data/parquet/overview.html).
 
 ----
 

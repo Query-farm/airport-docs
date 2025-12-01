@@ -12,7 +12,7 @@ If the Apache Arrow specifies that a field is not nullable, that is interpreted 
 
 Apache Arrow does not actually have a formalized method to serialize checks that may exist on a table, as such the checks will be serialized using `msgpack` on the Apache arrow schema.
 
-Checks are specified a set of string based expressions.  An example check expression could be `"color in ('blue', 'green')"`, that would restrict the value of the color field to be either "blue" or "green".  These checks are serialized using this `msgpack` structure, then stored in a metadata key called `check_constraints`:
+Checks are specified as a set of string based expressions.  An example check expression could be `"color in ('blue', 'green')"`, that would restrict the value of the color field to be either "blue" or "green".  These checks are serialized using a `msgpack` structure, then stored in a metadata key called `check_constraints`:
 
 ```c++
 struct AirportTableCheckConstraints {
