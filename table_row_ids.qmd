@@ -8,7 +8,7 @@ For native DuckDB tables, this identifier is typically represented as a unique `
 
 Tables that are supplied via the Airport extension can optionally include a `rowid` pseudocolumn.
 
-To enable an Airport table to have a `rowid` column, the Arrow schema that defines the table must include a single field where the field's metadata includes a key named `is_rowid` with a non-empty string value.
+To enable an Airport table to have a `rowid` column, the Arrow schema that defines the table must include a single field whose metadata contains a key named `is_rowid` with a non-empty string value.
 
 ## Key Constraints and Data Types
 
@@ -22,7 +22,7 @@ The Arrow Flight server is responsible for:
 1. Ensuring that the values in the `rowid` column are unique across all endpoints,
 2. Properly handling filtering operations based on the `rowid` column.
 
-## Implications of tables without `rowid` columns.
+## Implications of Tables Without `rowid` Columns
 
 1. DuckDB is not able to perform row-wise `UPDATE` or `DELETE` operations on tables that do not have a `rowid` pseudocolumn.
 

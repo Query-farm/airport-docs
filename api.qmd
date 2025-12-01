@@ -27,7 +27,7 @@ Calling `airport_flights` and `airport_take_flight` are considered a lower level
 
 ### `airport_flights`
 
-This is a table returning function[^1] that produces a list of Arrow Flights that are available at the server specified.  Optionally criteria can be supplied that may be used by the server as it chooses.
+This is a table returning function[^1] that produces a list of Arrow Flights that are available at the server specified.  Optionally criteria can be supplied that the server can use for filtering.
 
 __Example:__
 
@@ -207,7 +207,7 @@ All arguments passed by name are optional.
 
 __Returning Value:__
 
-It is up to the server to determine the schema it wishes to return for the `__databases` flight, but it is suggested that it follow this schema.
+The server determines the schema it returns for the `__databases` flight, but it is recommended that it follow this schema.
 
 | Field Name | Type | Description |
 |-----|------|-------------|

@@ -2,7 +2,7 @@
 title: "Drop"
 ---
 
-The Airport extension supports dropping tables. The Arrow Flight server can decide if the table should actually be dropped.
+The Airport extension supports dropping tables. The Arrow Flight server determines whether to drop the table.
 
 ## Example
 

@@ -2,7 +2,7 @@
 title: "Drop"
 ---
 
-The Airport extension supports dropping schemas. The Arrow Flight server can decide if the schema should actually be dropped.
+The Airport extension supports dropping schemas. The Arrow Flight server determines whether to drop the schema.
 
 ## Example
 

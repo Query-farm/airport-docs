@@ -2,7 +2,7 @@
 title: "Create"
 ---
 
-The Airport extension supports the creation of tables. The Arrow Flight server can decide if the table should actually be created.
+The Airport extension supports the creation of tables. The Arrow Flight server determines whether to create the table.
 
 ## Example
 

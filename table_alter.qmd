@@ -2,7 +2,7 @@
 title: "Alter"
 ---
 
-The Airport extension supports altering tables. The Arrow Flight server can decide if the alteration should be applied.
+The Airport extension supports altering tables. The Arrow Flight server determines whether to apply the alteration.
 
 ## Example
 
