@@ -94,7 +94,7 @@ __Attach Arguments:__
 | secret | `VARCHAR` | This is the name of the [DuckDB secret](https://duckdb.org/docs/configuration/secrets_manager.html) to use to supply the value for the `auth_token`. |
 | auth_token | `VARCHAR` | A bearer value token to present to the server, the header is formatted like `Authorization: Bearer <auth_token>` |
 
-Once a database has been attached the tables will be visable in either `SHOW ALL TABLES` or `SELECT * from duckdb_tables()`.
+Once a database has been attached the tables will be visible in either `SHOW ALL TABLES` or `SELECT * from duckdb_tables()`.
 
 To make the tables accessible without using full qualification in the queries you may want to update the search path to include the newly attached database as show in the following example:
 

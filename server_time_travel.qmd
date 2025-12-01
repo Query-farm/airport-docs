@@ -9,7 +9,7 @@ Some examples are:
 
 ```sql
 -- Query table as it existed at a specific timestamp
-SELECT * FROM example.main.exployees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
+SELECT * FROM example.main.employees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
 
 -- Query table by a specific version number
 SELECT * FROM example.main.employees AT (VERSION => 42);

@@ -11,7 +11,7 @@ git clone --recursive git@github.com:Query-farm/duckdb-airport-extension
 
 # Clone the vcpkg repo
 #
-#   vcpkg manages all of the dependencies of the airport extention and is
+#   vcpkg manages all of the dependencies of the airport extension and is
 #   well integrated into DuckDB.
 git clone https://github.com/Microsoft/vcpkg.git
 
@@ -28,7 +28,7 @@ export VCPKG_TOOLCHAIN_PATH=`pwd`/vcpkg/scripts/buildsystems/vcpkg.cmake
 GEN=ninja make
 ```
 
-Building the extention will build all of its dependendenices, `protobuf`, `grpc`, `arrow` and others, this can take somewhat long time depending on the resources of the system being used to build the extension.
+Building the extension will build all of its dependencies, `protobuf`, `grpc`, `arrow` and others, this can take somewhat long time depending on the resources of the system being used to build the extension.
 
 ## Alternative to building from source
 

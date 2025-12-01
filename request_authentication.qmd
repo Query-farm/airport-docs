@@ -6,7 +6,7 @@ The Airport extension for DuckDB provides support for sending requests that can 
 
 Currently the only supported authentication mechanism is a bearer token passed via the `Authorization` gRPC header.  Additional mechanisms may be added in the future to include mutual TLS and OAuth2, this will rely on underlying support from Apache Arrow.
 
-The Airport extention integrates with the DuckDB secrets manager.  It does this by creating a new type of secret called `airport`.
+The Airport extension integrates with the DuckDB secrets manager.  It does this by creating a new type of secret called `airport`.
 
 An example of creating an `airport` secret is:
 

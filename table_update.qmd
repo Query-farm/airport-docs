@@ -29,7 +29,7 @@ For an Airport managed table to perform an `UPDATE` operation it must have a [`r
 :::
 
 ::: {.callout-tip}
-Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `INSERT` statement, all rows are sent to the Arrow Flight server where they are presumed to be immediately commited to storage. This differs from a standard SQL transation that doesn't commit data until `COMMIT` or `ROLLBACK` is issued.
+Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `UPDATE` statement, all rows are sent to the Arrow Flight server where they are presumed to be immediately committed to storage. This differs from a standard SQL transaction that doesn't commit data until `COMMIT` or `ROLLBACK` is issued.
 
 The current philosophy of the Airport extension is to send the rows to the server. If the server fails to commit the rows during the RPC request, it will raise an Arrow Flight exception, causing the DuckDB transaction to abort.
 

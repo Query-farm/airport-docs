@@ -2,7 +2,7 @@
 title: "Constraints, Checks and Default Values"
 ---
 
-The Airport extention for DuckDB supports tables that have constraints and checks.  The Arrow Flight server must declare these constraints and checks in the Apache Arrow schema of the table.
+The Airport extension for DuckDB supports tables that have constraints and checks.  The Arrow Flight server must declare these constraints and checks in the Apache Arrow schema of the table.
 
 ### Not Null Constraints
 

@@ -28,7 +28,7 @@ The rows from the `employees` table will be sent incrementally to Arrow Flight s
 
 ### DuckDB Catalog Integration
 
-For information about how to register an Arrow Flight as a table returning function refer to [Server Catalog Integration](server_catalog_integration.html).
+For information about how to register an Arrow Flight as a table returning function refer to [Server Catalog Integration](server_catalog_integration.qmd).
 
 ### Supporting the `ANY` DuckDB Data Type
 

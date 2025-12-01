@@ -95,7 +95,7 @@ The Airport Extension and MotherDuck both enhance DuckDB’s capabilities by ena
 | **Ownership**       | Community-driven (MIT licensed)                                      | Commercial product by [MotherDuck](https://motherduck.com)    |
 | **Installation**    | Install via `INSTALL airport from community` and use locally                 | Requires signup and a managed backend                         |
 | **Data Location**   | Query data from *any* Arrow Flight server        | Queries run against data stored in the MotherDuck cloud       |
-| **Execution Model** | DuckDB is the engine, Airport proxies remote access via Arrow Flight.  All data processing still occurrs in DuckDB | DuckDB queries are **pushed** to the cloud and executed there |
+| **Execution Model** | DuckDB is the engine, Airport proxies remote access via Arrow Flight.  All data processing still occurs in DuckDB | DuckDB queries are **pushed** to the cloud and executed there |
 | **Extensibility**   | Easily implement your own Flight servers and functions               | Closed-source backend, not user-extensible                    |
 | **Security**        | Security is the responsibility of Arrow Flight servers | Cloud security managed by MotherDuck                          |
 | **Use Cases**       | Access arbitrary, dynamic, and private sources from SQL              | Collaborate on cloud-native DuckDB databases                  |

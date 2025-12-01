@@ -24,7 +24,7 @@ SELECT * FROM example.main.employees;
 -- Queries that specify a point in time
 -- or version of the table are supported, if
 -- the Arrow flight server supports it.
-SELECT * FROM example.main.exployees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
+SELECT * FROM example.main.employees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
 SELECT * FROM example.main.employees AT (VERSION => 42);
 ```
 
@@ -34,7 +34,7 @@ You can join Airport tables with other tables or use multiple Airport sources in
 
 ### DuckDB Catalog Integration
 
-To learn how to register an Arrow Flight data a a DuckDB table, refer to [Server Catalog Integration](server_catalog_integration.html).
+To learn how to register an Arrow Flight data as a DuckDB table, refer to [Server Catalog Integration](server_catalog_integration.qmd).
 
 ### Time Travel / Point in Time Lookup
 
