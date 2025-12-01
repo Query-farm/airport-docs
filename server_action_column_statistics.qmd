@@ -34,4 +34,5 @@ The response is a Arrow `RecordBatch` serialized using the IPC Format.  The sche
 | `distinct_count` | `UINT64` | Indicate the number of distinct values in the field. |
 | `min` | Depends on column type | The minimum value of the field. |
 | `max` | Depends on column type | The maximum value of the field. |
-
+| `max_string_length` | `UINT64` | The maximum length of a string value |
+| `contains_unicode` | `BOOLEAN` | Indicate if the field contains Unicode text. |

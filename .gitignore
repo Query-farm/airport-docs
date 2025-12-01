@@ -10,3 +10,5 @@ wheels/
 .venv
 _site/
 /.quarto/
+
+**/*.quarto_ipynb

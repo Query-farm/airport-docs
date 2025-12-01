@@ -1,2 +1,3 @@
+Sitemap: https://airport.query.farm/sitemap.xml
 User-agent: *
 Allow: /

@@ -70,5 +70,4 @@ struct AirportTableFunctionInOutParameters
 };
 ```
 
-The rows produced by the function are read from the `DoExchange` stream.
-
+DuckDB will produce rows to send to the in/out function, these will be sent via the `DoExchange` stream as Arrow `RecordBatch` objects.  For each chunk the server should return a `RecordBatch` that may contain zero rows, that `RecordBatch` must be accompanied by metadata that is either set to `chunk_continues` or `chunk_finished` that indicates if there will be more `RecordBatch` objects produced from the currently provided input `RecordBatch`.

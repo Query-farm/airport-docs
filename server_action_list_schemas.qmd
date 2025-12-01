@@ -63,6 +63,8 @@ struct AirportSerializedSchema
   // The contents of the schema itself, which can be external
   // or provided inline.
   AirportSerializedContentsWithSHA256Hash contents;
+  // Should this be the default schema.
+  std::optional<bool> is_default;
 
   MSGPACK_DEFINE_MAP(schema, description, tags, contents)
 };

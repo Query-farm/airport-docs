@@ -2,8 +2,9 @@ project:
   type: website
 
 website:
-  title: "Airport for DuckDB"
+  title: "✈️ Airport for DuckDB"
   site-url: https://airport.query.farm
+  site-path: "/"
   repo-url: https://github.com/Query-farm/airport-docs
   repo-branch: master
   repo-actions: [edit, source, issue]
@@ -11,12 +12,11 @@ website:
   cookie-consent: true
   favicon: farm-icon.png
   open-graph: true
-  twitter-card:
-    image: farm-icon.png
+  twitter-card: true
 
   page-footer:
     left: |
-      &copy; 2025 <a href="https://query.farm">query.farm</a>
+      &copy; 2025 <a href="https://query.farm">Query.Farm</a>
     right: |
       Built for: <a href="https://duckdb.org"><img src="https://duckdb.org/images/logo-dl/DuckDB_Logo-horizontal.png" style="height: 2em; padding-right: 2em;" alt="DuckDB Logo"/></a>
   navbar:
@@ -47,6 +47,9 @@ website:
       contents:
         - text: "Extension API"
           href: api.qmd
+        - text: "---"
+        - text: "Benchmarks"
+          href: benchmark.qmd
         - text: "---"
         - text: "Catalog Integration"
           href: catalog_integration.qmd
@@ -165,10 +168,12 @@ website:
 
 format:
   html:
-    theme: [zephyr, theme.scss]
-    mainfont: Roboto,Open Sans, Helvetica
+    theme: [theme.scss]
+    highlight-style: github-light.theme
+    mainfont: Roboto, Open Sans, Helvetica
     css: styles.css
     toc: true
+    canonical-url: true
 
 
 

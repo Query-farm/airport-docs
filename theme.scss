@@ -1,7 +1,16 @@
 /*-- scss:defaults --*/
-$navbar-bg: #202C59;
-$navbar-fg: #ffffff;
 
-$link-color: #364B96;
-$code-color: #581F18;
-$code-block-bg: #FFF1D7;
+$body-bg: oklch(0.960 0.015 180.0);
+$body-color: quarto-color.adjust($body-bg, $lightness: -0.55, $space: oklch);
+$navbar-bg: quarto-color.adjust($body-bg,$lightness: -0.3,  $chroma: 0.08, $space: oklch);
+$navbar-fg: quarto-color.adjust($body-bg, $lightness: 0.8, $space: oklch);
+$sidebar-bg: quarto-color.adjust($body-bg, $lightness: -0.06, $chroma: 0.02, $space: oklch);
+$link-color: quarto-color.adjust($body-color, $lightness: 0.1, $chroma: 0.2, $space: oklch);
+$footer-bg: quarto-color.adjust($body-bg, $lightness: -0.10, $space: oklch);
+
+$code-color: quarto-color.adjust($body-color, $lightness: -0.1, $space: oklch);
+$code-bg: quarto-color.adjust($body-bg, $lightness: -0.03, $space: oklch);
+$code-block-bg: quarto-color.adjust($code-bg, $lightness: -0.01, $space: oklch);
+$code-block-border-left: quarto-color.adjust($code-block-bg, $lightness: -50, $saturation: -30, $space: hsl);
+
+$breadcrumb-padding-y: 0.5rem;
