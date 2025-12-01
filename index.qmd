@@ -83,7 +83,7 @@ If you wish to build the extension from source see these [instructions](build_in
 
 With the Airport extension you can:
 
-* Query data that DuckDB can't normally access—either because it’s non-tabular or in an unsupported format.  Even external APIs.  It all depends what the server allows.
+* Query data that DuckDB can't normally access—either because it's non-tabular or in an unsupported format.  Even external APIs.  It all depends on what the server allows.
 * Add custom [scalar](scalar_functions.qmd) or [table returning](table_returning_functions.qmd) SQL functions not available in DuckDB.
 * Provide User Defined Functions (UDFs) for DuckDB that execute remotely.
 * Serve data with fine-grained access control, filtering both rows and columns based on user permissions.

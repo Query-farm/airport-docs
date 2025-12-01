@@ -2,10 +2,10 @@
 title: "Table Column Statistics"
 ---
 
-An Arrow Flight server can optionally supply statistics that assist with efficient query execute.  For each field the server can optionally return the minimum and maximum values for a field, the number of distinct values, and if there are null or not null values.
+An Arrow Flight server can optionally supply statistics that assist with efficient query execution.  For each field the server can optionally return the minimum and maximum values for a field, the number of distinct values, and if there are null or not null values.
 
 ## Arrow Flight Server Implementation Notes
 
-For an Airport based table to provide statitics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.
+For an Airport based table to provide statistics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.
 
 If a table has opted in. The Airport extension will perform a `DoAction` Arrow Flight RPC with a method name of [`column_statistics`](server_action_column_statistics.qmd).

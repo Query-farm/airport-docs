@@ -290,4 +290,4 @@ It is the responsibility of the server to match the behavior of DuckDB.
 
     > MessagePack is an efficient binary serialization format. It lets you exchange data among multiple languages like JSON. But it's faster and smaller. Small integers are encoded into a single byte, and typical short strings require only one extra byte in addition to the strings themselves.
 
-[^database]: In this sense its not a database file, its a database name that is provied by the Arrow Flight server.
+[^database]: In this sense it's not a database file, it's a database name that is provided by the Arrow Flight server.

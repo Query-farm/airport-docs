@@ -80,7 +80,7 @@ The `AirportSerializedContentsWithSHA256Hash` structure provides schema or catal
 // This is a generic type that applies a SHA256
 // checksum to the data it contains.
 //
-// The data can either be provied inline by
+// The data can either be provided inline by
 // inside of the serialized field, or it can
 // be retrieved from the specified URL.
 //

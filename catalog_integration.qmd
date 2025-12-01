@@ -72,7 +72,7 @@ Airport retrieves information about an attached database or schema only when an 
 
 ## Attaching an Airport Database
 
-To attach an database provided by Airport execute a SQL `ATTACH` statement with the necessary information that provides the name of the database to attach and the URL of the Arrow Flight server.
+To attach a database provided by Airport execute a SQL `ATTACH` statement with the necessary information that provides the name of the database to attach and the URL of the Arrow Flight server.
 
 ```sql
 ATTACH 'airport_database_name' (

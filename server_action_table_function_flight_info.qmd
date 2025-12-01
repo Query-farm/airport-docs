@@ -2,7 +2,7 @@
 title: "`table_function_flight_info` Action"
 ---
 
-This `table_function_flight_info` action is used to determine the schema of a table function supplied by an Arrow Flight Server.  Since table functions can be dynamic based on their paraemters, this action is called with the parameters passed to the table function.
+This `table_function_flight_info` action is used to determine the schema of a table function supplied by an Arrow Flight Server.  Since table functions can be dynamic based on their parameters, this action is called with the parameters passed to the table function.
 
 ## Input Parameters
 
