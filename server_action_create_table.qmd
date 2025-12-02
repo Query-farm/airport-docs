@@ -2,11 +2,24 @@
 title: "`create_table` Action"
 ---
 
-This `create_table` action is used to create a table in a database as part of the `CREATE TABLE` SQL command.
+The `create_table` action creates a new table in the database with the specified schema and constraints. This action is invoked when executing a `CREATE TABLE` SQL statement.
+
+## SQL Example
+
+```sql
+CREATE TABLE example.main.employees (
+  id INTEGER,
+  name VARCHAR,
+  email VARCHAR UNIQUE,
+  salary INTEGER CHECK (salary > 0)
+);
+
+CREATE OR REPLACE TABLE example.main.orders AS SELECT * FROM source_table;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 struct AirportCreateTableParameters
@@ -34,7 +47,7 @@ struct AirportCreateTableParameters
 };
 ```
 
-## Output Results
+## Return Value
 
-The `create_table` action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) result that represents an Apache Flight that can be utilized to obtain the contents of the table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the newly created table. This flight can be used to query and retrieve the table's contents. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 

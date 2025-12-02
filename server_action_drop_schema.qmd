@@ -2,11 +2,18 @@
 title: "`drop_schema` Action"
 ---
 
-This `drop_schema` action is used to delete a schema in a database as part of the `DROP SCHEMA` SQL command.
+The `drop_schema` action deletes an existing schema from the database. This action is invoked when executing a `DROP SCHEMA` SQL statement.
+
+## SQL Example
+
+```sql
+DROP SCHEMA example.analytics;
+DROP SCHEMA IF EXISTS example.temp_data;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 struct DropItemActionParameters
@@ -25,4 +32,6 @@ struct DropItemActionParameters
 
 The `type` field of the parameters will be set to the value `schema`.
 
-The return value from the action is ignored, if there is an error it is expected that an exception will be raised.
+## Return Value
+
+The action does not return a value. If an error occurs, the server must raise an Arrow Flight exception with an appropriate error message.

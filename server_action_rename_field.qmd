@@ -2,11 +2,19 @@
 title: "`rename_field` Action"
 ---
 
-The `rename_field` action is used to rename a field in a structure that exists in a table as part of the `ALTER` SQL command.
+The `rename_field` action renames a field within a nested `STRUCT` column in a table. This action is invoked when executing an `ALTER TABLE ... RENAME COLUMN` SQL statement that targets a field within a struct.
+
+## SQL Example
+
+```sql
+-- Rename a field within a nested struct column
+ALTER TABLE example.main.employees RENAME COLUMN address.zip_code TO address.postal_code;
+ALTER TABLE example.main.employees RENAME COLUMN metadata.created_at TO metadata.timestamp;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -34,5 +42,5 @@ struct AirportAlterTableRenameFieldParameters : AirportAlterBase
 
 ## Return Value
 
-The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the modified table with the field renamed within the struct column. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 

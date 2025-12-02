@@ -2,11 +2,18 @@
 title: "`change_column_type` Action"
 ---
 
-This `change_column_type` action is used to change the type of an existing field in table as part of the `ALTER` SQL command.
+The `change_column_type` action changes the data type of an existing column in a table. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... TYPE` SQL statement.
+
+## SQL Example
+
+```sql
+ALTER TABLE example.main.employees ALTER COLUMN salary TYPE BIGINT;
+ALTER TABLE example.main.employees ALTER COLUMN email TYPE VARCHAR USING CAST(email AS VARCHAR);
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -33,6 +40,6 @@ struct AirportAlterTableChangeColumnTypeParameters : AirportAlterBase
 
 ## Return Value
 
-The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the modified table with the column's type changed. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 
 

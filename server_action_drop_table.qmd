@@ -2,11 +2,18 @@
 title: "`drop_table` Action"
 ---
 
-This `drop_table` action is used to delete a table in a database as part of the `DROP TABLE` SQL command.
+The `drop_table` action deletes an existing table from the database. This action is invoked when executing a `DROP TABLE` SQL statement.
+
+## SQL Example
+
+```sql
+DROP TABLE example.main.employees;
+DROP TABLE IF EXISTS example.main.temp_data;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 struct DropItemActionParameters
@@ -25,4 +32,6 @@ struct DropItemActionParameters
 
 The `type` field of the parameters will be set to the value `table`.
 
-The return value from the action is ignored, if there is an error it is expected that an exception will be raised.
+## Return Value
+
+The action does not return a value. If an error occurs, the server must raise an Arrow Flight exception with an appropriate error message.

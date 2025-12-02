@@ -2,11 +2,11 @@
 title: "`flight_info` Action"
 ---
 
-This `flight_info` action is used to determine the schema of a table function supplied by an Arrow Flight server.  Since table's schemas can vary across versions, when using a point in time or time travel query the server needs to return the schema of the table at that point.
+The `flight_info` action retrieves the schema and metadata for a table at a specific point in time. This is particularly important for time travel queries, where the table's schema may have evolved over time. The action allows the server to return the appropriate schema for the requested timestamp or version.
 
 ## Input Parameters
 
-There is a single `msgpack` encoded parameter passed to the action.
+The action receives a single `msgpack`-encoded parameter:
 
 ```c++
 struct AirportTableFunctionFlightInfoParameters
@@ -23,6 +23,6 @@ struct AirportTableFunctionFlightInfoParameters
 };
 ```
 
-## Output Result
+## Return Value
 
-The `flight_info` is expected to return a single serialized Arrow `FlightInfo` structure, that will then be used to retrieve the data.  The custom action of `flight_info` is used because it allows additional data to be serialized compared with the `GetFlightInfo` Arrow RPC method.
+The action must return a single serialized Arrow `FlightInfo` structure representing the table at the specified point in time. This custom action is used instead of the standard `GetFlightInfo` RPC because it supports additional parameters such as time travel information.

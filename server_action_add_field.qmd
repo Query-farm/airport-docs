@@ -2,11 +2,19 @@
 title: "`add_field` Action"
 ---
 
-This `add_field` action is used to add a field to a structure of a table as part of the `ALTER` SQL command.
+The `add_field` action adds a new field to a nested `STRUCT` column within a table. This action is invoked when executing an `ALTER TABLE ... ADD COLUMN` SQL statement that targets a field within a struct.
+
+## SQL Example
+
+```sql
+-- Add a field to a nested struct column
+ALTER TABLE example.main.employees ADD COLUMN address.city VARCHAR;
+ALTER TABLE example.main.employees ADD COLUMN IF NOT EXISTS metadata.created_by VARCHAR;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -23,7 +31,7 @@ struct AirportAlterBase
 
 struct AirportAlterTableAddFieldParameters : AirportAlterBase
 {
-  // This is contains the path of the field and the type of the column.
+  // Contains the path to the field and the Arrow type for the new field.
   std::string column_schema;
   bool if_field_not_exists;
 
@@ -34,5 +42,5 @@ struct AirportAlterTableAddFieldParameters : AirportAlterBase
 
 ## Return Value
 
-The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the modified table with the new field added to the struct column. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 

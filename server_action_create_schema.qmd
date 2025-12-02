@@ -2,11 +2,18 @@
 title: "`create_schema` Action"
 ---
 
-This `create_schema` action is used to create a schema in a database as part of the `CREATE SCHEMA` SQL command.
+The `create_schema` action creates a new schema in the database. This action is invoked when executing a `CREATE SCHEMA` SQL statement.
+
+## SQL Example
+
+```sql
+CREATE SCHEMA example.analytics;
+CREATE SCHEMA example.staging;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 struct AirportCreateSchemaParameters
@@ -21,6 +28,6 @@ struct AirportCreateSchemaParameters
 };
 ```
 
-## Output Result
+## Return Value
 
-The Arrow Flight server responds with a single `msgpack`-serialized message containing a `AirportSerializedContentsWithSHA256Hash` as describe in the [`list_schemas`](server_action_list_schemas.qmd) RPC.
+The Arrow Flight server must respond with a single `msgpack`-serialized message containing an `AirportSerializedContentsWithSHA256Hash` structure as described in the [`list_schemas`](server_action_list_schemas.qmd) action.

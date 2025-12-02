@@ -2,11 +2,18 @@
 title: "`set_default` Action"
 ---
 
-The `set_default` action is used to set a default value for a column as part of the `ALTER` SQL command.
+The `set_default` action sets or updates the default value for a column. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... SET DEFAULT` SQL statement.
+
+## SQL Example
+
+```sql
+ALTER TABLE example.main.employees ALTER COLUMN status SET DEFAULT 'active';
+ALTER TABLE example.main.employees ALTER COLUMN hire_date SET DEFAULT CURRENT_DATE;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -33,6 +40,6 @@ struct AirportAlterTableSetDefaultParameters : AirportAlterBase
 
 ## Return Value
 
-The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+The action does not return a value. If an error occurs, the server must raise an Arrow Flight exception with an appropriate error message.
 
 

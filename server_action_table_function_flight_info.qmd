@@ -2,11 +2,11 @@
 title: "`table_function_flight_info` Action"
 ---
 
-This `table_function_flight_info` action is used to determine the schema of a table function supplied by an Arrow Flight Server.  Since table functions can be dynamic based on their parameters, this action is called with the parameters passed to the table function.
+The `table_function_flight_info` action retrieves the schema and metadata for a table-returning function. Since table functions can return different schemas based on their input parameters, this action is invoked with the actual parameter values to determine the appropriate output schema.
 
 ## Input Parameters
 
-There is a single `msgpack` encoded parameter passed to the action.
+The action receives a single `msgpack`-encoded parameter:
 
 ```c++
 struct AirportTableFunctionFlightInfoParameters
@@ -29,6 +29,6 @@ struct AirportTableFunctionFlightInfoParameters
 
 The `parameters` field contains a serialized Arrow Record Batch with the parameter values.  The field names of the record batch are the same as defined by the input schema of the function.
 
-## Output Result
+## Return Value
 
-The `table_function_flight_info` is expected to return a single serialized Arrow `FlightInfo` structure, that will then be used to retrieve the data.  The custom action of ``table_function_flight_info` is used because it allows additional data to be serialized compared with the `GetFlightInfo` Arrow RPC method.
+The action must return a single serialized Arrow `FlightInfo` structure representing the table function's output for the given parameters. This custom action is used instead of the standard `GetFlightInfo` RPC because it supports additional context such as function parameters and time travel information.

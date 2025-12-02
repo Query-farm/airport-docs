@@ -2,11 +2,18 @@
 title: "`add_constraint` Action"
 ---
 
-This `add_constraint` action is used to add a constraint to a table as part of the `ALTER` SQL command.
+The `add_constraint` action adds a constraint (such as `CHECK`, `UNIQUE`, or `FOREIGN KEY`) to an existing table. This action is invoked when executing an `ALTER TABLE ... ADD CONSTRAINT` SQL statement.
+
+## SQL Example
+
+```sql
+ALTER TABLE example.main.employees ADD CONSTRAINT salary_positive CHECK (salary > 0);
+ALTER TABLE example.main.employees ADD CONSTRAINT unique_email UNIQUE (email);
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -32,6 +39,6 @@ struct AirportAlterTableAddConstraintParameters : AirportAlterBase
 
 ## Return Value
 
-The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the modified table with the constraint applied. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 
 

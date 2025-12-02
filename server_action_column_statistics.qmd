@@ -2,11 +2,11 @@
 title: "`column_statistics` Action"
 ---
 
-The `column_statitics` action is used to provide DuckDB with statistics about a field in a table. These statistics allow DuckDB to execute queries more efficiently. An Arrow Flight server can optionally choose to implement this action on a table by table basis.
+The `column_statistics` action provides DuckDB with statistical information about a column in a table. These statistics enable the query optimizer to make better execution decisions, such as choosing optimal join strategies or filtering approaches. Implementing this action is optional and can be done selectively for specific tables.
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 struct GetFlightColumnStatistics
@@ -23,9 +23,9 @@ The `flight_descriptor` field is the Arrow Flight serialized FlightDescriptor st
 
 The `type` field is the DuckDB data type name, i.e. `VARCHAR`, `TIMESTAMP WITH TIME ZONE`.
 
-## Output Results
+## Return Value
 
-The response is a Arrow `RecordBatch` serialized using the IPC Format.  The schema of the response should contain these fields.
+The action must return an Arrow `RecordBatch` serialized using the IPC format with a single row containing the following fields:
 
 | Field Name | Type | Description     |
 |------------|------|-----------------|

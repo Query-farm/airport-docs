@@ -2,11 +2,11 @@
 title: "`create_transaction` Action"
 ---
 
-The `create_transaction` action is used to obtain a new transaction identifier.
+The `create_transaction` action creates a new transaction and returns a unique transaction identifier. This identifier can be used in subsequent operations to group multiple statements within a single transaction.
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 struct AirportGetCatalogVersionParams
@@ -16,9 +16,9 @@ struct AirportGetCatalogVersionParams
 };
 ```
 
-## Output Results
+## Return Value
 
-The `create_table` action is expected to return a `msgpack` encoded structure.
+The action must return a `msgpack`-encoded structure:
 
 ```c++
 struct GetTransactionIdentifierResult

@@ -2,11 +2,18 @@
 title: "`set_not_null` Action"
 ---
 
-This `set_not_null` action is used to add a `NOT NULL` constraint on a column in a table.  It is sent as part of the `ALTER` SQL command.
+The `set_not_null` action adds a `NOT NULL` constraint to a column, ensuring it cannot accept null values. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... SET NOT NULL` SQL statement.
+
+## SQL Example
+
+```sql
+ALTER TABLE example.main.employees ALTER COLUMN email SET NOT NULL;
+ALTER TABLE example.main.employees ALTER COLUMN employee_id SET NOT NULL;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -32,6 +39,6 @@ struct AirportAlterTableSetNotNullParameters : AirportAlterBase
 
 ## Return Value
 
-The action does not return a value, but should raise a Arrow Flight exception if there is an error.
+The action does not return a value. If an error occurs (such as when existing rows contain null values), the server must raise an Arrow Flight exception with an appropriate error message.
 
 

@@ -2,11 +2,17 @@
 title: "`drop_not_null` Action"
 ---
 
-This `drop_not_null` action is used to remove a `NOT NULL` constraint on a column in a table.  It is sent as part of the `ALTER` SQL command.
+The `drop_not_null` action removes a `NOT NULL` constraint from a column, allowing it to accept null values. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... DROP NOT NULL` SQL statement.
+
+## SQL Example
+
+```sql
+ALTER TABLE example.main.employees ALTER COLUMN middle_name DROP NOT NULL;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -31,6 +37,6 @@ struct AirportAlterTableDropNotNullParameters : AirportAlterBase
 
 ## Return Value
 
-The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the modified table with the `NOT NULL` constraint removed. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 
 

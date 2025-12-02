@@ -2,11 +2,19 @@
 title: "`remove_field` Action"
 ---
 
-The `remove_field` action is used to remove a field from a structure that exists in a table as part of the `ALTER` SQL command.
+The `remove_field` action removes a field from a nested `STRUCT` column within a table. This action is invoked when executing an `ALTER TABLE ... DROP COLUMN` SQL statement that targets a field within a struct.
+
+## SQL Example
+
+```sql
+-- Remove a field from a nested struct column
+ALTER TABLE example.main.employees DROP COLUMN address.apartment;
+ALTER TABLE example.main.employees DROP COLUMN IF EXISTS metadata.legacy_id CASCADE;
+```
 
 ## Input Parameters
 
-There is a single `msgpack` serialized parameter passed to the action.
+The action receives a single `msgpack`-serialized parameter:
 
 ```c++
 // The base class for all alter parameters.
@@ -33,5 +41,5 @@ struct AirportAlterTableRemoveFieldParameters : AirportAlterBase
 
 ## Return Value
 
-The action is expected to return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure with the changes applied.  The `app_metadata` field should be populated as appropriate for the flight to be used as a table.
+The action must return a single [`FlightInfo`](https://github.com/apache/arrow/blob/ac1f05f28e18e85ee55cf7aaf3c8ae1ffe0e92d7/format/Flight.proto#L275) structure representing the modified table with the field removed from the struct column. The `app_metadata` field must be populated appropriately to identify the flight as a table.
 
