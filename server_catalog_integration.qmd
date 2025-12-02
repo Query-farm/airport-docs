@@ -19,7 +19,7 @@ To address this, the extension now integrates directly with the DuckDB catalog. 
 
 This integration works by leveraging the Airport extension's ability to interpret the metadata of Arrow Flights provided by the server, effectively creating a catalog layer on top of Arrow Flight, which itself does not provide one.
 
-The Airport extension relies on additional metadata attached to the flight information.  This metadata is stored in the `app_metadata` field of the `FlightInfo` structure. This metadata signals to Airport whether a specific flight should be treated as a database table, a scalar function, or a table-returning function.  The metadata is a serialized C++ structure named  using `msgpack` named `SerializedFlightAppMetadata`.
+The Airport extension relies on additional metadata attached to the flight information. This metadata is stored in the `app_metadata` field of the `FlightInfo` structure. This metadata signals to Airport whether a specific flight should be treated as a database table, a scalar function, or a table-returning function. The metadata is a serialized C++ structure, using `msgpack`, called `SerializedFlightAppMetadata`.
 
 ::: {.callout-note title="SerializedFlightAppMetadata Structure" collapse="true"}
 
@@ -249,7 +249,7 @@ Databases often contain hundreds or even thousands of tables, each with its own 
 
 To optimize performance, a server can serialize and compress schema descriptions once and provide clients with a reference to the stored representation via a URL (e.g., accessible with curl). This URL could be hosted on a CDN to further improve efficiency.
 
-If an Airport-provided `list_schemas` schema or database includes a SHA256 checksum and its contents are not provided inline with the response, it is assumed that the content can be be cacheable indefinitely. Instead of repeatedly downloading the schema information, DuckDB caches it in the `.duckdb` home directory under the  `airport_cache` direction, using the SHA256 checksum as the cache key. Before attempting to retrieve the schema from a URL, DuckDB first checks this cache. If the schema exists on disk and its hash matches, the cached version is used.
+If an Airport-provided `list_schemas` schema or database includes a SHA256 checksum and its contents are not provided inline with the response, it is assumed that the content can be cacheable indefinitely. Instead of repeatedly downloading the schema information, DuckDB caches it in the `.duckdb` home directory under the `airport_cache` directory, using the SHA256 checksum as the cache key. Before attempting to retrieve the schema from a URL, DuckDB first checks this cache. If the schema exists on disk and its hash matches, the cached version is used.
 
 :::
 
@@ -261,22 +261,22 @@ Instead of using Arrow Flight's `ListFlights` RPC for catalog integration, the A
 
 1. __Flexible Response Delivery:__ Responses can be provided inline or via an external URL, validated and cached based off of a SHA256 checksum. This enables CDN support and client-side caching.
 
-2. __Comprehensive Database Representation:__ `list_schemas` returns either the entire database's structure.  Each schema contained in the database can either be returned inline or via an external URL. This allows schemas that are immutable to be efficiently cached, and fixed schemas the be served effectively.
+2. __Comprehensive Database Representation:__ `list_schemas` returns the entire database's structure. Each schema contained in the database can either be returned inline or via an external URL. This allows schemas that are immutable to be efficiently cached, and fixed schemas to be served effectively.
 
-4. __Efficient Handling of Dynamic Schemas:__ For schemas that change frequently, SHA256 checksums are optional.  Without a SHA256 checksum the schema information will not be cached by DuckDB.
+3. __Efficient Handling of Dynamic Schemas:__ For schemas that change frequently, SHA256 checksums are optional. Without a SHA256 checksum the schema information will not be cached by DuckDB.
 
 ## Retrieving Catalog and Schema Information
 
 Database schema information is retrieved using an Arrow Flight RPC action called via `DoAction`[^1] with the name [`list_schemas`](server_action_list_schemas.qmd).
 
 ## Case Sensitivity
-DuckDB [table and identifier names are case-insensitive](https://duckdb.org/docs/stable/sql/dialect/keywords_and_identifiers.html) but the names are not transformed (or standardized to a particular case) before they are sent to the Arrow Flight server. As such a query like
+DuckDB [table and identifier names are case-insensitive](https://duckdb.org/docs/stable/sql/dialect/keywords_and_identifiers.html) but the names are not transformed (or standardized to a particular case) before they are sent to the Arrow Flight server. As such, a query like
 
 ```sql
-SELECT FROM from FooBar;
+SELECT * FROM FooBar;
 ```
 
-Will look for a table named `FooBar`.
+will look for a table named `FooBar`.
 
 It is the responsibility of the server to match the behavior of DuckDB.
 

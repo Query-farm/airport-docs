@@ -50,7 +50,7 @@ _Note: Rows rounded to 2 decimal places for clarity._
 
 # Remote Table Creation
 
-## Create Remove Table from 32-byte String
+## Create Remote Table from 32-byte String
 
 - **Duration:** 3.53s
 - **Rows/sec:** 11.33M

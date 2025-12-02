@@ -76,7 +76,7 @@ website:
                 - text: "Drop"
                   href: table_drop.qmd
                 - text: "Alter"
-                  hre f: table_alter.qmd
+                  href: table_alter.qmd
                 - text: "RowId Pseudocolumn"
                   href: table_row_ids.qmd
                 - text: "Column Statistics"

@@ -74,7 +74,7 @@ To help with efficiency, the entire contents of a catalog can be provided via a 
 
 ### Schema Serialization Methods
 
-The `AirportSerializedContentsWithSHA256Hash` structure provides schema or catalog content, either inline or via an external URL with SHA256 validation.  If an external URL is provided, the contents is assumed to the same as the inline serialization with the SHA256 value of the contents being verified.
+The `AirportSerializedContentsWithSHA256Hash` structure provides schema or catalog content, either inline or via an external URL with SHA256 validation. If an external URL is provided, the contents is assumed to be the same as the inline serialization with the SHA256 value of the contents being verified.
 
 ```c++
 // This is a generic type that applies a SHA256
@@ -101,7 +101,7 @@ struct AirportSerializedContentsWithSHA256Hash
   MSGPACK_DEFINE_MAP(sha256, url, serialized)
 };
 ```
-The type and format of the inline serialized data varies depends on if the content is describing an entire catalog or a specific schema.
+The type and format of the inline serialized data depends on whether the content is describing an entire catalog or a specific schema.
 
 ### Catalog Inline Serialization
 

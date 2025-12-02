@@ -18,7 +18,7 @@ These macros are added to the `main` schema:
 
 
 ::: {.callout-tip}
-Calling `airport_flights` and `airport_take_flight` are considered a lower level interface.  Airport also [integrates with the DuckDB catalog](catalog_integration.qmd) the allows Arrow Flights to operate much like DuckDB Tables.
+Calling `airport_flights` and `airport_take_flight` are considered a lower level interface. Airport also [integrates with the DuckDB catalog](catalog_integration.qmd) that allows Arrow Flights to operate much like DuckDB Tables.
 :::
 
 ---
