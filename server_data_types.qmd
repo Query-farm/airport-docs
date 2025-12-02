@@ -1,5 +1,6 @@
 ---
 title: "Data Types"
+description: "Learn about Apache Arrow data types supported by Airport, including primitives, nested types, and Arrow extension types for custom data structures."
 ---
 
 Arrow Flight servers can choose which data types they support. Since Arrow Flight builds on Apache Arrow, it can serialize any data type that Arrow supports—including complex nested types like structs, maps, and unions.

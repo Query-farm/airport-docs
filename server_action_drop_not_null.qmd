@@ -1,5 +1,6 @@
 ---
 title: "`drop_not_null` Action"
+description: "Implement the drop_not_null DoAction to support ALTER TABLE ALTER COLUMN DROP NOT NULL statements for removing column constraints."
 ---
 
 The `drop_not_null` action removes a `NOT NULL` constraint from a column, allowing it to accept null values. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... DROP NOT NULL` SQL statement.

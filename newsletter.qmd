@@ -1,5 +1,6 @@
 ---
 title: "Airport for DuckDB Newsletter"
+description: "Subscribe to the Airport for DuckDB newsletter for updates on new features, data connectors, SQL tips, and insights on building Data-as-a-Service platforms."
 ---
 
 The **Airport** extension brings [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html) support to [DuckDB](https://duckdb.org), allowing you to query remote APIs, serve data securely, and expand DuckDB’s functionality with remote SQL functions.

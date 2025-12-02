@@ -1,5 +1,6 @@
 ---
 title: "`set_default` Action"
+description: "Implement the set_default DoAction to support ALTER TABLE ALTER COLUMN SET DEFAULT statements for defining column default values."
 ---
 
 The `set_default` action sets or updates the default value for a column. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... SET DEFAULT` SQL statement.

@@ -1,5 +1,6 @@
 ---
 title: "Transactions and Consistency"
+description: "Understand how Airport implements transactional consistency and read isolation for Arrow Flight servers using transaction identifiers."
 ---
 
 The Airport extension interacts primarily with external systems, which may not provide the same transactional guarantees as native DuckDB tables. However, Airport implements mechanisms to support consistency and transactional semantics where possible.

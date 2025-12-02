@@ -1,5 +1,6 @@
 ---
 title: "Select from Tables"
+description: "Query remote data using standard SELECT statements with Airport - supports streaming, predicate pushdown, and Parquet file locations."
 ---
 
 The Airport extension enables DuckDB to query remote data using standard `SELECT` statements. Through Arrow Flight integration, data can be either streamed directly or accessed via returned locations (such as URLs to Parquet files). Arrow Flight servers may optionally filter results server-side using query predicates before returning data.

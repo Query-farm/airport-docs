@@ -1,5 +1,6 @@
 ---
 title: "Create Table"
+description: "Create new tables in Airport-attached databases using standard SQL CREATE TABLE statements with Arrow Flight server validation."
 ---
 
 The Airport extension supports creating tables through standard SQL `CREATE TABLE` statements. The Arrow Flight server determines whether to permit the table creation.

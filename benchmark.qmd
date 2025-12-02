@@ -1,5 +1,6 @@
 ---
 title: "Airport I/O Benchmarks"
+description: "Performance benchmarks for Airport extension operations including scalar functions, table creation, and selection with 40M-100M row datasets."
 format:
   html:
     toc: true

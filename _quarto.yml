@@ -1,5 +1,8 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "!CLAUDE.md"
 
 website:
   title: "✈️ Airport for DuckDB"
@@ -9,7 +12,6 @@ website:
   repo-branch: master
   repo-actions: [edit, source, issue]
   google-analytics: "G-NQTYGWQD1B"
-  cookie-consent: true
   favicon: farm-icon.png
   open-graph: true
   twitter-card: true

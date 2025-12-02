@@ -1,5 +1,6 @@
 ---
 title: "`create_transaction` Action"
+description: "Implement the create_transaction DoAction to provide transaction identifiers for consistent reads and transactional isolation."
 ---
 
 The `create_transaction` action creates a new transaction and returns a unique transaction identifier. This identifier can be used in subsequent operations to group multiple statements within a single transaction.

@@ -1,5 +1,6 @@
 ---
 title: "Extension API"
+description: "Complete reference for Airport extension API functions including airport_flights, airport_take_flight, airport_action, and catalog integration with DuckDB."
 ---
 
 When the Airport extension is loaded into a DuckDB session it supplies a number of functions that can be called.

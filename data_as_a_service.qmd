@@ -1,5 +1,6 @@
 ---
 title: "Airport Extension for Data-as-a-Service"
+description: "Build powerful Data-as-a-Service (DaaS) platforms with Airport - deliver queryable data over the Internet without managing infrastructure or ETL pipelines."
 filters:
   - d2
 d2:

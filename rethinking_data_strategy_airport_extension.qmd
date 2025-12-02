@@ -1,6 +1,7 @@
 ---
 title: "Rethinking Data Strategy: Airport as a Foundation for the Modern Data Stack"
 author: "Rusty Conover"
+description: "Simplify your data stack with Airport - query any data source through SQL using Apache Arrow Flight as a universal interface for live, versioned data."
 ---
 
 # SQL as a Strategic Interface for Everything

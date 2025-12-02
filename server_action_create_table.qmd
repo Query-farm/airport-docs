@@ -1,5 +1,6 @@
 ---
 title: "`create_table` Action"
+description: "Implement the create_table DoAction to support CREATE TABLE statements with schemas, constraints, and default values."
 ---
 
 The `create_table` action creates a new table in the database with the specified schema and constraints. This action is invoked when executing a `CREATE TABLE` SQL statement.

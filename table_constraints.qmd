@@ -1,5 +1,6 @@
 ---
 title: "Constraints, Checks, and Default Values"
+description: "Define NOT NULL constraints, check constraints, and default values in Airport tables using Arrow schema metadata and SQL expressions."
 ---
 
 The Airport extension supports tables with constraints, check expressions, and default values. Arrow Flight servers declare these properties in the table's Apache Arrow schema metadata.

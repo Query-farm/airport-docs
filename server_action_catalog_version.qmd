@@ -1,5 +1,6 @@
 ---
 title: "`catalog_version` Action"
+description: "Implement the catalog_version DoAction to provide version tracking for catalog changes and cache invalidation in DuckDB."
 ---
 
 The `catalog_version` action returns the current version of the database catalog. DuckDB uses this version number to determine whether cached schema information is still valid. When the version changes, DuckDB refreshes the catalog metadata by re-querying the schemas.

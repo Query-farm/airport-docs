@@ -1,5 +1,6 @@
 ---
 title: "`flight_info` Action"
+description: "Implement the flight_info DoAction to retrieve table schema and metadata at specific timestamps or versions for time travel queries."
 ---
 
 The `flight_info` action retrieves the schema and metadata for a table at a specific point in time. This is particularly important for time travel queries, where the table's schema may have evolved over time. The action allows the server to return the appropriate schema for the requested timestamp or version.

@@ -1,5 +1,6 @@
 ---
 title: "`remove_field` Action"
+description: "Implement the remove_field DoAction to support removing fields from STRUCT columns in your Arrow Flight server tables."
 ---
 
 The `remove_field` action removes a field from a nested `STRUCT` column within a table. This action is invoked when executing an `ALTER TABLE ... DROP COLUMN` SQL statement that targets a field within a struct.

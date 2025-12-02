@@ -1,5 +1,6 @@
 ---
 title: "Update Rows"
+description: "Update rows in Airport-managed tables using standard SQL UPDATE statements with RETURNING clause support for modified values."
 ---
 
 The Airport extension supports updating rows in managed tables through standard SQL `UPDATE` statements. The Arrow Flight server is responsible for storing and persisting the modified data.

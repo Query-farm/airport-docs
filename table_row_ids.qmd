@@ -1,5 +1,6 @@
 ---
 title: "Airport Tables with `rowid` Pseudocolumns"
+description: "Implement rowid pseudocolumns in Airport tables for unique row identification, enabling efficient updates and deletes by row ID."
 ---
 
 In DuckDB, the [`rowid` pseudocolumn](https://duckdb.org/docs/stable/sql/statements/select.html#row-ids) serves as a unique row identifier derived from the physical storage location.

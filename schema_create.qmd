@@ -1,5 +1,6 @@
 ---
 title: "Create Schema"
+description: "Create new schemas in Airport-attached databases using standard SQL CREATE SCHEMA statements with Arrow Flight server integration."
 ---
 
 The Airport extension supports creating schemas in attached databases. DuckDB schemas can contain tables, functions, macros, and other database objects. The Arrow Flight server determines whether the schema creation request is permitted.

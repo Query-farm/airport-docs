@@ -1,5 +1,6 @@
 ---
 title: "Features"
+description: "Explore Airport's key features: SQL operations on remote data, time travel queries, custom functions, row-level security, and Apache Arrow-based high-performance data access."
 ---
 
 The Airport extension brings [Arrow Flight](https://arrow.apache.org/blog/2019/10/13/introducing-arrow-flight/) support to DuckDB, enabling high-performance remote data access and distributed operations. Key features are detailed below.

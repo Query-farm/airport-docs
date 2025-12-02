@@ -1,5 +1,6 @@
 ---
 title: "`add_column` Action"
+description: "Implement the add_column DoAction to support ALTER TABLE ADD COLUMN statements in your Arrow Flight server."
 ---
 
 The `add_column` action adds a new column to an existing table. This action is invoked when executing an `ALTER TABLE ... ADD COLUMN` SQL statement.

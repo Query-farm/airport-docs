@@ -1,5 +1,6 @@
 ---
 title: "`rename_table` Action"
+description: "Implement the rename_table DoAction to support ALTER TABLE RENAME TO statements for renaming tables in your database."
 ---
 
 The `rename_table` action renames an existing table. This action is invoked when executing an `ALTER TABLE ... RENAME TO` SQL statement.

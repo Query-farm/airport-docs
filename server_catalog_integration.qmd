@@ -1,5 +1,6 @@
 ---
 title: "Airport Servers and the DuckDB Catalog"
+description: "Understand how Arrow Flight servers integrate with DuckDB's catalog system to make remote data appear as native tables, schemas, and functions."
 filters:
   - d2
 d2:

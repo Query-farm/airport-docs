@@ -1,5 +1,6 @@
 ---
 title: "`add_constraint` Action"
+description: "Implement the add_constraint DoAction to support ALTER TABLE ADD CONSTRAINT statements for check and unique constraints."
 ---
 
 The `add_constraint` action adds a constraint (such as `CHECK`, `UNIQUE`, or `FOREIGN KEY`) to an existing table. This action is invoked when executing an `ALTER TABLE ... ADD CONSTRAINT` SQL statement.

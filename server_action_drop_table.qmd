@@ -1,5 +1,6 @@
 ---
 title: "`drop_table` Action"
+description: "Implement the drop_table DoAction to support DROP TABLE statements for deleting tables from your Arrow Flight server database."
 ---
 
 The `drop_table` action deletes an existing table from the database. This action is invoked when executing a `DROP TABLE` SQL statement.

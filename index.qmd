@@ -1,5 +1,6 @@
 ---
 title: "Airport for DuckDB"
+description: "Airport is a DuckDB extension that brings Arrow Flight support to DuckDB, enabling remote data access, custom SQL functions, and Data-as-a-Service capabilities."
 ---
 
 <img src="airport-duck-2.jpg" style="float:right; width:250px; padding: 1.2em;" alt="A duck at the airport."/>

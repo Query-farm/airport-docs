@@ -1,5 +1,6 @@
 ---
 title: "Scalar Functions"
+description: "Create custom scalar user-defined functions (UDFs) in Arrow Flight servers that can be called directly from DuckDB SQL queries."
 ---
 
 The Airport extension enables Arrow Flight servers to provide custom scalar functions that can be called directly within SQL queries.

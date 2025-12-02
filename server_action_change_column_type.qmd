@@ -1,5 +1,6 @@
 ---
 title: "`change_column_type` Action"
+description: "Implement the change_column_type DoAction to support ALTER TABLE ALTER COLUMN TYPE statements for changing column data types."
 ---
 
 The `change_column_type` action changes the data type of an existing column in a table. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... TYPE` SQL statement.

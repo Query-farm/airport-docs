@@ -1,5 +1,6 @@
 ---
 title: "Time Travel"
+description: "Enable time travel queries in your Arrow Flight server to allow DuckDB users to query historical table snapshots using timestamps or version numbers."
 ---
 
 As of version 1.3.0, DuckDB supports time travel (also known as point-in-time) SQL queries, allowing users to query the historical state of a table.

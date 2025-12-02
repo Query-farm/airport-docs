@@ -1,5 +1,6 @@
 ---
 title: "Server Basics"
+description: "Learn how to build an Arrow Flight server for Airport - from basic data exposure to advanced features like authentication, UDFs, and catalog integration."
 ---
 
 Writing an Arrow Flight server that integrates with the Airport extension for DuckDB can range from simple to sophisticated, depending on your requirements. At its most basic, a Flight server exposes data through Arrow Flights. With additional implementation, it can become a fully programmable, secure service that responds efficiently to SQL queries, supports user-defined functions, and integrates seamlessly with DuckDB.

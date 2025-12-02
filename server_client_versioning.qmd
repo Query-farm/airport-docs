@@ -1,5 +1,6 @@
 ---
 title: "Server–Client Versioning"
+description: "Ensure compatibility between Airport extension and Arrow Flight servers using the airport-user-agent header for protocol version negotiation."
 ---
 
 The integration between the Airport DuckDB extension and Arrow Flight servers is expected to evolve over time. Versioning changes have already occurred during the development of the extension.

@@ -1,5 +1,6 @@
 ---
 title: "Catalog Versioning"
+description: "Learn how DuckDB detects catalog changes in Arrow Flight servers using version tracking for automatic cache invalidation and refresh."
 ---
 
 Multiple DuckDB sessions can simultaneously access a single Arrow Flight server. When one session modifies or creates an object in the database or catalog, other attached clients detect the change the next time they run a query. For example, if one session creates a table, that table becomes visible to other clients immediately upon creation.

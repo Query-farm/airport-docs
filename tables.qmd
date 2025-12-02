@@ -1,5 +1,6 @@
 ---
 title: "Tables"
+description: "Understand how Arrow Flights are exposed as DuckDB tables through Airport, enabling SELECT, INSERT, UPDATE, DELETE, and DDL operations."
 ---
 
 Tables are fundamental to database systems, representing structured collections of data organized into rows with associated data types.

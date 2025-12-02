@@ -1,5 +1,6 @@
 ---
 title: "`create_schema` Action"
+description: "Implement the create_schema DoAction to support CREATE SCHEMA statements in your Arrow Flight server database."
 ---
 
 The `create_schema` action creates a new schema in the database. This action is invoked when executing a `CREATE SCHEMA` SQL statement.

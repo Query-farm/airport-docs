@@ -1,5 +1,6 @@
 ---
 title: "Insert Rows"
+description: "Insert data into Airport-managed tables using standard SQL INSERT statements with RETURNING clause support for generated columns."
 ---
 
 The Airport extension supports inserting data into managed tables through standard SQL `INSERT` statements. The Arrow Flight server is responsible for storing and persisting the data.

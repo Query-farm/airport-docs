@@ -1,5 +1,6 @@
 ---
 title: "`drop_schema` Action"
+description: "Implement the drop_schema DoAction to support DROP SCHEMA statements for removing schemas from your Arrow Flight server database."
 ---
 
 The `drop_schema` action deletes an existing schema from the database. This action is invoked when executing a `DROP SCHEMA` SQL statement.

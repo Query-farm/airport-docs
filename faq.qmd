@@ -1,5 +1,6 @@
 ---
 title: "Frequently Asked Questions"
+description: "Find answers to common questions about the Airport extension for DuckDB, including architecture decisions, performance considerations, and implementation details."
 ---
 
 ## Architecture and Design

@@ -1,5 +1,6 @@
 ---
 title: "`column_statistics` Action"
+description: "Implement the column_statistics DoAction to provide min/max values, distinct counts, and null statistics for query optimization."
 ---
 
 The `column_statistics` action provides DuckDB with statistical information about a column in a table. These statistics enable the query optimizer to make better execution decisions, such as choosing optimal join strategies or filtering approaches. Implementing this action is optional and can be done selectively for specific tables.

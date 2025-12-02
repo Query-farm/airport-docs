@@ -1,5 +1,6 @@
 ---
 title: "`table_function_flight_info` Action"
+description: "Implement the table_function_flight_info DoAction to retrieve schema and metadata for table-valued functions with dynamic return types."
 ---
 
 The `table_function_flight_info` action retrieves the schema and metadata for a table-returning function. Since table functions can return different schemas based on their input parameters, this action is invoked with the actual parameter values to determine the appropriate output schema.

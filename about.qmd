@@ -1,5 +1,6 @@
 ---
 title: "About"
+description: "Official documentation for the Airport extension for DuckDB - integrating Apache Arrow Flight for high-performance remote data access and distributed queries."
 ---
 
 This is the official documentation for the **Airport** extension for DuckDB.

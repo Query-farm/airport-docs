@@ -1,5 +1,6 @@
 ---
 title: "`add_field` Action"
+description: "Implement the add_field DoAction to support adding fields to STRUCT columns in your Arrow Flight server tables."
 ---
 
 The `add_field` action adds a new field to a nested `STRUCT` column within a table. This action is invoked when executing an `ALTER TABLE ... ADD COLUMN` SQL statement that targets a field within a struct.

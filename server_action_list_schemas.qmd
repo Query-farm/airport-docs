@@ -1,5 +1,6 @@
 ---
 title: "`list_schemas` Action"
+description: "Implement the list_schemas DoAction to expose database schemas, tables, and functions for DuckDB catalog integration (required)."
 ---
 
 This `list_schemas` action is used by DuckDB to determine the contents of a database attached via Airport.  The Arrow Flight server returns information about the schemas that exist in the database as well as all of the tables, scalar functions and table returning functions.

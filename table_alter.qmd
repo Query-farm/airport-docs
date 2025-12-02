@@ -1,5 +1,6 @@
 ---
 title: "Alter Table"
+description: "Modify table schemas in Airport-attached databases using ALTER TABLE statements for adding, removing, and renaming columns."
 ---
 
 The Airport extension supports table schema modifications through the standard SQL `ALTER TABLE` statement. The Arrow Flight server determines whether to permit and apply the requested alteration.

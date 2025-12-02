@@ -1,5 +1,6 @@
 ---
 title: "`remove_column` Action"
+description: "Implement the remove_column DoAction to support ALTER TABLE DROP COLUMN statements for removing columns from tables."
 ---
 
 The `remove_column` action removes a column from an existing table. This action is invoked when executing an `ALTER TABLE ... DROP COLUMN` SQL statement.

@@ -1,5 +1,6 @@
 ---
 title: "Drop Schema"
+description: "Drop schemas from Airport-attached databases using standard SQL DROP SCHEMA statements with Arrow Flight server validation."
 ---
 
 The Airport extension supports dropping schemas from attached databases. The Arrow Flight server determines whether the schema drop request is permitted.

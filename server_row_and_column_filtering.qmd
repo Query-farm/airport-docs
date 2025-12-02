@@ -1,5 +1,6 @@
 ---
 title: "Row and Column Level Filtering"
+description: "Implement fine-grained access control in your Arrow Flight server with row-level and column-level filtering based on user identity and permissions."
 ---
 
 The Airport extension for DuckDB enables **row-level** and **column-level** filtering based on the identity of the user making the request. This functionality allows organizations to enforce fine-grained access control policies directly within the Arrow Flight server.

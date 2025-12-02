@@ -1,5 +1,6 @@
 ---
 title: "Drop Table"
+description: "Drop tables from Airport-attached databases using standard SQL DROP TABLE statements with Arrow Flight server authorization."
 ---
 
 The Airport extension supports dropping tables through standard SQL `DROP TABLE` statements. The Arrow Flight server determines whether to permit the table deletion.

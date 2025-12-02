@@ -1,5 +1,6 @@
 ---
 title: "`endpoints` Action"
+description: "Implement the endpoints DoAction to return Arrow Flight endpoints with predicate pushdown, column selection, and time travel support."
 ---
 
 This `endpoints` action returns the Arrow Flight endpoints for a flight descriptor. By using the action it is possible to pass along additional information to the server.

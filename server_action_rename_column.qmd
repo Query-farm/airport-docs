@@ -1,5 +1,6 @@
 ---
 title: "`rename_column` Action"
+description: "Implement the rename_column DoAction to support ALTER TABLE RENAME COLUMN statements for renaming table columns."
 ---
 
 The `rename_column` action renames an existing column in a table. This action is invoked when executing an `ALTER TABLE ... RENAME COLUMN` SQL statement.

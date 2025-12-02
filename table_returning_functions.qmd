@@ -1,5 +1,6 @@
 ---
 title: "Table-Returning Functions"
+description: "Implement table-valued functions (TVFs) in Arrow Flight servers that return multiple rows with dynamic schemas based on input parameters."
 ---
 
 The Airport extension enables Arrow Flight servers to provide table-returning functions (also known as table-valued functions or TVFs). These SQL functions return an arbitrary number of rows conforming to a schema, which can be dynamically determined based on the function's input parameters.

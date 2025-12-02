@@ -1,5 +1,6 @@
 ---
 title: "Table Column Statistics"
+description: "Provide column-level statistics from Arrow Flight servers to optimize DuckDB query execution with min/max values, distinct counts, and null checks."
 ---
 
 Arrow Flight servers can optionally provide column-level statistics to improve query execution performance. Statistics may include:

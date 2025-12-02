@@ -1,5 +1,6 @@
 ---
 title: "Building the Airport Extension from Source"
+description: "Step-by-step instructions for building the Airport extension from source, including dependencies, compilation, and testing."
 ---
 
 Follow these instructions to build the Airport extension from source.

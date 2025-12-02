@@ -1,5 +1,6 @@
 ---
 title: "`set_not_null` Action"
+description: "Implement the set_not_null DoAction to support ALTER TABLE ALTER COLUMN SET NOT NULL statements for adding column constraints."
 ---
 
 The `set_not_null` action adds a `NOT NULL` constraint to a column, ensuring it cannot accept null values. This action is invoked when executing an `ALTER TABLE ... ALTER COLUMN ... SET NOT NULL` SQL statement.

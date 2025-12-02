@@ -1,5 +1,6 @@
 ---
 title: "Standard gRPC Headers"
+description: "Reference guide for standard gRPC headers sent by Airport including airport-user-agent, authority, and session tracking headers."
 ---
 
 The Airport extension sends a standard set of [gRPC headers](https://grpc.io/docs/guides/metadata/) with every request to Arrow Flight servers. These headers provide important context for request routing, authentication, and session tracking.

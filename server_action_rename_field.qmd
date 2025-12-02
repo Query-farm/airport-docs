@@ -1,5 +1,6 @@
 ---
 title: "`rename_field` Action"
+description: "Implement the rename_field DoAction to support renaming fields within STRUCT columns in your Arrow Flight server tables."
 ---
 
 The `rename_field` action renames a field within a nested `STRUCT` column in a table. This action is invoked when executing an `ALTER TABLE ... RENAME COLUMN` SQL statement that targets a field within a struct.

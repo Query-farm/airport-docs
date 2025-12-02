@@ -1,5 +1,6 @@
 ---
 title: "Predicate Pushdown"
+description: "Implement predicate pushdown in your Arrow Flight server to reduce data transfer by filtering at the source before returning results to DuckDB."
 ---
 
 When DuckDB runs a SQL query that filters data from a table provided by the Airport extension, it can push those filter expressions down to the Arrow Flight server. This process, known as *predicate pushdown*, moves filtering closer to the data source, aiming to reduce the amount of data transferred back to the client.

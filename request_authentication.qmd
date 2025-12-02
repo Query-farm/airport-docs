@@ -1,5 +1,6 @@
 ---
 title: "Request Authentication"
+description: "Configure authentication for Airport connections using bearer tokens and DuckDB secrets manager integration for secure Arrow Flight server access."
 ---
 
 The Airport extension supports authenticated requests to Arrow Flight servers via authentication headers.

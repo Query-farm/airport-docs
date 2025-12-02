@@ -1,5 +1,6 @@
 ---
 title: "Airport/DuckDB Catalog Integration"
+description: "Learn how Airport integrates with DuckDB's catalog system to expose Arrow Flight servers as databases, schemas, tables, and functions."
 filters:
   - d2
 d2:

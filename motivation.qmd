@@ -1,6 +1,7 @@
 ---
 title: "Motivation for the Airport Extension"
 author: "Rusty Conover"
+description: "Discover why Airport was created - enabling universal data access via SQL, connecting any data source anywhere to DuckDB through Arrow Flight."
 ---
 
 # The Dream of Universal Data Access via SQL
