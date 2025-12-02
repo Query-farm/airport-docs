@@ -31,7 +31,7 @@ INSTALL airport FROM community;
 LOAD AIRPORT;
 
 -- Attach a database named 'hello'
-ATTACH 'hello' (TYPE  AIRPORT, location 'grpc+tls://hello-airport.query.farm');
+ATTACH 'hello' (TYPE AIRPORT, location 'grpc+tls://hello-airport.query.farm');
 
 -- Jump into a static schema
 USE hello.static;
@@ -74,8 +74,6 @@ SELECT * FROM messages WHERE channel = 'airport' order by timestamp desc;
 │   0   │ zesty-chick │ This is my first message │ 2025-07-22 02:31:47.714 │ airport │
 └───────┴─────────────┴──────────────────────────┴─────────────────────────┴─────────┘
 ```
-
-
 
 If you wish to build the extension from source see these [instructions](build_instructions.qmd).
 
