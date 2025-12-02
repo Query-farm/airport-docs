@@ -2,59 +2,62 @@
 title: "Features"
 ---
 
-The Airport extension brings [Arrow Flight](https://arrow.apache.org/blog/2019/10/13/introducing-arrow-flight/) support to DuckDB, the features of the extension are detailed below.
+The Airport extension brings [Arrow Flight](https://arrow.apache.org/blog/2019/10/13/introducing-arrow-flight/) support to DuckDB, enabling high-performance remote data access and distributed operations. Key features are detailed below.
 
 ## Key Features
 
-### Supported SQL:
+### Supported SQL Operations
 
-- Databases
-  - [`ATTACH`](catalog_integration.qmd#attaching-an-airport-database)
-  - [`DETACH`](catalog_integration.qmd#attaching-an-airport-database)
-- Tables
-  - [`SELECT`](table_select.qmd)
-  - [`UPDATE`](table_update.qmd)
-  - [`INSERT`](table_insert.qmd)
-  - [`DELETE`](table_delete.qmd)
-  - [`CREATE TABLE`](table_create.qmd)
-  - [`DROP`](table_drop.qmd)
-  - [`ALTER TABLE`](table_alter.qmd)
-- Schemas
-  - [`CREATE SCHEMA`](schema_create.qmd)
-  - [`DROP SCHEMA`](schema_drop.qmd)
+**Databases:**
+
+- [`ATTACH`](catalog_integration.qmd#attaching-an-airport-database) — Connect remote databases
+- [`DETACH`](catalog_integration.qmd#attaching-an-airport-database) — Disconnect databases
+
+**Tables:**
+
+- [`SELECT`](table_select.qmd) — Query remote tables
+- [`UPDATE`](table_update.qmd) — Modify existing data
+- [`INSERT`](table_insert.qmd) — Add new data
+- [`DELETE`](table_delete.qmd) — Remove data
+- [`CREATE TABLE`](table_create.qmd) — Create new tables
+- [`DROP`](table_drop.qmd) — Delete tables
+- [`ALTER TABLE`](table_alter.qmd) — Modify table structure
+
+**Schemas:**
+
+- [`CREATE SCHEMA`](schema_create.qmd) — Create new schemas
+- [`DROP SCHEMA`](schema_drop.qmd) — Delete schemas
 
 ### Time Travel
 
-Airport supports time travel on tables where supported by the remote system. You can query previous versions of data or audit historical changes using standard SQL idioms.
+Airport supports time travel queries on tables where the remote system provides this capability. Query historical data snapshots or audit changes over time using standard SQL syntax.
 
 ### Custom Scalar Functions (UDFs)
 
-Airport supports custom scalar functions that run on the remote server. These are defined and registered as part of the remote schema and behave like native DuckDB functions.
+Airport supports custom scalar functions that execute on the remote server. These user-defined functions are registered in the remote schema and behave like native DuckDB functions within queries.
 
-### Table Returning Functions
+### Table-Returning Functions
 
-Airport includes table-valued functions that can receive arguments — including other tables — and return result sets. TVFs enable parameterized queries, dynamic filtering, and subquery pipelines with remote execution.
+Airport supports table-valued functions (TVFs) that accept arguments—including other tables—and return result sets. TVFs enable parameterized queries, dynamic filtering, and complex data pipelines with remote execution.
 
 
 ## Developer Features
 
-### Open Source and MIT Licensed.
+### Open Source and MIT Licensed
 
-Airport is freely available under the MIT License.
+Airport is freely available under the permissive MIT License.
 
-### Build on Apache Arrow
+### Built on Apache Arrow
 
-Airport uses Apache Arrow and Arrow Flight for:
+Airport leverages Apache Arrow and Arrow Flight for:
 
-- High-performance IPC
-- Streaming data across process boundaries
-- Compatibility with Python, Rust, Go, C++, and more
+- High-performance inter-process communication (IPC)
+- Efficient streaming across process boundaries
+- Multi-language compatibility (Python, Rust, Go, C++, Java, and more)
 
 ### Easy to Extend
 
-Want to create your own endpoint?
-
-Airport makes it easy to implement custom Arrow Flight servers using DuckDB-compatible semantics. Plug in your data source, expose it with Flight, and let users query it via SQL.
+Airport simplifies the creation of custom Arrow Flight servers with DuckDB-compatible semantics. Connect your data source, expose it via Arrow Flight, and enable SQL queries—no complex integration required.
 
 ### Row and Column Level Security
 

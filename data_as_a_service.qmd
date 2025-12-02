@@ -8,30 +8,30 @@ d2:
 ---
 
 
-The **Airport extension** for DuckDB enables you to offer powerful *Data-as-a-Service* (DaaS) solutions.
+The **Airport extension** for DuckDB enables you to build and deliver powerful *Data-as-a-Service* (DaaS) solutions.
 
 ## What is Data-as-a-Service?
 
-Data-as-a-Service delivers clean, structured, and queryable data over the Internet, on demand—similar to SaaS (Software-as-a-Service), but for data instead of software. Consumers don’t need to manage infrastructure, storage, or ETL pipelines—they just connect and start querying.
+Data-as-a-Service (DaaS) delivers clean, structured, queryable data over the Internet on demand—similar to Software-as-a-Service (SaaS), but for data instead of software. Data consumers don't need to manage infrastructure, storage, or ETL pipelines—they simply connect and start querying.
 
 Leveraging [Arrow Flight](https://arrow.apache.org/docs/format/Flight.html), Airport can stream datasets or provide data locations with minimal client-side effort.
 
 ### Key Benefits
 
 1. **Zero Infrastructure Burden**
-    - Clients only need DuckDB. No custom SDKs or platform dependencies.
+   - Clients only need DuckDB—no custom SDKs or platform dependencies.
 
 2. **Scalable & Real-Time**
-    - Data delivery is efficient and often near real-time.
+   - Efficient data delivery with near real-time updates.
 
 3. **Easy Integration**
-    - Seamlessly plugs into apps, dashboards, or analytics platforms.
+   - Seamlessly integrates with applications, dashboards, and analytics platforms.
 
 4. **Flexible Delivery**
-    - Clients can run queries but they can also download the data just as easily.  They can just use a [`COPY TO` SQL statement](https://duckdb.org/docs/stable/sql/statements/copy.html#copy--to).
+   - Clients can query data in place or download it locally using standard [`COPY TO` statements](https://duckdb.org/docs/stable/sql/statements/copy.html#copy--to).
 
 5. **Cost Efficiency**
-    - Data can be stored in the cloud or on-premises in a data center, clients can be pointed to the most efficient location.  Data can be served from CDNs or streamed directly from the Arrow Flight server as necessary.
+   - Data can be stored in the cloud or on-premises. Clients are automatically directed to the most efficient location. Data can be served from CDNs or streamed directly from Arrow Flight servers as needed.
 
 ## Architecture
 

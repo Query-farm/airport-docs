@@ -8,9 +8,11 @@ format:
     code-tools: true
 ---
 
-This document presents some benchmarks of core operations using the **Airport** extension for DuckDB. The benchmarks cover scalar functions, table creation, and selection operations involving both `BIGINT` and 32-byte string data. Results are measured in execution time (`duration_sec`), CPU usage (`cpu_sec`), and system CPU usage (`cpu_system`), and include throughput in rows per second.
+This document presents performance benchmarks for core operations using the **Airport** extension for DuckDB. The benchmarks evaluate scalar functions, table creation, and selection operations with both `BIGINT` and 32-byte string data types.
 
-All tests were conducted using 40M to 100M rows, simulating high-throughput analytical workloads.
+Results are measured in execution time (`duration_sec`), CPU usage (`cpu_sec`), system CPU usage (`cpu_system`), and throughput (rows per second).
+
+All tests were conducted using datasets of 40M to 100M rows, simulating high-throughput analytical workloads typical in production environments.
 
 # Summary Table
 
@@ -76,10 +78,10 @@ _Note: Rows rounded to 2 decimal places for clarity._
 
 # Observations
 
-- **Scalar functions** scale well, with `Echo BIGINT` and `Echo 32-byte String` both exceeding 35M Rows/sec.
-- **Table creation** is the most costly, especially for large datasets due to single threaded insert speeds.
-- **Select queries** from remote tables using Airport are fast, often exceeding 40M Rows/sec.
-- System CPU usage remains low, indicating good kernel-level efficiency with I/O.
+- **Scalar functions** scale exceptionally well, with `Echo BIGINT` and `Echo 32-byte String` both exceeding 35M rows/sec.
+- **Table creation** is the most resource-intensive operation, particularly for large datasets, due to single-threaded insert limitations.
+- **Select queries** from remote tables deliver excellent performance, often exceeding 40M rows/sec.
+- **System CPU usage** remains low across all operations, indicating efficient kernel-level I/O handling.
 
 # Conclusion
 

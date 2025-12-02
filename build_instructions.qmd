@@ -1,34 +1,35 @@
 ---
-title: "Building the Airport Extension for DuckDB"
+title: "Building the Airport Extension from Source"
 ---
 
-To build the Airport extension from source for DuckDB you can follow these instructions.
+Follow these instructions to build the Airport extension from source.
 
 ```sh
-# This clones the git repository of the extension.
-# duckdb and extension-ci-tools are submodules.
+# Clone the Airport extension repository with submodules
+# (includes duckdb and extension-ci-tools)
 git clone --recursive git@github.com:Query-farm/duckdb-airport-extension
 
-# Clone the vcpkg repo
-#
-#   vcpkg manages all of the dependencies of the airport extension and is
-#   well integrated into DuckDB.
+# Clone vcpkg for dependency management
+# vcpkg handles all Airport dependencies and integrates seamlessly with DuckDB
 git clone https://github.com/Microsoft/vcpkg.git
 
 # Bootstrap vcpkg
 ./vcpkg/bootstrap-vcpkg.sh
 
-# Store the toolchain path for vcpkg, so it can be called
-# by the makefiles.
+# Set the vcpkg toolchain path for the build system
 export VCPKG_TOOLCHAIN_PATH=`pwd`/vcpkg/scripts/buildsystems/vcpkg.cmake
 
-# If you have the ninja build tool installed,
-# you can use it to speed up the build, otherwise
-# just run make by itself.
+# Build the extension
+# If you have Ninja installed, use it for faster builds:
 GEN=ninja make
+
+# Otherwise, use standard make:
+make
 ```
 
-Building the extension will build all of its dependencies, `protobuf`, `grpc`, `arrow` and others, this can take some time depending on the resources of the system being used to build the extension.
+::: {.callout-note}
+Building the extension will compile all dependencies including `protobuf`, `grpc`, `arrow`, and others. Build time varies depending on system resources but typically takes 15-45 minutes on modern hardware.
+:::
 
 ## Alternative to building from source
 

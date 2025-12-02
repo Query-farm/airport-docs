@@ -2,9 +2,9 @@
 title: "Scalar Functions"
 ---
 
-The Airport Extension enables the Arrow Flight Server to provide scalar functions callable within SQL queries.
+The Airport extension enables Arrow Flight servers to provide custom scalar functions that can be called directly within SQL queries.
 
-A scalar function returns a single result (of any [DuckDB data type](https://duckdb.org/docs/stable/sql/data_types/overview.html), including nested types) when given a set of parameters.
+A scalar function accepts a set of input parameters and returns a single result of any [DuckDB data type](https://duckdb.org/docs/stable/sql/data_types/overview.html), including nested and complex types.
 
 ## Example
 
@@ -12,21 +12,22 @@ A scalar function returns a single result (of any [DuckDB data type](https://duc
 SELECT geocode_address('1024 Lenox Ave, Miami Beach, Florida 33139')
 ```
 
-When invoked, the parameters to the function are serialized and sent to the Arrow Flight server, with the results returned to the DuckDB client.
+When invoked, function parameters are serialized and sent to the Arrow Flight server. The server executes the function and returns the results to the DuckDB client.
 
-Scalar functions are registered in a DuckDB catalog and schema when an Airport-provided database is [attached](server_catalog_integration.qmd). They can be explicitly called by referencing the database and schema names:
+Scalar functions are automatically registered in the DuckDB catalog when an Airport-provided database is [attached](server_catalog_integration.qmd). Functions can be explicitly qualified with their database and schema names:
 
 ```sql
 SELECT geocoder.usa.geocode_address('1024 Lenox Ave, Miami Beach, Florida 33139')
 ```
-In this example `geocoder` is the attached database name, and `usa` is the name of the schema.
 
-## Efficiency / Parallelism
+In this example, `geocoder` is the attached database name and `usa` is the schema name.
 
-Airport scalar functions operate efficiently by processing entire [DuckDB vectors](https://duckdb.org/docs/stable/internals/vector.html) at once. As of DuckDB version 1.2, the standard vector size is 2048 tuples. DuckDB can also invoke scalar functions from multiple threads, so the Arrow Flight server should handle parallel requests.
+## Efficiency and Parallelism
+
+Airport scalar functions achieve high efficiency by processing entire [DuckDB vectors](https://duckdb.org/docs/stable/internals/vector.html) in batch operations. As of DuckDB version 1.2, the standard vector size is 2048 tuples. DuckDB may invoke scalar functions from multiple threads concurrently, so Arrow Flight servers must support parallel request handling.
 
 ::: {.callout-note}
-There may be support added to limit parallelism for calls to scalar functions in the future if deemed necessary, right now the number of threads calling the function is likely limited to the number of CPU cores available to DuckDB.
+Future versions may introduce configurable parallelism limits for scalar function calls. Currently, the number of concurrent threads is typically bounded by the number of CPU cores available to DuckDB.
 :::
 
 
