@@ -6,6 +6,7 @@ project:
 
 website:
   title: "✈️ Airport for DuckDB"
+  description: "Airport adds Arrow Flight protocol to DuckDB, enabling remote data queries, custom SQL functions, and Data-as-a-Service. Connect DuckDB to any data source."
   site-url: https://airport.query.farm
   site-path: "/"
   repo-url: https://github.com/Query-farm/airport-docs
@@ -13,8 +14,13 @@ website:
   repo-actions: [edit, source, issue]
   google-analytics: "G-NQTYGWQD1B"
   favicon: farm-icon.png
-  open-graph: true
-  twitter-card: true
+  open-graph:
+    locale: en_US
+    site-name: "Airport for DuckDB Documentation"
+  twitter-card:
+    creator: "@QueryFarm"
+    site: "@QueryFarm"
+    card-style: summary_large_image
 
   page-footer:
     left: |
@@ -176,6 +182,9 @@ format:
     css: styles.css
     toc: true
     canonical-url: true
+    lang: en
+    html-math-method: katex
+    anchor-sections: true
 
 
 
