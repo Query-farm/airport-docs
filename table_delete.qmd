@@ -1,8 +1,8 @@
 ---
-title: "Delete"
+title: "Delete Rows"
 ---
 
-The Airport extension allows tables that it manages to have rows deleted.  The Arrow Flight server is responsible for deleting the data if it chooses to do so.
+The Airport extension supports row deletion from managed tables through standard SQL `DELETE` statements. The Arrow Flight server is responsible for performing the actual deletion operation.
 
 ## Example
 

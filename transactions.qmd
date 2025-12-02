@@ -2,19 +2,42 @@
 title: "Transactions and Consistency"
 ---
 
-The Airport extension for DuckDB primarily interacts with external systems, so the same transactional guarantees may not always be available or even possible.
+The Airport extension interacts primarily with external systems, which may not provide the same transactional guarantees as native DuckDB tables. However, Airport implements mechanisms to support consistency and transactional semantics where possible.
 
-### Consistency of Reads
+## Consistency of Reads
 
-In database systems, data consistency refers to ensuring that data remains accurate and reliable across transactions. This typically means that when a transaction reads data, it sees a stable and correct view of the data, even if other transactions are modifying it concurrently.
+In database systems, **data consistency** ensures that transactions see a stable, accurate view of data, even when concurrent modifications occur.
 
-To achieve consistency within the Airport extension for DuckDB, a `DoAction` Arrow Flight RPC is made at the start of a transaction. The action name is `create_transaction`. This call returns an optional unique identifier, which is included in subsequent RPCs via the `airport-transaction-id` header. If servers respect this identifier that they issue, the extension can ensure that data requested within the same transaction remains consistent.
+Airport supports read consistency through transaction identifiers:
 
-From the perspective of the Airport extension, data requested with the same transaction identifier should be consistent (even across tables). It is the server's responsibility to reject transaction identifiers that can no longer guarantee consistency and raise an appropriate Arrow Flight exception. This mechanism allows clients to rely on consistent data views while interacting with external systems.
+1. At the start of a transaction, Airport invokes a `DoAction` RPC with the [`create_transaction`](server_action_create_transaction.qmd) action.
+2. The server returns an optional unique transaction identifier.
+3. This identifier is included in all subsequent RPCs via the `airport-transaction-id` gRPC header.
+4. Servers that respect this identifier can ensure consistent data views within the same transaction, even across multiple tables.
 
-### Commit and Rollback
+**Server Responsibilities:**
 
-Airport-managed tables lack the transactional guarantees of native DuckDB tables. When using the `INSERT`, `DELETE` or `UPDATE` statements, all rows are sent to the Arrow Flight server where they are presumed to be immediately committed to storage. This differs from a standard SQL transaction that doesn't commit data until `COMMIT` or `ROLLBACK` is issued.
+- Data accessed with the same transaction identifier must be consistent across all tables and requests
+- Servers must reject expired or invalid transaction identifiers by raising an Arrow Flight exception
+- This mechanism enables reliable, consistent data access even when querying remote systems
 
-The current philosophy of the Airport extension is to send the rows to the server. If the server fails to commit the rows during the RPC request, it will raise an Arrow Flight exception, causing the DuckDB transaction to abort.
+## Commit and Rollback
+
+Airport-managed tables differ from native DuckDB tables in their transactional behavior:
+
+**Current Behavior:**
+
+- Data modifications (`INSERT`, `DELETE`, `UPDATE`) are sent immediately to the Arrow Flight server
+- The server is expected to commit changes during the RPC request
+- This differs from traditional SQL transactions that defer commits until an explicit `COMMIT` statement
+
+**Error Handling:**
+
+- If the server cannot commit the data, it must raise an Arrow Flight exception
+- This exception causes the DuckDB transaction to abort
+- Clients can catch and handle these exceptions appropriately
+
+::: {.callout-note}
+Future versions of Airport may introduce deferred commit semantics, allowing servers to participate in two-phase commit protocols or handle rollbacks more gracefully.
+:::
 

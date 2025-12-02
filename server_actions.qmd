@@ -2,9 +2,9 @@
 title: "Server Actions"
 ---
 
-When implementing an Arrow Flight server that integrates with the Airport Extension for DuckDB, you may need to handle several specific actions within the Arrow Flight `DoAction` RPC handler.
+When implementing an Arrow Flight server that integrates with the Airport extension for DuckDB, you must handle specific actions within the Arrow Flight `DoAction` RPC handler.
 
-These actions are summarized below along with their parameters and expected input and output types.
+The following table summarizes all supported actions, including which are required for basic functionality and which are optional for enhanced features.
 
 
 | Action Name | Required | Description |

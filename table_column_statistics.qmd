@@ -2,10 +2,16 @@
 title: "Table Column Statistics"
 ---
 
-An Arrow Flight server can optionally supply statistics that assist in efficient query execution.  For each field the server can optionally return the minimum and maximum values for a field, the number of distinct values, and if there are null or not null values.
+Arrow Flight servers can optionally provide column-level statistics to improve query execution performance. Statistics may include:
+
+- Minimum and maximum values
+- Number of distinct values
+- Presence of null or non-null values
+
+These statistics enable DuckDB's query optimizer to make better execution decisions, such as choosing optimal join strategies or filter orderings.
 
 ## Arrow Flight Server Implementation Notes
 
-For an Airport-managed table to provide statistics, the Arrow schema of the table should contain a metadata key called `can_produce_statistics` with a non-empty string value.
+To enable statistics for a table, add a metadata key named `can_produce_statistics` with a non-empty string value to the table's Arrow schema.
 
-If a table has opted in, the Airport extension will perform a `DoAction` Arrow Flight RPC with a method name of [`column_statistics`](server_action_column_statistics.qmd).
+When statistics are available, the Airport extension invokes a `DoAction` Arrow Flight RPC with the [`column_statistics`](server_action_column_statistics.qmd) action for each column of interest.

@@ -1,8 +1,8 @@
 ---
-title: "Select"
+title: "Select from Tables"
 ---
 
-The Airport extension enables DuckDB to query remote data using standard `SELECT` statements. It integrates with Arrow Flight to either stream data or return the data's location. Optionally, the Arrow Flight server may filter results before returning them using the query's predicates.
+The Airport extension enables DuckDB to query remote data using standard `SELECT` statements. Through Arrow Flight integration, data can be either streamed directly or accessed via returned locations (such as URLs to Parquet files). Arrow Flight servers may optionally filter results server-side using query predicates before returning data.
 
 ## Example
 
@@ -28,7 +28,7 @@ SELECT * FROM example.main.employees AT (TIMESTAMP => TIMESTAMP '2020-01-01');
 SELECT * FROM example.main.employees AT (VERSION => 42);
 ```
 
-You can join Airport tables with other tables or use multiple Airport sources in a single query. DuckDB fetches them in parallel, constrained only by available threads. If a table appears multiple times, each use results in a separate request.
+Airport tables can be joined with other tables or combined with multiple Airport sources in a single query. DuckDB fetches data in parallel, limited only by the available thread pool size. Each reference to a table results in an independent request to the Arrow Flight server.
 
 ## Arrow Flight Server Implementation Notes
 
@@ -41,10 +41,12 @@ To learn how to register an Arrow Flight data as a DuckDB table, refer to [Serve
 When a query includes time travel or point-in-time semantics, the Airport extension issues a [`flight_info`](server_action_flight_info.qmd) RPC. This retrieves the `FlightInfo` structure representing the table as it existed at that specific moment in time. This ensures that queries reflect the correct schema, even if the table has evolved over time.
 
 
-### Endpoint / Location Lookup
+### Endpoint and Location Lookup
 
-To fetch data from a flight, the Airport extension performs a `DoAction` RPC named [`endpoints`](server_action_endpoints.qmd), instead of the standard `GetFlightInfo` RPC. This is done because:
+To retrieve data from a flight, the Airport extension uses a `DoAction` RPC with the [`endpoints`](server_action_endpoints.qmd) action instead of the standard `GetFlightInfo` RPC.
 
-1. The schema is already known and doesn’t need to be returned.
-2. Filter predicates can be serialized and sent, allowing the server to filter endpoints. `GetFlightInfo` doesn't allow additional data beyond the `FlightDescriptor` to be passed.
+**Reasons for using `DoAction`:**
+
+1. **Schema already known** — The table schema is cached from catalog discovery, eliminating redundant schema transfers.
+2. **Predicate pushdown** — Filter predicates can be serialized and sent to the server, enabling server-side filtering. The standard `GetFlightInfo` RPC only accepts a `FlightDescriptor` without additional context.
 

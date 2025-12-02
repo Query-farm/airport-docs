@@ -2,11 +2,17 @@
 title: "Tables"
 ---
 
-Tables are fundamental to database systems, representing collections of data organized by rows and associated data types.
+Tables are fundamental to database systems, representing structured collections of data organized into rows with associated data types.
 
-Apache Arrow Flight, however, does not natively support the concept of tables. Instead, it handles collections of flights. A flight from an Arrow Flight server can represent a table because it has a fixed schema.  The Arrow flight server can return the contents of a flight either by streaming it back to the client or by returning URLs to where the contents of the flight can be obtained.
+Apache Arrow Flight does not natively define "tables" in the traditional database sense. Instead, it provides a framework for serving "flights"—data streams with fixed schemas. The Airport extension bridges this gap by treating Arrow Flights as tables within DuckDB.
 
-In traditional databases, tables support both reading and modification. Reading typically involves `SELECT` statements, while modifications occur through `UPDATE`, `DELETE`, or `INSERT` operations. While Arrow Flight servers are not required to support all these operations, the Airport extension facilitates all of them.
+A flight can represent a table because:
+
+1. It has a fixed, well-defined schema
+2. It can return data either by streaming or by providing locations (URLs) to data files
+3. It can support both read and write operations
+
+Traditional database tables support reading (`SELECT`) and modification (`INSERT`, `UPDATE`, `DELETE`) operations. While Arrow Flight servers are not required to implement all operations, the Airport extension provides a complete framework for supporting them.
 
 ## Arrow Flight Server Implementation Notes
 

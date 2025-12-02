@@ -1,8 +1,8 @@
 ---
-title: "Table Returning Functions"
+title: "Table-Returning Functions"
 ---
 
-The Airport extension for DuckDB supports having Arrow Flight servers provide table returning functions.  Table returning functions are SQL functions that return an arbitrary number of rows conforming to a schema.  The schema can be dynamically defined based on the input to the function.
+The Airport extension enables Arrow Flight servers to provide table-returning functions (also known as table-valued functions or TVFs). These SQL functions return an arbitrary number of rows conforming to a schema, which can be dynamically determined based on the function's input parameters.
 
 ## Example
 

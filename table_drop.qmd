@@ -1,12 +1,12 @@
 ---
-title: "Drop"
+title: "Drop Table"
 ---
 
-The Airport extension supports dropping tables. The Arrow Flight server determines whether to drop the table.
+The Airport extension supports dropping tables through standard SQL `DROP TABLE` statements. The Arrow Flight server determines whether to permit the table deletion.
 
 ## Example
 
-For a DuckDB session to drop a table, a standard SQL `DROP TABLE ` statement is executed in a schema that is managed by the Airport extension.
+To drop a table, execute a standard SQL `DROP TABLE` statement referencing a schema managed by the Airport extension.
 
 ```sql
 -- Attach an Airport database

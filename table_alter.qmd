@@ -1,8 +1,8 @@
 ---
-title: "Alter"
+title: "Alter Table"
 ---
 
-The Airport extension supports altering tables. The Arrow Flight server determines whether to apply the alteration.
+The Airport extension supports table schema modifications through the standard SQL `ALTER TABLE` statement. The Arrow Flight server determines whether to permit and apply the requested alteration.
 
 ## Example
 
@@ -24,9 +24,9 @@ ALTER TABLE example.main.employees DROP COLUMN id;
 
 ## Arrow Flight Server Implementation Notes
 
-The Airport extension will perform a `DoAction` Arrow Flight RPC with a method name that corresponds to the type of alteration being performed.
+The Airport extension invokes a `DoAction` Arrow Flight RPC with an action name corresponding to the specific alteration type.
 
-The types of alterations that can be performed are:
+### Supported Alteration Operations
 
 | Action Name | Description |
 |-------------|-------------|
@@ -43,6 +43,6 @@ The types of alterations that can be performed are:
 | [`set_default`](server_action_set_default.qmd "Set a default value for a field") | Set a default value for a field. |
 | [`set_not_null`](server_action_set_not_null.qmd "Set a field to NOT NULL") | Set a field to NOT NULL. |
 
-Each type of alteration takes a different parameter structure.
+Each alteration type accepts a specific parameter structure as defined in its respective documentation page.
 
-All actions are not expected to return a value, but should raise an exception upon error.
+**Return Value:** Most alteration actions return an updated `FlightInfo` structure reflecting the modified table schema. Actions like `set_default` and `set_not_null` do not return values but must raise an Arrow Flight exception on error.

@@ -2,9 +2,9 @@
 title: "Server Basics"
 ---
 
-Writing an Arrow Flight server that works with the Airport DuckDB extension can be either simple or complex depending on how much functionality you want to support. At a basic level, a Flight server simply exposes data over Arrow Flights. But with additional effort, it can evolve into a programmable, secure service that responds efficiently to SQL queries, supports user-defined functions, and integrates deeply with DuckDB.
+Writing an Arrow Flight server that integrates with the Airport extension for DuckDB can range from simple to sophisticated, depending on your requirements. At its most basic, a Flight server exposes data through Arrow Flights. With additional implementation, it can become a fully programmable, secure service that responds efficiently to SQL queries, supports user-defined functions, and integrates seamlessly with DuckDB.
 
-This guide will walk you through the basics of writing an Arrow Flight server and how to extend it to support the Airport extension for DuckDB.
+This guide introduces the fundamentals of creating an Arrow Flight server and extending it to support the Airport extension.
 
 ## Why Write a Flight Server?
 
@@ -43,13 +43,23 @@ It's also beneficial to review the [Arrow Flight protocol definition](https://gi
 
 ## Airport Extension Integration Levels
 
-The Airport extension for DuckDB expects Flight servers to implement a few additional capabilities. Depending on how deeply you want to integrate, choose the appropriate level:
+The Airport extension expects Flight servers to implement specific capabilities. The depth of integration depends on your use case:
 
-### Level 1: Schema Discovery
+### Level 1: Schema Discovery (Required)
 
-To have Arrow Flights appear in DuckDB as schemas, tables, and functions, your server must implement the `DoAction` RPC with support for the `list_schemas` action. This allows DuckDB to enumerate the top-level schemas exposed by your server when a client attaches a database.
+To expose Arrow Flights as DuckDB schemas, tables, and functions, your server must implement the `DoAction` RPC with support for the [`list_schemas`](server_action_list_schemas.qmd) action. This enables DuckDB to enumerate available schemas when a database is attached.
 
-See: [`list_schemas` implementation guide](server_action_list_schemas.qmd)
+### Level 2: Data Access (Required)
+
+Implement the [`endpoints`](server_action_endpoints.qmd) action to provide flight endpoints for data retrieval. This allows DuckDB to fetch data from your tables.
+
+### Level 3: Write Operations (Optional)
+
+Support table modifications by implementing actions like [`create_table`](server_action_create_table.qmd), [`drop_table`](server_action_drop_table.qmd), and data manipulation operations.
+
+### Level 4: Advanced Features (Optional)
+
+Implement time travel, column statistics, predicate pushdown, and custom functions for enhanced query optimization and functionality.
 
 For more efficient query execution, your server can implement support for predicate pushdown. This allows DuckDB to send filter expressions to your server, letting it reduce data volume before returning results.
 
