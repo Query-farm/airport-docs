@@ -897,7 +897,7 @@ Use appropriate synchronization in your implementations.
 
 ## Known Limitations
 
-- **Reserved schema name**: The schema name `main` cannot be used. This name is reserved by Airport DuckDB Extension as the default schema for local databases, and using it for an Airport-attached catalog will cause conflicts. Choose a different name for your schemas (e.g., `demo`, `app`, `public`, etc.).
+- **Reserved schema name**: The schema name `main` cannot be used in Airport-attached servers. This is a limitation of the current Airport DuckDB Extension implementation. While DuckDB itself handles `main` schema normally, Airport-attached catalogs cannot expose schemas named `main`. Choose a different name for your schemas (e.g., `demo`, `app`, `public`, etc.).
 
 ## Examples
 
