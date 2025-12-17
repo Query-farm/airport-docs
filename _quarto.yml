@@ -170,6 +170,11 @@ website:
                   - text: "table_function_flight_info"
                     href: server_action_table_function_flight_info.qmd
         - text: "---"
+        - section: "Protocol Implementation Guides"
+          contents:
+            - text: "Implement an Airport-compatible server on Golang"
+              href: protocol_implementation_golang.qmd
+        - text: "---"
         - text: "FAQ"
           href: faq.qmd
         - text: "---"
