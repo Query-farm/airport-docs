@@ -136,6 +136,7 @@ The airport-go package is organized into several subpackages:
 | `airport` | Main package: server creation, catalog builder, authentication helpers |
 | `airport/catalog` | Core interfaces: Catalog, Schema, Table, Functions, DML/DDL options |
 | `airport/auth` | Authentication implementations (bearer token) |
+| `airport/filter` | Filter pushdown parsing and SQL encoding |
 | `airport/flight` | Internal Flight handler implementation |
 
 ## Server Configuration
@@ -329,6 +330,56 @@ type DeletableTable interface {
 }
 ```
 
+### UpdatableBatchTable
+
+Alternative UPDATE interface where rowid is embedded in the RecordBatch (preferred over UpdatableTable):
+
+```go
+type UpdatableBatchTable interface {
+    Table
+
+    // Update modifies existing rows using data from the RecordBatch.
+    // The rows RecordBatch contains both the rowid column and new values.
+    // Use FindRowIDColumn(rows.Schema()) to locate the rowid column.
+    // Implementations MUST return ErrNullRowID if any rowid value is null.
+    Update(ctx context.Context, rows arrow.RecordBatch, opts *DMLOptions) (*DMLResult, error)
+}
+```
+
+### DeletableBatchTable
+
+Alternative DELETE interface where rowid is embedded in the RecordBatch (preferred over DeletableTable):
+
+```go
+type DeletableBatchTable interface {
+    Table
+
+    // Delete removes rows identified by rowid values in the RecordBatch.
+    // Use FindRowIDColumn(rows.Schema()) to locate the rowid column.
+    // Implementations MUST return ErrNullRowID if any rowid value is null.
+    Delete(ctx context.Context, rows arrow.RecordBatch, opts *DMLOptions) (*DMLResult, error)
+}
+```
+
+### ErrNullRowID
+
+Sentinel error for null rowid validation in batch operations:
+
+```go
+var ErrNullRowID = errors.New("null rowid value not allowed")
+```
+
+### FindRowIDColumn
+
+Helper function to locate the rowid column in a schema:
+
+```go
+// FindRowIDColumn returns the index of the rowid column in the schema.
+// Returns -1 if no rowid column is found.
+// Rowid column is identified by name "rowid" or metadata key "is_rowid".
+func FindRowIDColumn(schema *arrow.Schema) int
+```
+
 ### RowID Support
 
 For UPDATE and DELETE operations, tables must include a `rowid` pseudocolumn with special metadata:
@@ -402,6 +453,11 @@ type DynamicTable interface {
     SetNotNull(ctx context.Context, columnName string, opts SetNotNullOptions) error
     DropNotNull(ctx context.Context, columnName string, opts DropNotNullOptions) error
     SetDefault(ctx context.Context, columnName, expression string, opts SetDefaultOptions) error
+
+    // Struct field operations
+    AddField(ctx context.Context, columnSchema *arrow.Schema, opts AddFieldOptions) error
+    RenameField(ctx context.Context, columnPath []string, newName string, opts RenameFieldOptions) error
+    RemoveField(ctx context.Context, columnPath []string, opts RemoveFieldOptions) error
 }
 ```
 
@@ -611,38 +667,90 @@ SELECT * FROM airport_take_flight(
 
 ## Filter Pushdown (Predicate Pushdown)
 
-DuckDB can push WHERE clause predicates to the server via `ScanOptions.Filter`. The filter is a JSON-serialized expression tree.
+DuckDB can push WHERE clause predicates to the server via `ScanOptions.Filter`. The `filter` package provides parsing and SQL encoding for these expressions.
+
+### Using the Filter Package
 
 ```go
+import "github.com/hugr-lab/airport-go/filter"
+
 func (t *MyTable) Scan(ctx context.Context, opts *catalog.ScanOptions) (array.RecordReader, error) {
     if opts.Filter != nil {
-        // Parse the JSON filter
-        var filterExpr struct {
-            Filters            []json.RawMessage `json:"filters"`
-            ColumnBindingNames []string          `json:"column_binding_names_by_index"`
-        }
-        if err := json.Unmarshal(opts.Filter, &filterExpr); err != nil {
+        // Parse filter JSON into strongly-typed structures
+        fp, err := filter.Parse(opts.Filter)
+        if err != nil {
+            // Malformed JSON - fall back to unfiltered scan
             return t.scanAll(ctx)
         }
 
-        // Interpret and apply filter to your data source
+        // Encode to SQL WHERE clause
+        enc := filter.NewDuckDBEncoder(nil)
+        whereClause := enc.EncodeFilters(fp)
+
+        if whereClause != "" {
+            query := "SELECT * FROM table WHERE " + whereClause
+            // Execute filtered query...
+        }
     }
 
     return t.scanAll(ctx)
 }
 ```
 
-### Filter Expression Types
+### Column Mapping
 
-| Expression Class | Description |
+Map DuckDB column names to backend storage names:
+
+```go
+enc := filter.NewDuckDBEncoder(&filter.EncoderOptions{
+    ColumnMapping: map[string]string{
+        "user_id": "uid",           // user_id → uid
+        "created": "created_at",    // created → created_at
+    },
+})
+```
+
+### Column Expression Replacement
+
+Replace column names with SQL expressions for computed columns:
+
+```go
+enc := filter.NewDuckDBEncoder(&filter.EncoderOptions{
+    ColumnExpressions: map[string]string{
+        "full_name": "CONCAT(first_name, ' ', last_name)",
+    },
+})
+```
+
+### Unsupported Expression Handling
+
+The encoder gracefully handles unsupported expressions:
+
+- **AND**: Skips unsupported children, keeps others
+- **OR**: If any child is unsupported, skips entire OR expression
+- Returns empty string if all expressions are unsupported
+
+This produces the widest possible filter, which is safe because DuckDB applies filters client-side as a fallback.
+
+### Supported Expression Types
+
+| Expression Type | Description |
 |-----------------|-------------|
-| `BOUND_COMPARISON` | Comparison operators (=, >, <, >=, <=, !=) |
-| `BOUND_COLUMN_REF` | Column references |
-| `BOUND_CONSTANT` | Literal values |
-| `BOUND_CONJUNCTION` | Logical AND/OR operators |
-| `BOUND_FUNCTION` | Function calls |
+| `ComparisonExpression` | Binary comparisons (=, <>, <, >, <=, >=, IN, NOT IN, BETWEEN) |
+| `ConjunctionExpression` | AND/OR with multiple children |
+| `ConstantExpression` | Literal values with type information |
+| `ColumnRefExpression` | References to table columns |
+| `FunctionExpression` | Function calls (LOWER, LENGTH, etc.) |
+| `CastExpression` | Type casts (CAST, TRY_CAST) |
+| `BetweenExpression` | BETWEEN lower AND upper |
+| `OperatorExpression` | Unary operators (IS NULL, IS NOT NULL, NOT) |
+| `CaseExpression` | CASE WHEN ... THEN ... ELSE ... END |
 
-For detailed format specification, see the [Airport Extension documentation](https://airport.query.farm/server_predicate_pushdown.html).
+### Supported Data Types
+
+All DuckDB logical types are supported: BOOLEAN, TINYINT-BIGINT, UTINYINT-UBIGINT, HUGEINT, UHUGEINT, FLOAT, DOUBLE, DECIMAL, VARCHAR, BLOB, DATE, TIME, TIMESTAMP variants, INTERVAL, UUID, and complex types (LIST, STRUCT, MAP, ARRAY).
+
+For detailed JSON format specification, see the [Airport Extension documentation](https://airport.query.farm/server_predicate_pushdown.html).
 
 ## Time Travel Queries
 
@@ -882,6 +990,7 @@ var (
     ErrAlreadyExists  = errors.New("already exists")
     ErrSchemaNotEmpty = errors.New("schema contains tables")
     ErrNotImplemented = errors.New("not implemented")
+    ErrNullRowID      = errors.New("null rowid value not allowed") // For batch DML operations
 )
 ```
 
@@ -911,6 +1020,7 @@ The [airport-go repository](https://github.com/hugr-lab/airport-go) includes sev
 | [dml](https://github.com/hugr-lab/airport-go/tree/main/examples/dml) | DML operations with transactions |
 | [dynamic](https://github.com/hugr-lab/airport-go/tree/main/examples/dynamic) | Dynamic catalog with live schema updates |
 | [functions](https://github.com/hugr-lab/airport-go/tree/main/examples/functions) | Scalar and table functions |
+| [filter](https://github.com/hugr-lab/airport-go/tree/main/examples/filter) | Filter pushdown parsing and SQL encoding |
 | [tls](https://github.com/hugr-lab/airport-go/tree/main/examples/tls) | TLS/SSL configuration |
 | [timetravel](https://github.com/hugr-lab/airport-go/tree/main/examples/timetravel) | Time travel queries |
 
